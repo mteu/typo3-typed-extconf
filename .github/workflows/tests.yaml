@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ["8.3", "8.4"]
+        php-version: ["8.2", "8.3", "8.4"]
         composer-version: ["latest"]
         dependencies: ["lowest", "highest"]
         typo3-version: ["13.4"]
