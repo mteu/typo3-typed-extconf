@@ -1,10 +1,19 @@
+<div align="center">
+
+[![CGL](https://github.com/mteu/typo3-typed-extconf/actions/workflows/cgl.yaml/badge.svg)](https://github.com/mteu/typo3-typed-extconf/actions/workflows/cgl.yaml)
+[![Tests](https://github.com/mteu/typo3-typed-extconf/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/mteu/typo3-typed-extconf/actions/workflows/tests.yaml)
+[![Coverage](https://coveralls.io/repos/github/mteu/typo3-typed-extconf/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-typed-extconf?branch=main)
+[![Maintainability](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf/maintainability.svg)](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf)
+
 # TYPO3 Typed Extension Configuration
 
-A TYPO3 v13 extension that provides type-safe extension configuration
+</div>
+
+This TYPO3 CMS extension aims to provide type-safe extension configuration
 management, ensuring other extensions can rely on fully-typed configuration
 values instead of the default string-only values from the TYPO3 backend.
 
-## Features
+## 🚀 Features
 
 - **Type Safety**: Automatic conversion of string values from backend
 configuration to proper PHP types (int, bool, array, etc.)
@@ -15,21 +24,30 @@ type mapping and validation
 - **Default Handling**: Provide sensible defaults for missing configuration keys
 - **Path Mapping**: Support for nested configuration paths with dot notation
 - **Developer Experience**: Simple API for accessing typed configuration values
-- **Interface-based Design**: Mockable interface for testing
 
-## Installation
+## ⚡️ Installation
 
-Add the extension to your TYPO3 project:
+Add this package to your TYPO3 Extension:
 
 ```bash
 composer require mteu/typo3-typed-extconf
 ```
 
-## Usage
+## 💡 Usage
 
-> **📖 For a comprehensive developer guide with advanced examples and best practices, see [Documentation/developer-guide.md](Documentation/developer-guide.md)**
+> [!TIP]
+> For a comprehensive developer guide with advanced examples and best practices,
+> check out the [Developer Guide](Documentation/developer-guide.md).
+
+> [!NOTE]
+> If you're in a hurry you might want to have this package generate
+> configuration classes automatically based on your extension's
+> `ext_conf_template.txt`.
 >
-> **⚡ Generate configuration classes automatically using the CLI command: `./vendor/bin/typo3 typed-extconf:generate` - see [Documentation/command-guide.md](Documentation/command-guide.md)**
+> Run `./vendor/bin/typo3 typed-extconf:generate` or consult the
+> [Command Guide](Documentation/command-guide.md).
+>
+> Use with caution, though, since this functionality is not well tested, yet.
 
 ### 1. Define Configuration Schema
 
@@ -92,10 +110,12 @@ final readonly class MyService
 
 ### `#[ExtensionConfig]`
 
-Class-level attribute to specify which TYPO3 extension the configuration belongs to.
+Class-level attribute to specify which TYPO3 extension the configuration belongs
+to.
 
 **Parameters:**
-- `extensionKey` (string, optional): The TYPO3 extension key. If not provided, must be passed to the service method.
+- `extensionKey` (string, optional): The TYPO3 extension key. If not provided,
+- must be passed to the service method.
 
 ### `#[ExtConfProperty]`
 
@@ -103,12 +123,22 @@ Property/parameter-level attribute for configuration value mapping.
 
 **Parameters:**
 - `default` (mixed, optional): Default value if configuration key is missing
-- `path` (string, optional): Custom configuration path using dot notation (e.g., 'api.endpoint')
-- `required` (bool, optional): Whether the configuration value is required (default: false)
+- `path` (string, optional): Custom configuration path using dot notation
+(e.g., 'api.endpoint')
+- `required` (bool, optional): Whether the configuration value is required
+(default: false)
 
 ## Configuration Structure
 
-The extension expects TYPO3 extension configuration in the standard format. For example, in your extension's `ext_conf_template.txt`:
+Extension configuration in TYPO3 is typically stored in
+`config/system/settings.php` under the
+`$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` array, or in
+`config/system/additional.php` for custom configurations. The backend
+configuration interface allows administrators to modify these values, but all
+values are stored as strings regardless of their intended type.
+
+The extension expects TYPO3 extension configuration in the standard format. For
+example, in your extension's `ext_conf_template.txt`:
 
 ```
 # cat=basic; type=int+; label=Maximum items
@@ -126,7 +156,8 @@ allowedTypes = default,fallback
 
 ## Service Registration
 
-The extension automatically registers its services. If you need to configure them manually:
+The extension automatically registers its services. If you need to configure
+them manually:
 
 ```yaml
 # Configuration/Services.yaml
@@ -139,19 +170,6 @@ services:
   mteu\TypedExtConf\:
     resource: '../Classes/*'
 ```
-
-## Error Handling
-
-The extension provides specific exceptions:
-
-- `mteu\TypedExtConf\Exception\ConfigurationException`: Configuration retrieval or schema issues
-- `mteu\TypedExtConf\Exception\SchemaValidationException`: Type mapping validation failures
-
-## Requirements
-
-- TYPO3 v13.4+
-- PHP 8.3+
-- cuyz/valinor ^2.0
 
 ## File Structure
 
@@ -172,15 +190,15 @@ packages/typo3-typed-extconf/
 ├── Tests/
 │   └── Unit/
 │       ├── Fixture/
-│       └── Mapper/
+│       └── Provider/
 ├── composer.json
 ├── ext_emconf.php
 └── README.md
 ```
 
-## Examples
+## 🧑‍💻 Examples
 
-### Real-world Example: Nested Configuration
+### Real-world example with nested configuration
 
 ```php
 #[ExtensionConfig(extensionKey: 'my_complex_ext')]
@@ -212,5 +230,3 @@ final readonly class DatabaseConfiguration
     ) {}
 }
 ```
-
-This extension provides a robust foundation for type-safe extension configuration in TYPO3 v13, eliminating runtime errors caused by type mismatches and improving developer experience.
