@@ -7,6 +7,10 @@
 
 # TYPO3 Typed Extension Configuration
 
+[![TYPO3 12](https://img.shields.io/badge/TYPO3-12-orange.svg)](https://get.typo3.org/version/12)
+[![TYPO3 13](https://img.shields.io/badge/TYPO3-13-orange.svg)](https://get.typo3.org/version/13)
+[![PHP Version Require](https://poser.pugx.org/mteu/typo3-typed-extconf/require/php)](https://packagist.org/packages/mteu/typo3-typed-extconf)
+
 </div>
 
 This TYPO3 CMS extension aims to provide type-safe extension configuration

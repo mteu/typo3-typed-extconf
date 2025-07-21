@@ -5,7 +5,6 @@
 		"typo3/cms-core": "~12.4.31"
 	},
 	"require-dev": {
-		"phpstan/phpstan-phpunit": "^2.0",
 		"phpunit/phpcov": "^10.0",
 		"phpunit/phpunit": "^11.5",
 		"typo3/testing-framework": "^8.2"
