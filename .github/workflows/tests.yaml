@@ -1,0 +1,117 @@
+name: Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  tests:
+    name: Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }}, Composer ${{ matrix.composer-version }} & ${{ matrix.dependencies }} dependencies)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.3", "8.4"]
+        composer-version: ["latest"]
+        dependencies: ["lowest", "highest"]
+        typo3-version: ["13.4"]
+        #exclude:
+        #  - php-version: "8.1"
+        #    typo3-version: "13.4"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Prepare environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v${{ matrix.composer-version }}
+          coverage: pcov
+
+      # Install dependencies
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
+
+      # Run tests
+      - name: Run unit tests
+        run: composer test:unit
+
+      # todo: add coverage and reporting
+
+  tests-coverage:
+    name: Test coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Prepare environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          tools: composer:v2
+          coverage: pcov
+
+      # Install dependencies
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+
+      # Run tests
+      - name: Build coverage directory
+        run: mkdir -p .build/coverage
+      - name: Run tests with coverage
+        run: composer test:coverage
+
+      # Upload artifact
+      - name: Fix coverage path
+        working-directory: .build/coverage
+        run: sed -i "s#$GITHUB_WORKSPACE#${{ github.workspace }}#g" clover.xml
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: .build/coverage/clover.xml
+          retention-days: 7
+
+  report-coverage:
+    name: Report test coverage
+    needs: tests-coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Download artifact
+      - name: Download coverage artifact
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+
+      # qlty
+      - name: qlty report
+        uses: qltysh/qlty-action/coverage@v1
+        if: env.QLTY_COVERAGE_TOKEN
+        env:
+          QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: ${{ steps.download.outputs.download-path }}/clover.xml
+
+      # Coveralls
+      - name: Coveralls report
+        uses: coverallsapp/github-action@v2
+        with:
+          file: ${{ steps.download.outputs.download-path }}/clover.xml

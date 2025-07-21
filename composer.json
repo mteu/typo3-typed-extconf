@@ -1,0 +1,102 @@
+{
+	"name": "mteu/typo3-typed-extconf",
+	"description": "Provides type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-cms-extension",
+	"authors": [
+		{
+			"name": "Martin Adler",
+			"email": "mteu@mailbox.org"
+		}
+	],
+	"require": {
+		"php": "~8.3.0 || ~8.4.0",
+		"cuyz/valinor": "^2.0",
+		"typo3/cms-core": "~13.4.12"
+	},
+	"require-dev": {
+		"armin/editorconfig-cli": "^2.0",
+		"eliashaeussler/version-bumper": "^3.0",
+		"ergebnis/composer-normalize": "^2.28",
+		"mteu/zealous-stan": "^0.6.3",
+		"phpstan/extension-installer": "*",
+		"phpstan/phpstan": "^2.1",
+		"phpunit/phpcov": "^11.0.0",
+		"phpunit/phpunit": "^12.1",
+		"roave/security-advisories": "dev-latest",
+		"saschaegerer/phpstan-typo3": "^2.1",
+		"shipmonk/composer-dependency-analyser": "*",
+		"ssch/typo3-rector": "^3.6",
+		"typo3/coding-standards": "^0.8.0",
+		"typo3/testing-framework": "^9.2.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"mteu\\TypedExtConf\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"mteu\\TypedExtConf\\Tests\\": "Tests/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"eliashaeussler/version-bumper": true,
+			"ergebnis/composer-normalize": true,
+			"phpstan/extension-installer": true,
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		},
+		"lock": true,
+		"sort-packages": true,
+		"vendor-dir": ".build/vendor"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "typed_extconf",
+			"skip-ter-packagist-import": true,
+			"web-dir": ".build/web"
+		}
+	},
+	"scripts": {
+		"fix": [
+			"@fix:composer",
+			"@fix:editorconfig",
+			"@fix:php"
+		],
+		"fix:composer": "@composer normalize",
+		"fix:editorconfig": "ec --fix",
+		"fix:php": "php-cs-fixer fix --config php-cs-fixer.php",
+		"lint": [
+			"@lint:composer",
+			"@lint:editorconfig",
+			"@lint:php"
+		],
+		"lint:composer": "@composer normalize --dry-run",
+		"lint:editorconfig": "ec",
+		"lint:php": "php-cs-fixer fix --config php-cs-fixer.php",
+		"lint:yaml": "find . -path './.build' -prune -o \\( -name '*.yaml' -o -name '*.yml' \\) -type f -print | xargs yaml-lint --format=github",
+		"sca": [
+			"@sca:php",
+			"@sca:migrate"
+		],
+		"sca:migrate": [
+			"@sca:migrate:php"
+		],
+		"sca:migrate:php": [
+			"Composer\\Config::disableProcessTimeout",
+			"rector process"
+		],
+		"sca:php": "phpstan analyse -c phpstan.neon --memory-limit=4G",
+		"test": [
+			"@test:unit"
+		],
+		"test:coverage": [
+			"@test:coverage:unit"
+		],
+		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
+		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage",
+		"validate-dependencies": "composer-dependency-analyser"
+	}
+}

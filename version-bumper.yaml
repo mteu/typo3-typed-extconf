@@ -1,0 +1,7 @@
+presets:
+  - typo3-commit-guidelines
+  - typo3-extension
+
+releaseOptions:
+  commitMessage: '[RELEASE] Release of EXT:monitoring v{%version%}'
+  signTag: true
