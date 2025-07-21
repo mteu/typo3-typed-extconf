@@ -90,12 +90,16 @@
 		],
 		"sca:php": "phpstan analyse -c phpstan.neon --memory-limit=4G",
 		"test": [
-			"@test:unit"
+			"@test:unit",
+			"@test:functional"
 		],
 		"test:coverage": [
-			"@test:coverage:unit"
+			"@test:coverage:unit",
+			"@test:coverage:merge"
 		],
+		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
 		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
+		"test:functional": "phpunit -c phpunit.functional.xml --no-coverage",
 		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage",
 		"validate-dependencies": "composer-dependency-analyser"
 	}

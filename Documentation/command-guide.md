@@ -5,6 +5,9 @@ configuration classes for TYPO3 extensions. This command helps developers quickl
 create configuration classes that work with the typed extension configuration
 system.
 
+> [!WARNING]
+> Use with caution, though, since this functionality is not well tested, yet.
+
 ## Overview
 
 The command supports two generation modes:
