@@ -9,18 +9,20 @@ on:
 
 jobs:
   tests:
-    name: Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }} & ${{ matrix.dependencies }} dependencies)
+    name: Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }} with ${{ matrix.dependencies }} dependencies)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php-version: ["8.2", "8.3", "8.4"]
-        composer-version: ["latest"]
-        dependencies: ["lowest", "highest"]
-        typo3-version: ["12.4", "13.4"]
-        #exclude:
-        #  - php-version: "8.1"
-        #    typo3-version: "13.4"
+        php-version: [ "8.2", "8.3", "8.4" ]
+        typo3-version: [ "12.4", "13.4"]
+        dependencies: [ "highest", "lowest" ]
+        include:
+          - typo3-version: "12.4"
+            composer-filename: '.github/composer/composer.typo3-v12'
+          - typo3-version: "13.4"
+            composer-filename: 'composer'
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,8 +38,9 @@ jobs:
 
       # Install dependencies
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@v3
         with:
+          composer-filename: ${{ matrix.composer-filename }}
           dependency-versions: ${{ matrix.dependencies }}
           composer-options: --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
 
