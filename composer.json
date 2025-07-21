@@ -26,7 +26,7 @@
 		"phpunit/phpcov": "^10.0 || ^11.0.0",
 		"phpunit/phpunit": "^11.5 || ^12.1",
 		"roave/security-advisories": "dev-latest",
-		"saschaegerer/phpstan-typo3": "^1.10 || ^2.1",
+		"saschaegerer/phpstan-typo3": "^2.1",
 		"shipmonk/composer-dependency-analyser": "*",
 		"ssch/typo3-rector": "^3.6",
 		"typo3/coding-standards": "^0.8.0",

@@ -1,0 +1,53 @@
+{
+	"require": {
+		"php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+		"cuyz/valinor": "^2.0",
+		"typo3/cms-core": "~12.4.31"
+	},
+	"require-dev": {
+		"phpstan/phpstan-phpunit": "^2.0",
+		"phpunit/phpcov": "^10.0",
+		"phpunit/phpunit": "^11.5",
+		"typo3/testing-framework": "^8.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"mteu\\TypedExtConf\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"mteu\\TypedExtConf\\Tests\\": "Tests/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		},
+		"lock": true,
+		"sort-packages": true,
+		"vendor-dir": ".build/vendor"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "typed_extconf",
+			"skip-ter-packagist-import": true,
+			"web-dir": ".build/web"
+		}
+	},
+	"scripts": {
+		"test": [
+			"@test:unit",
+			"@test:functional"
+		],
+		"test:coverage": [
+			"@test:coverage:unit",
+			"@test:coverage:merge"
+		],
+		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
+		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
+		"test:functional": "phpunit -c phpunit.functional.xml --no-coverage",
+		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage"
+	}
+}
