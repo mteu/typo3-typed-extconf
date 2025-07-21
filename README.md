@@ -13,6 +13,15 @@ This TYPO3 CMS extension aims to provide type-safe extension configuration
 management, ensuring other extensions can rely on fully-typed configuration
 values instead of the default string-only values from the TYPO3 backend.
 
+> [!WARNING]
+> This project has just been prototyped and is not yet recommended for
+> productive use. Please wait for the official release.
+
+## 🚧 Todos
+- Evaluate a TYPO3 v12 backport
+- Improve quality of testing
+- Test with more real-world projects
+
 ## 🚀 Features
 
 - **Type Safety**: Automatic conversion of string values from backend
