@@ -45,8 +45,6 @@ jobs:
       - name: Run unit tests
         run: composer test:unit
 
-      # todo: add coverage and reporting
-
   tests-coverage:
     name: Test coverage
     runs-on: ubuntu-latest
@@ -76,7 +74,7 @@ jobs:
       # Upload artifact
       - name: Fix coverage path
         working-directory: .build/coverage
-        run: sed -i "s#$GITHUB_WORKSPACE#${{ github.workspace }}#g" clover.xml
+        run: sed -i 's#/home/runner/work/typo3-typed-extconf/typo3-typed-extconf#${{ github.workspace }}#g' clover.xml
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
