@@ -106,7 +106,7 @@ final readonly class MyService
 }
 ```
 
-## Attribute Reference
+## 📙 Attribute Reference
 
 ### `#[ExtensionConfig]`
 
@@ -115,7 +115,7 @@ to.
 
 **Parameters:**
 - `extensionKey` (string, optional): The TYPO3 extension key. If not provided,
-- must be passed to the service method.
+must be passed to the service method.
 
 ### `#[ExtConfProperty]`
 
@@ -133,72 +133,16 @@ Property/parameter-level attribute for configuration value mapping.
 Extension configuration in TYPO3 is typically stored in
 `config/system/settings.php` under the
 `$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` array, or in
-`config/system/additional.php` for custom configurations. The backend
-configuration interface allows administrators to modify these values, but all
-values are stored as strings regardless of their intended type.
+`config/system/additional.php`, or custom configurations.
 
-The extension expects TYPO3 extension configuration in the standard format. For
-example, in your extension's `ext_conf_template.txt`:
+TYPO3's backend configuration interface allows administrators to modify these values, but all
+values set through the backend module will be stored as strings regardless of their intended type.
 
-```
-# cat=basic; type=int+; label=Maximum items
-maxItems = 10
+This package retrieves the configuration with `TYPO3\CMS\Core\Configuration\ExtensionConfiguration`
+regardless on how it got there.
 
-# cat=features; type=boolean; label=Enable feature
-enableFeature = 1
 
-# cat=api; type=string; label=API Endpoint
-api.endpoint = /api/v1
-
-# cat=advanced; type=string; label=Allowed types (comma-separated)
-allowedTypes = default,fallback
-```
-
-## Service Registration
-
-The extension automatically registers its services. If you need to configure
-them manually:
-
-```yaml
-# Configuration/Services.yaml
-services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
-    public: false
-
-  mteu\TypedExtConf\:
-    resource: '../Classes/*'
-```
-
-## File Structure
-
-```
-packages/typo3-typed-extconf/
-├── Classes/
-│   ├── Attribute/
-│   │   ├── ExtConfProperty.php
-│   │   └── ExtensionConfig.php
-│   ├── Exception/
-│   │   ├── ConfigurationException.php
-│   │   └── SchemaValidationException.php
-│   └── Provider/
-│       ├── ExtensionConfigurationProvider.php
-│       └── TypedExtensionConfigurationProvider.php
-├── Configuration/
-│   └── Services.yaml
-├── Tests/
-│   └── Unit/
-│       ├── Fixture/
-│       └── Provider/
-├── composer.json
-├── ext_emconf.php
-└── README.md
-```
-
-## 🧑‍💻 Examples
-
-### Real-world example with nested configuration
+## 🧑‍💻 Real-world example with nested configuration
 
 ```php
 #[ExtensionConfig(extensionKey: 'my_complex_ext')]
