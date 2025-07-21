@@ -230,3 +230,17 @@ final readonly class DatabaseConfiguration
     ) {}
 }
 ```
+
+## 🤝 Contributing
+Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
+workflow of submitting new features or bugfixes.
+
+## 🔒 Security
+Please refer to our [security policy](SECURITY.md) if you discover a security vulnerability in
+this extension. Be warned, though. I cannot afford bounty. This is private project.
+
+## ⭐ License
+This extension is licensed under the [GPL-2.0-or-later](LICENSE.md) license.
+
+## 💬 Support
+For issues and feature requests, please use the [GitHub issue tracker](https://github.com/mteu/typo3-typed-extconf/issues).
