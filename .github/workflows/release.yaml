@@ -6,9 +6,9 @@ on:
 
 env:
   TYPO3_DISABLE_DOCS_VERSION_UPDATE: 1
-  TYPO3_EXTENSION_KEY: monitoring
+  TYPO3_EXTENSION_KEY: typed_extconf
   TYPO3_EXCLUDE_FROM_PACKAGING: packaging_exclude.php
-  EXTENSION_ARTEFACT: monitoring_${{ github.ref_name }}.zip
+  EXTENSION_ARTEFACT: typed_extconf_${{ github.ref_name }}.zip
 
 jobs:
   # build extension for TER publishing

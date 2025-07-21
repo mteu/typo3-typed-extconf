@@ -298,12 +298,12 @@ final readonly class DefaultsConfiguration
 Handle deeply nested configuration structures:
 
 ```php
-#[ExtensionConfig(extensionKey: 'monitoring')]
-final readonly class MonitoringConfiguration
+#[ExtensionConfig(extensionKey: 'example')]
+final readonly class ExampleConfiguration
 {
     public function __construct(
         #[ExtConfProperty(path: 'providers.database.enabled', default: true)]
-        public bool $databaseMonitoringEnabled,
+        public bool $databaseExampleEnabled,
 
         #[ExtConfProperty(path: 'providers.cache.threshold', default: 80)]
         public int $cacheThreshold,

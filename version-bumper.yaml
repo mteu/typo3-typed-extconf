@@ -3,5 +3,5 @@ presets:
   - typo3-extension
 
 releaseOptions:
-  commitMessage: '[RELEASE] Release of EXT:monitoring v{%version%}'
+  commitMessage: '[RELEASE] Release of EXT:typed_extconf v{%version%}'
   signTag: true
