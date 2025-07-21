@@ -10,25 +10,27 @@
 		}
 	],
 	"require": {
-		"php": "~8.3.0 || ~8.4.0",
+		"php": "~8.2.0 || ~8.3.0 || ~8.4.0",
 		"cuyz/valinor": "^2.0",
-		"typo3/cms-core": "~13.4.12"
+		"typo3/cms-core": "~12.4.31 || ~13.4.12"
 	},
 	"require-dev": {
-		"armin/editorconfig-cli": "^2.0",
+		"armin/editorconfig-cli": "^2.1",
 		"eliashaeussler/version-bumper": "^3.0",
 		"ergebnis/composer-normalize": "^2.28",
+		"friendsofphp/php-cs-fixer": "^3.8",
 		"mteu/zealous-stan": "^0.6.3",
 		"phpstan/extension-installer": "*",
 		"phpstan/phpstan": "^2.1",
-		"phpunit/phpcov": "^11.0.0",
-		"phpunit/phpunit": "^12.1",
+		"phpstan/phpstan-phpunit": "^2.0",
+		"phpunit/phpcov": "^10.0 || ^11.0.0",
+		"phpunit/phpunit": "^11.5 || ^12.1",
 		"roave/security-advisories": "dev-latest",
-		"saschaegerer/phpstan-typo3": "^2.1",
+		"saschaegerer/phpstan-typo3": "^1.10 || ^2.1",
 		"shipmonk/composer-dependency-analyser": "*",
 		"ssch/typo3-rector": "^3.6",
 		"typo3/coding-standards": "^0.8.0",
-		"typo3/testing-framework": "^9.2.0"
+		"typo3/testing-framework": "^8.2 || ^9.2"
 	},
 	"autoload": {
 		"psr-4": {

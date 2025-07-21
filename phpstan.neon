@@ -1,2 +1,21 @@
-includes:
-	- phpstan.inc.neon
+parameters:
+	paths:
+		- Classes
+		- Configuration
+		- Tests
+	level: max
+	treatPhpDocTypesAsCertain: false
+
+	ergebnis:
+		noExtends:
+			classesAllowedToBeExtended:
+				- Exception
+				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
+				- Symfony\Component\Console\Command\Command
+
+	ignoreErrors:
+		- identifier: ergebnis.noConstructorParameterWithDefaultValue
+		- identifier: ergebnis.noNullableReturnTypeDeclaration
+		- identifier: ergebnis.noParameterWithNullDefaultValue
+		- identifier: ergebnis.noParameterWithNullableTypeDeclaration
+		- message: '#Interface must be located in "Contract" or "Contracts" namespace#'

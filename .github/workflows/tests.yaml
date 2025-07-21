@@ -9,15 +9,15 @@ on:
 
 jobs:
   tests:
-    name: Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }}, Composer ${{ matrix.composer-version }} & ${{ matrix.dependencies }} dependencies)
+    name: Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }} & ${{ matrix.dependencies }} dependencies)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php-version: ["8.3", "8.4"]
+        php-version: ["8.2", "8.3", "8.4"]
         composer-version: ["latest"]
         dependencies: ["lowest", "highest"]
-        typo3-version: ["13.4"]
+        typo3-version: ["12.4", "13.4"]
         #exclude:
         #  - php-version: "8.1"
         #    typo3-version: "13.4"
