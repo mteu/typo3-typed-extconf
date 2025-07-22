@@ -25,7 +25,6 @@ namespace mteu\TypedExtConf\Provider;
 
 use CuyZ\Valinor\Mapper\MappingError;
 use CuyZ\Valinor\Mapper\TreeMapper;
-use CuyZ\Valinor\MapperBuilder;
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use mteu\TypedExtConf\Exception\ConfigurationException;
@@ -41,15 +40,10 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 final readonly class TypedExtensionConfigurationProvider implements ExtensionConfigurationProvider, SingletonInterface
 {
-    private TreeMapper $mapper;
-
     public function __construct(
         private ExtensionConfiguration $extensionConfiguration,
-    ) {
-        $this->mapper = (new MapperBuilder())
-            ->allowSuperfluousKeys()
-            ->mapper();
-    }
+        private TreeMapper $mapper,
+    ) {}
 
     /**
      * @template T of object
