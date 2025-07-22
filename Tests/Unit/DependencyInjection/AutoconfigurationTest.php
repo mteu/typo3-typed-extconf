@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\DependencyInjection;
 
+use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use mteu\TypedExtConf\Tests\Unit\Fixture\SimpleTestConfiguration;
@@ -41,12 +42,17 @@ use Symfony\Component\DependencyInjection\Reference;
 final class AutoconfigurationTest extends TestCase
 {
     #[Test]
+    #[RequiresPackage(
+        package: 'symfony/dependency-injection',
+        versionRequirement: '>= 7.3',
+    )]
     public function testAttributeAutoconfigurationRegistersService(): void
     {
         $container = new ContainerBuilder();
 
         $configurator = require __DIR__ . '/../../../Configuration/Services.php';
         assert(is_callable($configurator));
+
         $configurator($container);
 
         $reflectionClass = new \ReflectionClass(SimpleTestConfiguration::class);
@@ -64,6 +70,47 @@ final class AutoconfigurationTest extends TestCase
         $callback = reset($configurators);
         self::assertIsCallable($callback);
 
+        $callback($definition, $attribute, $reflectionClass);
+
+        $factory = $definition->getFactory();
+        self::assertIsArray($factory);
+        self::assertInstanceOf(Reference::class, $factory[0]);
+        self::assertSame(ExtensionConfigurationProvider::class, (string)$factory[0]);
+        self::assertSame('get', $factory[1]);
+
+        $arguments = $definition->getArguments();
+        self::assertCount(2, $arguments);
+        self::assertSame(SimpleTestConfiguration::class, $arguments[0]);
+        self::assertSame('test_ext', $arguments[1]);
+    }
+
+    #[Test]
+    #[RequiresPackage(
+        package: 'symfony/dependency-injection',
+        versionRequirement: '< 7.3',
+        message: 'getAutoconfiguredAttributes() is deprecated in >= 7.3',
+    )]
+    public function testAttributeAutoconfigurationRegistersServiceForSymfonyDependencyInjectionUpTo73(): void
+    {
+        $container = new ContainerBuilder();
+
+        $configurator = require __DIR__ . '/../../../Configuration/Services.php';
+        assert(is_callable($configurator));
+
+        $configurator($container);
+
+        $reflectionClass = new \ReflectionClass(SimpleTestConfiguration::class);
+        $attribute = $reflectionClass->getAttributes(ExtensionConfig::class)[0]->newInstance();
+
+        $definition = new ChildDefinition('abstract.service');
+
+        /** @phpstan-ignore method.deprecated */
+        $autoconfigurationCallbacks = $container->getAutoconfiguredAttributes();
+
+        self::assertArrayHasKey(ExtensionConfig::class, $autoconfigurationCallbacks);
+
+        // Execute the callback
+        $callback = $autoconfigurationCallbacks[ExtensionConfig::class];
         $callback($definition, $attribute, $reflectionClass);
 
         $factory = $definition->getFactory();
