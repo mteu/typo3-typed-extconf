@@ -24,14 +24,14 @@ $EM_CONF[$_EXTKEY] = [
     'title' => 'Typed Extension Configuration',
     'description' => 'Provides type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration',
     'category' => 'services',
-    'version' => '0.0.0',
+    'version' => '0.1.0',
     'state' => 'alpha',
     'author' => 'Martin Adler',
     'author_email' => 'mteu@mailbox.org',
     'constraints' => [
         'depends' => [
             'typo3' => '13.4.12-13.4.99',
-            'php' => '8.3.0-8.4.99',
+            'php' => '8.2.0-8.4.99',
         ],
     ],
 ];
