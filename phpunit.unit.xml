@@ -5,6 +5,9 @@
     bootstrap=".build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTestsBootstrap.php"
     colors="true"
 >
+    <extensions>
+        <bootstrap class="EliasHaeussler\PHPUnitAttributes\PHPUnitAttributesExtension" />
+    </extensions>
     <testsuites>
         <testsuite name="Unit tests">
             <directory>Tests/Unit</directory>

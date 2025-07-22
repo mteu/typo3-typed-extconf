@@ -59,9 +59,45 @@ final readonly class MyExtensionConfiguration
 }
 ```
 
-### Step 2: Inject and Use the Configuration Mapper
+### Step 2: Use Your Configuration
 
-Inject the configuration mapper service in your classes:
+#### Recommended: Direct Injection
+
+Simply inject your configuration class directly:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\MyExtension\Service;
+
+use Vendor\MyExtension\Configuration\MyExtensionConfiguration;
+
+final readonly class MyService
+{
+    public function __construct(
+        private MyExtensionConfiguration $config,
+    ) {}
+
+    public function doSomething(): void
+    {
+        // All properties are now properly typed
+        $maxItems = $this->config->maxItems; // int
+        $isEnabled = $this->config->enableFeature; // bool
+        $endpoint = $this->config->apiEndpoint; // string
+
+        // Use your configuration...
+        if ($isEnabled && $maxItems > 0) {
+            // Your business logic here
+        }
+    }
+}
+```
+
+#### Alternative: Using the Provider
+
+If you need more control, use the configuration provider:
 
 ```php
 <?php
@@ -82,16 +118,7 @@ final readonly class MyService
     public function doSomething(): void
     {
         $config = $this->extensionConfigurationProvider->get(MyExtensionConfiguration::class);
-
-        // All properties are now properly typed
-        $maxItems = $config->maxItems; // int
-        $isEnabled = $config->enableFeature; // bool
-        $endpoint = $config->apiEndpoint; // string
-
-        // Use your configuration...
-        if ($isEnabled && $maxItems > 0) {
-            // Your business logic here
-        }
+        // Use configuration...
     }
 }
 ```
@@ -229,8 +256,21 @@ final readonly class CacheConfiguration
 
 ### Dependency Injection
 
-The extension uses TYPO3's dependency injection system. Simply type-hint the
-`ExtensionConfigurationProvider` interface:
+The extension automatically registers your configuration classes as DI services. You can inject them directly:
+
+```php
+use Vendor\MyExtension\Configuration\MyExtensionConfiguration;
+
+final readonly class MyController
+{
+    public function __construct(
+        private MyExtensionConfiguration $config,
+        // ... other dependencies
+    ) {}
+}
+```
+
+Alternatively, inject the provider service if you need more control:
 
 ```php
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
@@ -577,13 +617,3 @@ final readonly class MyConfiguration
     ) {}
 }
 ```
-
-## Conclusion
-
-The `mteu/typo3-typed-extconf` extension provides a powerful foundation for
-type-safe extension configuration in TYPO3 v13. By following this guide and the
-best practices outlined above, you can eliminate runtime errors caused by type
-mismatches and significantly improve your extension's developer experience.
-
-For additional support or to report issues, please visit the
-[project repository](https://github.com/mteu/typodrei).

@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#2 \$configurator of method Symfony\\Component\\DependencyInjection\\ContainerBuilder\:\:registerAttributeForAutoconfiguration\(\) expects callable\(Symfony\\Component\\DependencyInjection\\ChildDefinition, mteu\\TypedExtConf\\Attribute\\ExtensionConfig, Reflector\)\: void, Closure\(Symfony\\Component\\DependencyInjection\\ChildDefinition, mteu\\TypedExtConf\\Attribute\\ExtensionConfig, ReflectionClass\)\: void given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Configuration/Services.php
