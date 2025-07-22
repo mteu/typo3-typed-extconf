@@ -36,9 +36,9 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
 final readonly class SecurityConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'security.token', default: '')]
-        public string $token,
-        #[ExtConfProperty(path: 'security.enabled', default: true)]
-        public bool $enabled,
+        #[ExtConfProperty(path: 'security.token')]
+        public string $token = '',
+        #[ExtConfProperty(path: 'security.enabled')]
+        public bool $enabled = true,
     ) {}
 }

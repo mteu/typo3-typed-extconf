@@ -35,6 +35,5 @@ final readonly class ExtConfProperty
     public function __construct(
         public ?string $path = null,
         public bool $required = false,
-        public mixed $default = null,
     ) {}
 }

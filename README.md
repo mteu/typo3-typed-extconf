@@ -76,17 +76,17 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class MyExtensionConfig
 {
     public function __construct(
-        #[ExtConfProperty(default: 10)]
-        public int $maxItems,
+        #[ExtConfProperty()]
+        public int $maxItems = 10,
 
-        #[ExtConfProperty(default: true, required: false)]
-        public bool $enableFeature,
+        #[ExtConfProperty(required: false)]
+        public bool $enableFeature = true,
 
-        #[ExtConfProperty(path: 'api.endpoint', default: '/api/v1')]
-        public string $apiEndpoint,
+        #[ExtConfProperty(path: 'api.endpoint')]
+        public string $apiEndpoint = '/api/v1',
 
-        #[ExtConfProperty(default: ['default', 'fallback'])]
-        public array $allowedTypes,
+        #[ExtConfProperty()]
+        public array $allowedTypes = ['default', 'fallback'],
     ) {}
 }
 ```
@@ -135,7 +135,6 @@ must be passed to the service method.
 Property/parameter-level attribute for configuration value mapping.
 
 **Parameters:**
-- `default` (mixed, optional): Default value if configuration key is missing
 - `path` (string, optional): Custom configuration path using dot notation
 (e.g., 'api.endpoint')
 - `required` (bool, optional): Whether the configuration value is required
@@ -162,28 +161,28 @@ regardless on how it got there.
 final readonly class ComplexConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'api.endpoint', default: '/api')]
-        public string $endpoint,
+        #[ExtConfProperty(path: 'api.endpoint')]
+        public string $endpoint = '/api',
 
         // Nested configuration object
         public DatabaseConfiguration $database,
 
-        #[ExtConfProperty(default: 'production')]
-        public string $environment,
+        #[ExtConfProperty()]
+        public string $environment = 'production',
     ) {}
 }
 
 final readonly class DatabaseConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'db.host', default: 'localhost')]
-        public string $host,
+        #[ExtConfProperty(path: 'db.host')]
+        public string $host = 'localhost',
 
-        #[ExtConfProperty(path: 'db.port', default: 3306)]
-        public int $port,
+        #[ExtConfProperty(path: 'db.port')]
+        public int $port = 3306,
 
-        #[ExtConfProperty(path: 'db.ssl', default: true)]
-        public bool $enableSsl,
+        #[ExtConfProperty(path: 'db.ssl')]
+        public bool $enableSsl = true,
     ) {}
 }
 ```

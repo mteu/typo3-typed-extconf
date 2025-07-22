@@ -36,10 +36,10 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class ComplexTestConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'main.endpoint', default: '/api')]
-        public string $endpoint,
         public NestedTestConfiguration $nestedConfig,
-        #[ExtConfProperty(default: 'fallback')]
-        public string $simpleValue,
+        #[ExtConfProperty(path: 'main.endpoint')]
+        public string $endpoint = '/api',
+        #[ExtConfProperty()]
+        public string $simpleValue = 'fallback',
     ) {}
 }

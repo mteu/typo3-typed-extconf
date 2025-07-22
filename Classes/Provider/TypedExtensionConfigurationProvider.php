@@ -167,10 +167,6 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
             return $this->convertValueToParameterType($rawValue, $parameter);
         }
 
-        if ($attribute?->default !== null) {
-            return $attribute->default;
-        }
-
         if ($attribute?->required === true) {
             throw new ConfigurationException(
                 sprintf('Required configuration key "%s" is missing', $configKey)
