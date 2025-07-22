@@ -47,14 +47,14 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class MyExtensionConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(default: 10)]
-        public int $maxItems,
+        #[ExtConfProperty()]
+        public int $maxItems = 10,
 
-        #[ExtConfProperty(default: true)]
-        public bool $enableFeature,
+        #[ExtConfProperty()]
+        public bool $enableFeature = true,
 
-        #[ExtConfProperty(path: 'api.endpoint', default: '/api/v1')]
-        public string $apiEndpoint,
+        #[ExtConfProperty(path: 'api.endpoint')]
+        public string $apiEndpoint = '/api/v1',
     ) {}
 }
 ```
@@ -122,17 +122,17 @@ The extension supports all standard PHP types with automatic conversion:
 final readonly class TypeExampleConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(default: 'default string')]
-        public string $stringValue,
+        #[ExtConfProperty()]
+        public string $stringValue = 'default string',
 
-        #[ExtConfProperty(default: 42)]
-        public int $intValue,
+        #[ExtConfProperty()]
+        public int $intValue = 42,
 
-        #[ExtConfProperty(default: 3.14)]
-        public float $floatValue,
+        #[ExtConfProperty()]
+        public float $floatValue = 3.14,
 
-        #[ExtConfProperty(default: true)]
-        public bool $boolValue,
+        #[ExtConfProperty()]
+        public bool $boolValue = true,
     ) {}
 }
 ```
@@ -155,12 +155,12 @@ final readonly class PathMappingConfiguration
 {
     public function __construct(
         // Maps to $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['my_extension']['database']['host']
-        #[ExtConfProperty(path: 'database.host', default: 'localhost')]
-        public string $dbHost,
+        #[ExtConfProperty(path: 'database.host')]
+        public string $dbHost = 'localhost',
 
         // Maps to $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['my_extension']['cache']['ttl']
-        #[ExtConfProperty(path: 'cache.ttl', default: 3600)]
-        public int $cacheTtl,
+        #[ExtConfProperty(path: 'cache.ttl')]
+        public int $cacheTtl = 3600,
     ) {}
 }
 ```
@@ -177,8 +177,8 @@ final readonly class RequiredFieldsConfiguration
         #[ExtConfProperty(path: 'api.key', required: true)]
         public string $apiKey,
 
-        #[ExtConfProperty(default: 'fallback')]
-        public string $optionalValue,
+        #[ExtConfProperty()]
+        public string $optionalValue = 'fallback',
     ) {}
 }
 ```
@@ -192,37 +192,35 @@ Create complex configuration hierarchies using nested objects:
 final readonly class ComplexConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'app.name', default: 'MyApp')]
-        public string $appName,
-
-        // Nested configuration object
         public DatabaseConfiguration $database,
         public CacheConfiguration $cache,
+        #[ExtConfProperty(path: 'app.name')]
+        public string $appName = 'MyApp',
     ) {}
 }
 
 final readonly class DatabaseConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'db.host', default: 'localhost')]
-        public string $host,
+        #[ExtConfProperty(path: 'db.host')]
+        public string $host = 'localhost',
 
-        #[ExtConfProperty(path: 'db.port', default: 3306)]
-        public int $port,
+        #[ExtConfProperty(path: 'db.port')]
+        public int $port = 3306,
 
-        #[ExtConfProperty(path: 'db.ssl', default: false)]
-        public bool $enableSsl,
+        #[ExtConfProperty(path: 'db.ssl')]
+        public bool $enableSsl = false,
     ) {}
 }
 
 final readonly class CacheConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'cache.backend', default: 'file')]
-        public string $backend,
+        #[ExtConfProperty(path: 'cache.backend')]
+        public string $backend = 'file',
 
-        #[ExtConfProperty(path: 'cache.lifetime', default: 86400)]
-        public int $lifetime,
+        #[ExtConfProperty(path: 'cache.lifetime')]
+        public int $lifetime = 86400,
     ) {}
 }
 ```
@@ -271,22 +269,22 @@ $config = $this->extensionConfigurationProvider->get(MyConfiguration::class, 'ot
 
 ### Default Value Strategies
 
-Handle missing configuration gracefully with defaults:
+Handle missing configuration gracefully with PHP parameter defaults:
 
 ```php
 #[ExtensionConfig(extensionKey: 'my_extension')]
 final readonly class DefaultsConfiguration
 {
     public function __construct(
-        // Simple default
-        #[ExtConfProperty(default: 'production')]
-        public string $environment,
+        // PHP parameter default
+        #[ExtConfProperty()]
+        public string $environment = 'production',
 
-        // Computed default (use with caution)
-        #[ExtConfProperty(default: 100)]
-        public int $maxMemoryMb,
+        // PHP parameter default
+        #[ExtConfProperty()]
+        public int $maxMemoryMb = 100,
 
-        // Required field without default
+        // Required field without PHP default
         #[ExtConfProperty(required: true)]
         public string $licenseKey,
     ) {}
@@ -302,14 +300,14 @@ Handle deeply nested configuration structures:
 final readonly class ExampleConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'providers.database.enabled', default: true)]
-        public bool $databaseExampleEnabled,
+        #[ExtConfProperty(path: 'providers.database.enabled')]
+        public bool $databaseExampleEnabled = true,
 
-        #[ExtConfProperty(path: 'providers.cache.threshold', default: 80)]
-        public int $cacheThreshold,
+        #[ExtConfProperty(path: 'providers.cache.threshold')]
+        public int $cacheThreshold = 80,
 
-        #[ExtConfProperty(path: 'notifications.email.recipients', default: '')]
-        public string $emailRecipients,
+        #[ExtConfProperty(path: 'notifications.email.recipients')]
+        public string $emailRecipients = '',
     ) {}
 }
 ```
@@ -474,15 +472,18 @@ final readonly class MyConfiguration
 
 ### 2. Provide Sensible Defaults
 
-Always provide sensible defaults for optional configuration values:
+Always provide sensible PHP parameter defaults for optional configuration values:
 
 ```php
 public function __construct(
-    #[ExtConfProperty(default: 10)] // Good: sensible default
-    public int $maxItems,
+    #[ExtConfProperty()] // Good: sensible PHP default
+    public int $maxItems = 10,
 
-    #[ExtConfProperty()] // Avoid: no default, might cause issues
+    #[ExtConfProperty()] // Avoid: no PHP default, might cause issues
     public int $timeout,
+
+    #[ExtConfProperty(required: true)] // Note: Requiring without default value will throw an Exception
+    public bool $requiredButNotSet,
 ) {}
 ```
 
@@ -492,11 +493,11 @@ Be specific about your types to catch configuration errors early:
 
 ```php
 public function __construct(
-    #[ExtConfProperty(default: 3600)] // Good: specific int type
-    public int $cacheLifetime,
+    #[ExtConfProperty()] // Good: specific int type
+    public int $cacheLifetime = 3600,
 
-    #[ExtConfProperty(default: 'value')] // Avoid: mixed type
-    public mixed $someValue,
+    #[ExtConfProperty()] // Avoid: mixed type
+    public mixed $someValue = 'value',
 ) {}
 ```
 
@@ -526,11 +527,11 @@ Use PHPDoc to document complex configuration options:
  * @param int $timeoutMs Request timeout in milliseconds
  */
 public function __construct(
-    #[ExtConfProperty(default: 3)]
-    public int $maxRetries,
+    #[ExtConfProperty()]
+    public int $maxRetries = 3,
 
-    #[ExtConfProperty(default: 5000)]
-    public int $timeoutMs,
+    #[ExtConfProperty()]
+    public int $timeoutMs = 5000,
 ) {}
 ```
 
@@ -543,8 +544,8 @@ Consider adding validation methods to your configuration classes:
 final readonly class MyConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(default: 80)]
-        public int $cacheThreshold,
+        #[ExtConfProperty()]
+        public int $cacheThreshold = 80,
     ) {}
 
     public function isValid(): bool
@@ -571,8 +572,8 @@ enum LogLevel: string
 final readonly class MyConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(default: 'info')]
-        public LogLevel $logLevel,
+        #[ExtConfProperty()]
+        public LogLevel $logLevel = LogLevel::INFO,
     ) {}
 }
 ```

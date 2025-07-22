@@ -34,11 +34,11 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
 final readonly class NestedTestConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'nested.enabled', default: false)]
-        public bool $enabled,
-        #[ExtConfProperty(path: 'nested.priority', default: 10)]
-        public int $priority,
-        #[ExtConfProperty(path: 'nested.name', default: '')]
-        public string $name,
+        #[ExtConfProperty(path: 'nested.enabled')]
+        public bool $enabled = false,
+        #[ExtConfProperty(path: 'nested.priority')]
+        public int $priority = 10,
+        #[ExtConfProperty(path: 'nested.name')]
+        public string $name = '',
     ) {}
 }

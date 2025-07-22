@@ -36,11 +36,11 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
 final readonly class ApiConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'api.url', default: 'https://api.example.com')]
-        public string $url,
-        #[ExtConfProperty(path: 'api.timeout', default: 30)]
-        public int $timeout,
-        #[ExtConfProperty(path: 'api.retries', default: 3)]
-        public int $retries,
+        #[ExtConfProperty(path: 'api.url')]
+        public string $url = 'https://api.example.com',
+        #[ExtConfProperty(path: 'api.timeout')]
+        public int $timeout = 30,
+        #[ExtConfProperty(path: 'api.retries')]
+        public int $retries = 3,
     ) {}
 }

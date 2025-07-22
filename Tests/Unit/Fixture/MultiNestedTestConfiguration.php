@@ -38,10 +38,10 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class MultiNestedTestConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'api.endpoint', default: '')]
-        public string $endpoint,
         public ApiConfiguration $apiConfiguration,
         public SecurityConfiguration $securityConfiguration,
         public NestedTestConfiguration $nestedTestConfiguration,
+        #[ExtConfProperty(path: 'api.endpoint')]
+        public string $endpoint = '',
     ) {}
 }

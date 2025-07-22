@@ -36,13 +36,13 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class SimpleTestConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'basic.string', default: 'default')]
-        public string $stringValue,
-        #[ExtConfProperty(path: 'basic.integer', default: 42)]
-        public int $intValue,
-        #[ExtConfProperty(path: 'basic.boolean', default: false)]
-        public bool $boolValue,
-        #[ExtConfProperty(path: 'basic.float', default: 3.14)]
-        public float $floatValue,
+        #[ExtConfProperty(path: 'basic.string')]
+        public string $stringValue = 'default',
+        #[ExtConfProperty(path: 'basic.integer')]
+        public int $intValue = 42,
+        #[ExtConfProperty(path: 'basic.boolean')]
+        public bool $boolValue = false,
+        #[ExtConfProperty(path: 'basic.float')]
+        public float $floatValue = 3.14,
     ) {}
 }

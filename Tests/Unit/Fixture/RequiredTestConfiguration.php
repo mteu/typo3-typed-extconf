@@ -36,7 +36,7 @@ final readonly class RequiredTestConfiguration
     public function __construct(
         #[ExtConfProperty(path: 'required.value', required: true)]
         public string $requiredValue,
-        #[ExtConfProperty(path: 'optional.value', default: 'optional')]
-        public string $optionalValue,
+        #[ExtConfProperty(path: 'optional.value')]
+        public string $optionalValue = 'optional',
     ) {}
 }
