@@ -187,6 +187,17 @@ final readonly class DatabaseConfiguration
 }
 ```
 
+## 🙏 Credits
+
+This project is built on the excellent [CuyZ\Valinor](https://github.com/CuyZ/Valinor)
+library, which provides the core type mapping and validation functionality.
+Without Valinor's robust object mapping capabilities, this extension would not
+be possible.
+
+Special thanks to:
+- **[CuyZ\Valinor](https://github.com/CuyZ/Valinor)** for the powerful and flexible object mapping engine
+- **[Romain Canon](https://github.com/romm)** and the Valinor contributors for their excellent work
+
 ## 🤝 Contributing
 Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
 workflow of submitting new features or bugfixes.
