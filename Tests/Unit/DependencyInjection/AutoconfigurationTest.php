@@ -23,8 +23,10 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\DependencyInjection;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
+use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use mteu\TypedExtConf\Tests\Unit\Fixture\SimpleTestConfiguration;
 use PHPUnit\Framework\Attributes\Test;
@@ -123,5 +125,47 @@ final class AutoconfigurationTest extends TestCase
         self::assertCount(2, $arguments);
         self::assertSame(SimpleTestConfiguration::class, $arguments[0]);
         self::assertSame('test_ext', $arguments[1]);
+    }
+
+    #[Test]
+    public function testTreeMapperFactoryRegistration(): void
+    {
+        $container = new ContainerBuilder();
+
+        $configurator = require __DIR__ . '/../../../Configuration/Services.php';
+        assert(is_callable($configurator));
+
+        $configurator($container);
+
+        self::assertTrue($container->hasDefinition(TreeMapperFactory::class));
+
+        $definition = $container->getDefinition(TreeMapperFactory::class);
+        self::assertTrue($definition->isAutowired());
+        self::assertTrue($definition->isAutoconfigured());
+    }
+
+    #[Test]
+    public function testTreeMapperRegistration(): void
+    {
+        $container = new ContainerBuilder();
+
+        $configurator = require __DIR__ . '/../../../Configuration/Services.php';
+        assert(is_callable($configurator));
+
+        $configurator($container);
+
+        self::assertTrue($container->hasDefinition(TreeMapper::class));
+
+        $definition = $container->getDefinition(TreeMapper::class);
+
+        $factory = $definition->getFactory();
+        self::assertIsArray($factory);
+        self::assertInstanceOf(Reference::class, $factory[0]);
+        self::assertSame(TreeMapperFactory::class, (string)$factory[0]);
+        self::assertSame('create', $factory[1]);
+
+        self::assertTrue($definition->isAutowired());
+        self::assertTrue($definition->isAutoconfigured());
+        self::assertFalse($definition->isPublic());
     }
 }

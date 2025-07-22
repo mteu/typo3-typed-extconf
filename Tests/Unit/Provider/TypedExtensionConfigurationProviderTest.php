@@ -59,7 +59,6 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     protected function setUp(): void
     {
         $this->extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
-        // @todo: test both automatic injection and custom mapper injection
         $this->subject = new TypedExtensionConfigurationProvider(
             $this->extensionConfiguration,
             (new MapperBuilder())
