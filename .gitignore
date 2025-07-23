@@ -1,5 +1,7 @@
-.build/
-tailor-version-artefact/
+/.build
+/config
+/tailor-version-artefact
+/var
 
 /.phpunit.result.cache
 /.php-cs-fixer.cache
