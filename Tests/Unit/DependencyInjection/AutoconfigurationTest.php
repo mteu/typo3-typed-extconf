@@ -26,7 +26,7 @@ namespace mteu\TypedExtConf\Tests\Unit\DependencyInjection;
 use CuyZ\Valinor\Mapper\TreeMapper;
 use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
-use mteu\TypedExtConf\Mapper\TreeMapperFactory;
+use mteu\TypedExtConf\Mapper\MapperFactory;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use mteu\TypedExtConf\Tests\Unit\Fixture\SimpleTestConfiguration;
 use PHPUnit\Framework\Attributes\Test;
@@ -144,7 +144,7 @@ final class AutoconfigurationTest extends TestCase
         $factory = $definition->getFactory();
         self::assertIsArray($factory);
         self::assertInstanceOf(Reference::class, $factory[0]);
-        self::assertSame(TreeMapperFactory::class, (string)$factory[0]);
+        self::assertSame(MapperFactory::class, (string)$factory[0]);
         self::assertSame('create', $factory[1]);
     }
 }
