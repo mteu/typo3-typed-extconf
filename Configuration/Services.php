@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
  * Copyright (C) 2025
  * Elias Häußler <elias@haeussler.dev>, Martin Adler <mteu@mailbox.org>
