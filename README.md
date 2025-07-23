@@ -7,9 +7,9 @@
 
 # TYPO3 Typed Extension Configuration
 
-![TYPO3 versions](https://typo3-badges.dev/badge/typed-extconf/typo3/shields.svg)
-![Latest version](https://typo3-badges.dev/badge/typed-extconf/version/shields.svg)
-![Stability](https://typo3-badges.dev/badge/typed-extconf/stability/shields.svg)
+![TYPO3 versions](https://typo3-badges.dev/badge/typed_extconf/typo3/shields.svg)
+![Latest version](https://typo3-badges.dev/badge/typed_extconf/version/shields.svg)
+![Stability](https://typo3-badges.dev/badge/typed_extconf/stability/shields.svg)
 [![PHP Version Require](https://poser.pugx.org/mteu/typo3-typed-extconf/require/php)](https://packagist.org/packages/mteu/typo3-typed-extconf)
 
 </div>
