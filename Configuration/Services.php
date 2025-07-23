@@ -24,7 +24,7 @@ declare(strict_types=1);
 
 use CuyZ\Valinor\Mapper\TreeMapper;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
-use mteu\TypedExtConf\Mapper\TreeMapperFactory;
+use mteu\TypedExtConf\Mapper\MapperFactory;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -51,5 +51,5 @@ return static function (ContainerBuilder $container): void {
     );
 
     $container->register(TreeMapper::class)
-        ->setFactory([new Reference(TreeMapperFactory::class), 'create']);
+        ->setFactory([new Reference(MapperFactory::class), 'create']);
 };
