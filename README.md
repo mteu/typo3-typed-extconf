@@ -130,12 +130,12 @@ use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 final readonly class MyService
 {
     public function __construct(
-        private ExtensionConfigurationProvider $extensionConfigurationProvider,
+        private ExtensionConfigurationProvider $configurationProvider,
     ) {}
 
     public function doSomething(): void
     {
-        $config = $this->extensionConfigurationProvider->get(MyExtensionConfig::class);
+        $config = $this->configurationProvider->get(MyExtensionConfig::class);
 
         // Use configuration...
     }

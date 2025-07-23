@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\Provider;
 
+use CuyZ\Valinor\MapperBuilder;
 use mteu\TypedExtConf\Exception\ConfigurationException;
 use mteu\TypedExtConf\Exception\SchemaValidationException;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
@@ -58,7 +59,12 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     protected function setUp(): void
     {
         $this->extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
-        $this->subject = new TypedExtensionConfigurationProvider($this->extensionConfiguration);
+        $this->subject = new TypedExtensionConfigurationProvider(
+            $this->extensionConfiguration,
+            (new MapperBuilder())
+                ->allowSuperfluousKeys()
+                ->mapper(),
+        );
     }
 
     #[Test]

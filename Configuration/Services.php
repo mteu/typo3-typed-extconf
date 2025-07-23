@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
- * Copyright (C) 2025 Elias Häußler <elias@haeussler.dev>
+ * Copyright (C) 2025
+ * Elias Häußler <elias@haeussler.dev>, Martin Adler <mteu@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
+use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -46,4 +49,14 @@ return static function (ContainerBuilder $container): void {
             ;
         }
     );
+
+    $container->register(TreeMapperFactory::class)
+        ->setAutowired(true)
+        ->setAutoconfigured(true);
+
+    $container->register(TreeMapper::class, TreeMapper::class)
+        ->setFactory([new Reference(TreeMapperFactory::class), 'create'])
+        ->setAutowired(true)
+        ->setAutoconfigured(true)
+        ->setPublic(false);
 };

@@ -272,12 +272,12 @@ use Vendor\Extension\Configuration\MyExtensionConfiguration;
 final readonly class MyService
 {
     public function __construct(
-        private ExtensionConfigurationProvider $extensionConfigurationProvider,
+        private ExtensionConfigurationProvider $configurationProvider,
     ) {}
 
     public function getConfiguration(): MyExtensionConfiguration
     {
-        return $this->extensionConfigurationProvider->get(MyExtensionConfiguration::class);
+        return $this->configurationProvider->get(MyExtensionConfiguration::class);
     }
 }
 ```
@@ -401,7 +401,7 @@ $timeout = (int)($config['timeout'] ?? 30);
 
 **After**:
 ```php
-$config = $this->extensionConfigurationProvider->get(MyExtensionConfiguration::class);
+$config = $this->configurationProvider->get(MyExtensionConfiguration::class);
 $timeout = $config->timeout; // Already typed and with defaults
 ```
 
@@ -416,7 +416,7 @@ $enabled = (bool)($config['enabled'] ?? false);
 
 **After**:
 ```php
-$config = $this->extensionConfigurationProvider->get(MyExtensionConfiguration::class);
+$config = $this->configurationProvider->get(MyExtensionConfiguration::class);
 $enabled = $config->enabled; // Type-safe boolean
 ```
 

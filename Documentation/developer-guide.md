@@ -112,12 +112,12 @@ use Vendor\MyExtension\Configuration\MyExtensionConfiguration;
 final readonly class MyService
 {
     public function __construct(
-        private ExtensionConfigurationProvider $extensionConfigurationProvider,
+        private ExtensionConfigurationProvider $configurationProvider,
     ) {}
 
     public function doSomething(): void
     {
-        $config = $this->extensionConfigurationProvider->get(MyExtensionConfiguration::class);
+        $config = $this->configurationProvider->get(MyExtensionConfiguration::class);
         // Use configuration...
     }
 }
@@ -254,9 +254,22 @@ final readonly class CacheConfiguration
 
 ## Service Integration
 
+### Automatic Service Registration
+
+The extension automatically registers your configuration classes as DI services through the `#[ExtensionConfig]` attribute. This is handled by the service configuration in `Configuration/Services.php`, which:
+
+1. **Registers attribute autoconfiguration** for `#[ExtensionConfig]`
+2. **Creates factory-based services** that use the `ExtensionConfigurationProvider`
+3. **Configures TreeMapper** with `allowSuperfluousKeys()` through `TreeMapperFactory`
+
+The DI container setup includes:
+- `TreeMapperFactory`: Creates configured TreeMapper instances
+- `TreeMapper`: Valinor mapper service with superfluous key allowance
+- `TypedExtensionConfigurationProvider`: Main service implementing `ExtensionConfigurationProvider`
+
 ### Dependency Injection
 
-The extension automatically registers your configuration classes as DI services. You can inject them directly:
+You can inject your configuration classes directly:
 
 ```php
 use Vendor\MyExtension\Configuration\MyExtensionConfiguration;
@@ -278,7 +291,7 @@ use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 final readonly class MyController
 {
     public function __construct(
-        private ExtensionConfigurationProvider $extensionConfigurationProvider,
+        private ExtensionConfigurationProvider $configurationProvider,
         // ... other dependencies
     ) {}
 }
@@ -290,9 +303,9 @@ If you need to access the service manually:
 
 ```php
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
+use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 
-$provider = GeneralUtility::makeInstance(TypedExtensionConfigurationProvider::class);
+$provider = GeneralUtility::makeInstance(ExtensionConfigurationProvider::class);
 $config = $provider->get(MyConfiguration::class);
 ```
 
@@ -302,8 +315,17 @@ You can override the extension key at runtime:
 
 ```php
 // Use a different extension key than what's defined in the #[ExtensionConfig] attribute
-$config = $this->extensionConfigurationProvider->get(MyConfiguration::class, 'other_extension');
+$config = $this->configurationProvider->get(MyConfiguration::class, 'other_extension');
 ```
+
+### TreeMapper Configuration
+
+The extension uses Valinor's TreeMapper with the following configuration:
+
+- **`allowSuperfluousKeys()`**: Permits extra keys in TYPO3 configuration that don't map to class properties
+- **Factory pattern**: TreeMapper instances are created through `TreeMapperFactory` for consistent configuration
+
+This setup ensures robust handling of TYPO3's flexible configuration structure while maintaining type safety.
 
 ## Advanced Features
 
