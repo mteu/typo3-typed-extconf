@@ -320,12 +320,103 @@ $config = $this->configurationProvider->get(MyConfiguration::class, 'other_exten
 
 ### TreeMapper Configuration
 
-The extension uses Valinor's TreeMapper with the following configuration:
+The extension uses the [`CuyZ\Valinor`](https://github.com/CuyZ/Valinor) TreeMapper
+with the following default configuration:
 
-- **`allowSuperfluousKeys()`**: Permits extra keys in TYPO3 configuration that don't map to class properties
-- **Factory pattern**: TreeMapper instances are created through `TreeMapperFactory` for consistent configuration
+- `allowSuperfluousKeys()`: Permits extra keys in TYPO3 configuration that don't
+map to class properties
+- TreeMapper instances are created through `TreeMapperFactory` for consistent
+- configuration
 
-This setup ensures robust handling of TYPO3's flexible configuration structure while maintaining type safety.
+This setup ensures robust handling of TYPO3's flexible configuration structure
+while maintaining type safety.
+
+### Custom TreeMapper Configuration
+
+If you need custom TreeMapper behavior (e.g., custom value converters, different
+validation rules), you can create your own provider with a customized
+TreeMapper:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\MyExtension\Provider;
+
+use CuyZ\Valinor\Mapper\TreeMapper;
+use CuyZ\Valinor\MapperBuilder;
+use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
+use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+
+final readonly class CustomExtensionConfigurationProvider
+{
+    private ExtensionConfigurationProvider $provider;
+
+    public function __construct(ExtensionConfiguration $extensionConfiguration)
+    {
+        // Create a custom TreeMapper with your specific configuration
+        $customTreeMapper = (new MapperBuilder())
+            ->allowSuperfluousKeys()
+            ->enableFlexibleCasting()  // Example: Enable flexible casting
+            ->allowPermissiveTypes()   // Example: Allow permissive types
+            ->mapper();
+
+        // Create the provider with your custom TreeMapper
+        $this->provider = new TypedExtensionConfigurationProvider(
+            $extensionConfiguration,
+            $customTreeMapper
+        );
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $configClass
+     * @return T
+     */
+    public function get(string $configClass, ?string $extensionKey = null): object
+    {
+        return $this->provider->get($configClass, $extensionKey);
+    }
+}
+```
+
+Then register your custom provider in `Configuration/Services.yaml`:
+
+```yaml
+services:
+  Vendor\MyExtension\Provider\CustomExtensionConfigurationProvider:
+    public: true
+    arguments:
+      - '@TYPO3\CMS\Core\Configuration\ExtensionConfiguration'
+```
+
+And use it in your services:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\MyExtension\Service;
+
+use Vendor\MyExtension\Configuration\MyExtensionConfiguration;
+use Vendor\MyExtension\Provider\CustomExtensionConfigurationProvider;
+
+final readonly class MyService
+{
+    public function __construct(
+        private CustomExtensionConfigurationProvider $configurationProvider,
+    ) {}
+
+    public function doSomething(): void
+    {
+        $config = $this->configurationProvider->get(MyExtensionConfiguration::class);
+        // Use your configuration with custom TreeMapper behavior...
+    }
+}
+```
 
 ## Advanced Features
 
