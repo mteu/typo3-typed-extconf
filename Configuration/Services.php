@@ -50,13 +50,6 @@ return static function (ContainerBuilder $container): void {
         }
     );
 
-    $container->register(TreeMapperFactory::class)
-        ->setAutowired(true)
-        ->setAutoconfigured(true);
-
-    $container->register(TreeMapper::class, TreeMapper::class)
-        ->setFactory([new Reference(TreeMapperFactory::class), 'create'])
-        ->setAutowired(true)
-        ->setAutoconfigured(true)
-        ->setPublic(false);
+    $container->register(TreeMapper::class)
+        ->setFactory([new Reference(TreeMapperFactory::class), 'create']);
 };
