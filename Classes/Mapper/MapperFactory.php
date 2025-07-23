@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
- * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
+ * Copyright (C) 2025 Elias Häußler <elias@haeussler.dev>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +24,14 @@ declare(strict_types=1);
 namespace mteu\TypedExtConf\Mapper;
 
 use CuyZ\Valinor\Mapper\TreeMapper;
-use CuyZ\Valinor\MapperBuilder;
 
 /**
- * TreeMapperFactory.
+ * MapperFactory.
  *
- * @author Martin Adler <mteu@mailbox.org>
+ * @author Elias Häußler <elias@haeussler.dev>
  * @license GPL-2.0-or-later
  */
-final readonly class TreeMapperFactory implements MapperFactory
+interface MapperFactory
 {
-    public function create(): TreeMapper
-    {
-        return (new MapperBuilder())
-            ->allowSuperfluousKeys()
-            ->mapper();
-    }
+    public function create(): TreeMapper;
 }
