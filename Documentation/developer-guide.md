@@ -320,12 +320,52 @@ $config = $this->configurationProvider->get(MyConfiguration::class, 'other_exten
 
 ### TreeMapper Configuration
 
-The extension uses Valinor's TreeMapper with the following configuration:
+The extension uses the [`CuyZ\Valinor`](https://github.com/CuyZ/Valinor) TreeMapper
+with the following default configuration:
 
-- **`allowSuperfluousKeys()`**: Permits extra keys in TYPO3 configuration that don't map to class properties
-- **Factory pattern**: TreeMapper instances are created through `TreeMapperFactory` for consistent configuration
+- `allowSuperfluousKeys()`: Permits extra keys in TYPO3 configuration that don't
+map to class properties
+- TreeMapper instances are created through `TreeMapperFactory` for consistent
+- configuration
 
-This setup ensures robust handling of TYPO3's flexible configuration structure while maintaining type safety.
+This setup ensures robust handling of TYPO3's flexible configuration structure
+while maintaining type safety.
+
+### Custom TreeMapper Configuration
+
+If you need custom TreeMapper behavior (e.g., custom value converters, different
+validation rules), you can create your own factory that provides a customized
+TreeMapper:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\MyExtension\Mapper;
+
+use CuyZ\Valinor\Mapper\TreeMapper;
+use CuyZ\Valinor\MapperBuilder;
+use mteu\TypedExtConf\Mapper\MapperFactory;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+
+#[AsAlias(MapperFactory::class)]
+final readonly class CustomMapperFactory implements MapperFactory
+{
+    public function create(): TreeMapper
+    {
+        return (new MapperBuilder())
+            ->allowSuperfluousKeys()
+            ->enableFlexibleCasting()  // Example: Enable flexible casting
+            ->allowPermissiveTypes()   // Example: Allow permissive types
+            ->mapper();
+    }
+}
+```
+
+> [!IMPORTANT]
+> Alias your custom `MapperFactory` to allow DI to use your mapper instead of the shipped one, e.g. by using the
+> [`#[AsAlias]`](https://symfony.com/doc/current/service_container/alias_private.html#aliasing) attribute.
 
 ## Advanced Features
 
