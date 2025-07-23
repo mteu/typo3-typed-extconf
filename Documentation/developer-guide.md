@@ -334,7 +334,7 @@ while maintaining type safety.
 ### Custom TreeMapper Configuration
 
 If you need custom TreeMapper behavior (e.g., custom value converters, different
-validation rules), you can create your own provider with a customized
+validation rules), you can create your own factory that provides a customized
 TreeMapper:
 
 ```php
@@ -342,81 +342,30 @@ TreeMapper:
 
 declare(strict_types=1);
 
-namespace Vendor\MyExtension\Provider;
+namespace Vendor\MyExtension\Mapper;
 
 use CuyZ\Valinor\Mapper\TreeMapper;
 use CuyZ\Valinor\MapperBuilder;
-use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
-use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use mteu\TypedExtConf\Mapper\MapperFactory;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class CustomExtensionConfigurationProvider
+#[AsAlias(MapperFactory::class)]
+final readonly class CustomMapperFactory implements MapperFactory
 {
-    private ExtensionConfigurationProvider $provider;
-
-    public function __construct(ExtensionConfiguration $extensionConfiguration)
+    public function create(): TreeMapper
     {
-        // Create a custom TreeMapper with your specific configuration
-        $customTreeMapper = (new MapperBuilder())
+        return (new MapperBuilder())
             ->allowSuperfluousKeys()
             ->enableFlexibleCasting()  // Example: Enable flexible casting
             ->allowPermissiveTypes()   // Example: Allow permissive types
             ->mapper();
-
-        // Create the provider with your custom TreeMapper
-        $this->provider = new TypedExtensionConfigurationProvider(
-            $extensionConfiguration,
-            $customTreeMapper
-        );
-    }
-
-    /**
-     * @template T of object
-     * @param class-string<T> $configClass
-     * @return T
-     */
-    public function get(string $configClass, ?string $extensionKey = null): object
-    {
-        return $this->provider->get($configClass, $extensionKey);
     }
 }
 ```
 
-Then register your custom provider in `Configuration/Services.yaml`:
-
-```yaml
-services:
-  Vendor\MyExtension\Provider\CustomExtensionConfigurationProvider:
-    public: true
-    arguments:
-      - '@TYPO3\CMS\Core\Configuration\ExtensionConfiguration'
-```
-
-And use it in your services:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace Vendor\MyExtension\Service;
-
-use Vendor\MyExtension\Configuration\MyExtensionConfiguration;
-use Vendor\MyExtension\Provider\CustomExtensionConfigurationProvider;
-
-final readonly class MyService
-{
-    public function __construct(
-        private CustomExtensionConfigurationProvider $configurationProvider,
-    ) {}
-
-    public function doSomething(): void
-    {
-        $config = $this->configurationProvider->get(MyExtensionConfiguration::class);
-        // Use your configuration with custom TreeMapper behavior...
-    }
-}
-```
+> [!IMPORTANT]
+> Alias your custom `MapperFactory` to allow DI to use your mapper instead of the shipped one, e.g. by using the
+> [`#[AsAlias]`](https://symfony.com/doc/current/service_container/alias_private.html#aliasing) attribute.
 
 ## Advanced Features
 
