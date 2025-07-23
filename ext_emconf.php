@@ -22,7 +22,7 @@
 /** @noinspection PhpUndefinedVariableInspection */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Typed Extension Configuration',
-    'description' => 'Provides type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration',
+    'description' => 'Aims to provide a type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration or mixed types from config/system/settings.php',
     'category' => 'services',
     'version' => '0.1.0',
     'state' => 'alpha',
