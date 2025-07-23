@@ -58,5 +58,5 @@ return static function (ContainerBuilder $container): void {
         ->setFactory([new Reference(TreeMapperFactory::class), 'create'])
         ->setAutowired(true)
         ->setAutoconfigured(true)
-        ->setPublic(true);
+        ->setPublic(false);
 };
