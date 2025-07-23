@@ -8,7 +8,7 @@ return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/Classes',
     ])
-    ->withPhpSets(php83: true)
+    ->withPhpSets(php82: true)
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0);
