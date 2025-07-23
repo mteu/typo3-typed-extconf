@@ -46,7 +46,7 @@ return static function (ContainerBuilder $container): void {
                     $reflector->name,
                     $attribute->extensionKey,
                 ])
-            ;
+                ->setPublic(true);
         }
     );
 
@@ -58,5 +58,5 @@ return static function (ContainerBuilder $container): void {
         ->setFactory([new Reference(TreeMapperFactory::class), 'create'])
         ->setAutowired(true)
         ->setAutoconfigured(true)
-        ->setPublic(false);
+        ->setPublic(true);
 };
