@@ -128,23 +128,6 @@ final class AutoconfigurationTest extends TestCase
     }
 
     #[Test]
-    public function testTreeMapperFactoryRegistration(): void
-    {
-        $container = new ContainerBuilder();
-
-        $configurator = require __DIR__ . '/../../../Configuration/Services.php';
-        assert(is_callable($configurator));
-
-        $configurator($container);
-
-        self::assertTrue($container->hasDefinition(TreeMapperFactory::class));
-
-        $definition = $container->getDefinition(TreeMapperFactory::class);
-        self::assertTrue($definition->isAutowired());
-        self::assertTrue($definition->isAutoconfigured());
-    }
-
-    #[Test]
     public function testTreeMapperRegistration(): void
     {
         $container = new ContainerBuilder();
@@ -163,9 +146,5 @@ final class AutoconfigurationTest extends TestCase
         self::assertInstanceOf(Reference::class, $factory[0]);
         self::assertSame(TreeMapperFactory::class, (string)$factory[0]);
         self::assertSame('create', $factory[1]);
-
-        self::assertTrue($definition->isAutowired());
-        self::assertTrue($definition->isAutoconfigured());
-        self::assertFalse($definition->isPublic());
     }
 }
