@@ -46,7 +46,7 @@ return static function (ContainerBuilder $container): void {
                     $reflector->name,
                     $attribute->extensionKey,
                 ])
-            ;
+                ->setPublic(true);
         }
     );
 
