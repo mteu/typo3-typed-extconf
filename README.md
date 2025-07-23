@@ -21,11 +21,6 @@ values instead of the default string-only values from the TYPO3 backend.
 > This project has just been prototyped and is not yet recommended for
 > productive use. Please wait for the official release.
 
-## 🚧 Todos
-- Evaluate a TYPO3 v12 backport
-- Improve quality of testing
-- Test with more real-world projects
-
 ## 🚀 Features
 
 - **Type Safety**: Automatic conversion of string values from backend
