@@ -36,6 +36,7 @@ expected types and default values
 type mapping and validation
 - **Default Handling**: Provide sensible defaults for missing configuration keys
 - **Path Mapping**: Support for nested configuration paths with dot notation
+- **Dependency Injection**: Configuration classes are automatically registered as DI services
 - **Developer Experience**: Simple API for accessing typed configuration values
 
 ## ⚡️ Installation
@@ -93,7 +94,33 @@ final readonly class MyExtensionConfig
 
 ### 2. Access Typed Configuration
 
-Inject the configuration service and access your typed configuration:
+#### Option A: Direct Injection (Recommended)
+
+Directly inject your configuration object using dependency injection:
+
+```php
+<?php
+
+final readonly class MyService
+{
+    public function __construct(
+        private MyExtensionConfig $config,
+    ) {}
+
+    public function doSomething(): void
+    {
+        // All properties are guaranteed to have the correct types
+        $maxItems = $this->config->maxItems; // int
+        $isEnabled = $this->config->enableFeature; // bool
+        $endpoint = $this->config->apiEndpoint; // string
+        $types = $this->config->allowedTypes; // array
+    }
+}
+```
+
+#### Option B: Using the Provider
+
+Alternatively, use the configuration provider service:
 
 ```php
 <?php
@@ -110,11 +137,7 @@ final readonly class MyService
     {
         $config = $this->extensionConfigurationProvider->get(MyExtensionConfig::class);
 
-        // All properties are guaranteed to have the correct types
-        $maxItems = $config->maxItems; // int
-        $isEnabled = $config->enableFeature; // bool
-        $endpoint = $config->apiEndpoint; // string
-        $types = $config->allowedTypes; // array
+        // Use configuration...
     }
 }
 ```

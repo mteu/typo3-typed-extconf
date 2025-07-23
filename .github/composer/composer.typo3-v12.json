@@ -5,6 +5,7 @@
 		"typo3/cms-core": "~12.4.31"
 	},
 	"require-dev": {
+		"eliashaeussler/phpunit-attributes": "^1.7",
 		"phpunit/phpcov": "^10.0",
 		"phpunit/phpunit": "^11.5",
 		"typo3/testing-framework": "^8.2"

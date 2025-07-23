@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f45f7345158459e32446170027c2f60",
+    "content-hash": "c603802dc4547b177a213f2eb6cae7f7",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -5429,6 +5429,60 @@
             "time": "2022-12-30T00:23:10+00:00"
         },
         {
+            "name": "eliashaeussler/phpunit-attributes",
+            "version": "1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eliashaeussler/phpunit-attributes.git",
+                "reference": "4c0832e0c7577500bd00ce570b23812abbdf95c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eliashaeussler/phpunit-attributes/zipball/4c0832e0c7577500bd00ce570b23812abbdf95c2",
+                "reference": "4c0832e0c7577500bd00ce570b23812abbdf95c2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
+                "phpunit/phpunit": "^10.5.35 || ^11.4 || ^12.0"
+            },
+            "require-dev": {
+                "armin/editorconfig-cli": "^1.8 || ^2.0",
+                "eliashaeussler/php-cs-fixer-config": "^2.0",
+                "eliashaeussler/phpstan-config": "^2.5.1",
+                "eliashaeussler/rector-config": "^3.0",
+                "ergebnis/composer-normalize": "^2.30",
+                "phpstan/extension-installer": "^1.2",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpcov": "^9.0 || ^10.0 || ^11.0",
+                "symfony/console": "^6.4 || ^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "EliasHaeussler\\PHPUnitAttributes\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Elias Häußler",
+                    "email": "elias@haeussler.dev",
+                    "homepage": "https://haeussler.dev",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides additional attributes for tests with PHPUnit",
+            "support": {
+                "issues": "https://github.com/eliashaeussler/phpunit-attributes/issues",
+                "source": "https://github.com/eliashaeussler/phpunit-attributes/tree/1.7.0"
+            },
+            "time": "2025-03-07T22:01:25+00:00"
+        },
+        {
             "name": "eliashaeussler/version-bumper",
             "version": "3.0.1",
             "source": {
@@ -8738,12 +8792,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "2976f12cdae3501980aabb46810cf807f7fdec44"
+                "reference": "2699ef22973a999fb9b79ed9e5fe576381068928"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2976f12cdae3501980aabb46810cf807f7fdec44",
-                "reference": "2976f12cdae3501980aabb46810cf807f7fdec44",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2699ef22973a999fb9b79ed9e5fe576381068928",
+                "reference": "2699ef22973a999fb9b79ed9e5fe576381068928",
                 "shasum": ""
             },
             "conflict": {
@@ -8904,7 +8958,7 @@
                 "doctrine/mongodb-odm": "<1.0.2",
                 "doctrine/mongodb-odm-bundle": "<3.0.1",
                 "doctrine/orm": ">=1,<1.2.4|>=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
-                "dolibarr/dolibarr": "<19.0.2|==21.0.0.0-beta",
+                "dolibarr/dolibarr": "<=21.0.2",
                 "dompdf/dompdf": "<2.0.4",
                 "doublethreedigital/guest-entries": "<3.1.2",
                 "drupal/admin_audit_trail": "<1.0.5",
@@ -8940,7 +8994,7 @@
                 "elefant/cms": "<2.0.7",
                 "elgg/elgg": "<3.3.24|>=4,<4.0.5",
                 "elijaa/phpmemcacheadmin": "<=1.3",
-                "elmsln/haxcms": "<11",
+                "elmsln/haxcms": "<11.0.8",
                 "encore/laravel-admin": "<=1.8.19",
                 "endroid/qr-code-bundle": "<3.4.2",
                 "enhavo/enhavo-app": "<=0.13.1",
@@ -9163,6 +9217,7 @@
                 "mainwp/mainwp": "<=4.4.3.3",
                 "mantisbt/mantisbt": "<=2.26.3",
                 "marcwillmann/turn": "<0.3.3",
+                "marshmallow/nova-tiptap": "<5.7",
                 "matomo/matomo": "<1.11",
                 "matyhtf/framework": "<3.0.6",
                 "mautic/core": "<5.2.6|>=6.0.0.0-alpha,<6.0.2",
@@ -9688,7 +9743,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-07-20T17:05:09+00:00"
+            "time": "2025-07-21T22:05:55+00:00"
         },
         {
             "name": "saschaegerer/phpstan-typo3",
