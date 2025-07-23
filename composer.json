@@ -1,6 +1,6 @@
 {
 	"name": "mteu/typo3-typed-extconf",
-	"description": "Provides type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration",
+	"description": "Aims to provide a type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration or mixed types from config/system/settings.php",
 	"license": "GPL-2.0-or-later",
 	"type": "typo3-cms-extension",
 	"authors": [

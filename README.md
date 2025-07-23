@@ -7,19 +7,21 @@
 
 # TYPO3 Typed Extension Configuration
 
-[![TYPO3 12](https://img.shields.io/badge/TYPO3-12-orange.svg)](https://get.typo3.org/version/12)
-[![TYPO3 13](https://img.shields.io/badge/TYPO3-13-orange.svg)](https://get.typo3.org/version/13)
+![TYPO3 versions](https://typo3-badges.dev/badge/typed-extconf/typo3/shields.svg)
+![Latest version](https://typo3-badges.dev/badge/typed-extconf/version/shields.svg)
+![Stability](https://typo3-badges.dev/badge/typed-extconf/stability/shields.svg)
 [![PHP Version Require](https://poser.pugx.org/mteu/typo3-typed-extconf/require/php)](https://packagist.org/packages/mteu/typo3-typed-extconf)
 
 </div>
 
-This TYPO3 CMS extension aims to provide type-safe extension configuration
-management, ensuring other extensions can rely on fully-typed configuration
-values instead of the default string-only values from the TYPO3 backend.
+This TYPO3 CMS extension aims to provide a type-safe extension configuration
+management for TYPO3, ensuring proper types instead of string-only values from
+backend configuration or mixed types from `config/system/settings.php|additional.php`
+(or custom solutions around those).
 
 > [!WARNING]
-> This project has just been prototyped and is not yet recommended for
-> productive use. Please wait for the official release.
+> This extension is still in early development and hence marked `alpha`. Be
+> cautious when using this in production environments.
 
 ## 🚀 Features
 
