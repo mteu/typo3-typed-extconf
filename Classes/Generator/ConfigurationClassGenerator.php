@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
  * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
  *
@@ -23,6 +23,10 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Generator;
 
+use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\PhpFile;
+use Nette\PhpGenerator\PsrPrinter;
+
 /**
  * ConfigurationClassGenerator.
  *
@@ -34,7 +38,7 @@ final readonly class ConfigurationClassGenerator
     /**
      * Generate a typed configuration class.
      *
-     * @param array<int, array<string, mixed>> $properties
+     * @param list<array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}> $properties
      */
     public function generate(string $extensionKey, string $className, array $properties): string
     {
@@ -42,30 +46,31 @@ final readonly class ConfigurationClassGenerator
             throw new \InvalidArgumentException('At least one property must be defined');
         }
 
-        $namespace = $this->generateNamespace($extensionKey);
-        $classDoc = $this->generateClassDocumentation($className, $extensionKey);
-        $imports = $this->generateImports();
-        $extensionConfigAttribute = $this->generateExtensionConfigAttribute($extensionKey);
-        $constructor = $this->generateConstructor($properties);
+        $file = new PhpFile();
+        $file->setStrictTypes();
 
-        return <<<PHP
-<?php
+        $namespace = $file->addNamespace($this->generateNamespaceName($extensionKey));
+        $namespace->addUse('mteu\\TypedExtConf\\Attribute\\ExtConfProperty');
+        $namespace->addUse('mteu\\TypedExtConf\\Attribute\\ExtensionConfig');
 
-declare(strict_types=1);
+        $class = $namespace->addClass($className);
+        $class->setFinal(true);
+        $class->setReadOnly(true);
+        $class->setComment($this->generateClassDocumentation($className, $extensionKey));
+        $class->addAttribute('ExtensionConfig', ['extensionKey' => $extensionKey]);
 
-{$imports}
+        $constructor = $class->addMethod('__construct');
+        $constructor->setPublic();
 
-{$classDoc}
-{$extensionConfigAttribute}
-final readonly class {$className}
-{
-{$constructor}
-}
+        foreach ($properties as $property) {
+            $this->addConstructorParameter($constructor, $property);
+        }
 
-PHP;
+        $printer = new PsrPrinter();
+        return $printer->printFile($file);
     }
 
-    private function generateNamespace(string $extensionKey): string
+    private function generateNamespaceName(string $extensionKey): string
     {
         // Convert extension key to namespace (e.g., my_extension -> MyExtension)
         $parts = explode('_', $extensionKey);
@@ -75,145 +80,78 @@ PHP;
 
         // If single part extension, use generic vendor
         if ($extension === '') {
-            return "namespace Vendor\\{$vendor}\\Configuration;";
+            return "Vendor\\{$vendor}\\Configuration";
         }
 
-        return "namespace {$vendor}\\{$extension}\\Configuration;";
+        return "{$vendor}\\{$extension}\\Configuration";
     }
 
     private function generateClassDocumentation(string $className, string $extensionKey): string
     {
-        return <<<DOC
-/**
- *
- * {$className}.
- *
- * Typed configuration class for extension '{$extensionKey}'.
- *
- * This class provides type-safe access to extension configuration properties.
- * Generated using mteu/typo3-typed-extconf.
- */
-DOC;
-    }
-
-    private function generateImports(): string
-    {
-        return <<<IMPORTS
-use mteu\TypedExtConf\Attribute\ExtConfProperty;
-use mteu\TypedExtConf\Attribute\ExtensionConfig;
-IMPORTS;
-    }
-
-    private function generateExtensionConfigAttribute(string $extensionKey): string
-    {
-        return "#[ExtensionConfig(extensionKey: '{$extensionKey}')]";
+        return "{$className}.\n\nTyped configuration class for extension '{$extensionKey}'.\n\nThis class provides type-safe access to extension configuration properties.\nGenerated using mteu/typo3-typed-extconf.";
     }
 
     /**
-     * @param array<int, array<string, mixed>> $properties
+     * @param array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string} $property
      */
-    private function generateConstructor(array $properties): string
+    private function addConstructorParameter(\Nette\PhpGenerator\Method $constructor, array $property): void
     {
-        $parameters = [];
-        $maxParameterLength = 0;
-
-        // First pass: generate parameter strings and find max length for alignment
-        foreach ($properties as $property) {
-            $parameterString = $this->generateConstructorParameter($property);
-            $parameters[] = $parameterString;
-            $maxParameterLength = max($maxParameterLength, strlen($parameterString));
+        if (!is_string($property['name']) || !is_string($property['type'])) {
+            return;
         }
 
-        // Second pass: generate with proper indentation
-        $constructorParams = [];
-        foreach ($properties as $i => $property) {
-            $attribute = $this->generateExtConfPropertyAttribute($property);
-            $parameter = $parameters[$i];
+        $parameter = $constructor->addPromotedParameter($property['name']);
+        $parameter->setType($property['type']);
+        $parameter->setPublic();
 
-            $constructorParams[] = "        {$attribute}\n        {$parameter},";
+        // Set PHP default value if provided
+        if (array_key_exists('default', $property)) {
+            $parameter->setDefaultValue($this->formatDefaultValueForParameter($property['default'], $property['type']));
         }
 
-        $parameterList = implode("\n", $constructorParams);
-
-        return <<<CONSTRUCTOR
-    public function __construct(
-{$parameterList}
-    ) {}
-CONSTRUCTOR;
-    }
-
-    /**
-     * @param array<string, mixed> $property
-     */
-    private function generateConstructorParameter(array $property): string
-    {
-        $type = is_string($property['type']) ? $property['type'] : 'mixed';
-        $name = is_string($property['name']) ? $property['name'] : 'property';
-
-        return "public {$type} \${$name}";
-    }
-
-    /**
-     * @param array<string, mixed> $property
-     */
-    private function generateExtConfPropertyAttribute(array $property): string
-    {
-        $attributes = [];
+        // Build ExtConfProperty attribute (only for mapping metadata)
+        $attributeArgs = [];
 
         // Add path if different from property name
         if (array_key_exists('path', $property) && is_string($property['path']) && $property['path'] !== $property['name']) {
-            $attributes[] = "path: '{$property['path']}'";
-        }
-
-        // Add default value
-        if (array_key_exists('default', $property)) {
-            $type = is_string($property['type']) ? $property['type'] : 'mixed';
-            $defaultValue = $this->formatDefaultValue($property['default'], $type);
-            $attributes[] = "default: {$defaultValue}";
+            $attributeArgs['path'] = $property['path'];
         }
 
         // Add required flag if true
         if (array_key_exists('required', $property) && $property['required'] === true) {
-            $attributes[] = 'required: true';
+            $attributeArgs['required'] = true;
         }
 
-        $attributeString = implode(', ', $attributes);
-
-        return "#[ExtConfProperty({$attributeString})]";
+        $parameter->addAttribute('ExtConfProperty', $attributeArgs);
     }
 
-    private function formatDefaultValue(mixed $value, string $type): string
+
+    private function formatDefaultValueForParameter(mixed $value, string $type): mixed
     {
         if ($value === null) {
-            return 'null';
+            return null;
         }
 
         return match ($type) {
-            'string' => "'" . addslashes(is_string($value) ? $value : '') . "'",
-            'bool' => (bool)$value ? 'true' : 'false',
-            'int', 'float' => is_numeric($value) ? (string)$value : '0',
-            'array' => $this->formatArrayValue($value),
-            default => "'" . addslashes(is_string($value) ? $value : '') . "'",
+            'string' => is_string($value) ? $value : '',
+            'bool' => (bool)$value,
+            'int' => is_numeric($value) ? (int)$value : 0,
+            'float' => is_numeric($value) ? (float)$value : 0.0,
+            'array' => $this->formatArrayValueForParameter($value),
+            default => is_string($value) ? $value : '',
         };
     }
 
-    private function formatArrayValue(mixed $value): string
+    /**
+     * @return array<mixed>
+     */
+    private function formatArrayValueForParameter(mixed $value): array
     {
         if (!is_array($value)) {
-            return '[]';
+            return [];
         }
 
-        if (count($value) === 0) {
-            return '[]';
-        }
-
-        // Format as PHP array syntax
-        $items = [];
-        foreach ($value as $item) {
-            $itemString = is_string($item) ? $item : '';
-            $items[] = "'" . addslashes($itemString) . "'";
-        }
-
-        return '[' . implode(', ', $items) . ']';
+        // Return the array as-is for PHP parameter defaults
+        return $value;
     }
 }
