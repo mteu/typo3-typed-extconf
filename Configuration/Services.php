@@ -41,8 +41,7 @@ return static function (ContainerBuilder $container): void {
                     new Reference(ExtensionConfigurationProvider::class), 'get',
                 ])
                 ->setArguments([
-                    $reflector->name,
-                    $attribute->extensionKey,
+                    $reflector->name
                 ])
                 ->setPublic(true);
         }

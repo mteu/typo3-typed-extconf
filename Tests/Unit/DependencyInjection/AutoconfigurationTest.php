@@ -79,9 +79,8 @@ final class AutoconfigurationTest extends TestCase
         self::assertSame('get', $factory[1]);
 
         $arguments = $definition->getArguments();
-        self::assertCount(2, $arguments);
+        self::assertCount(1, $arguments);
         self::assertSame(SimpleTestConfiguration::class, $arguments[0]);
-        self::assertSame('test_ext', $arguments[1]);
     }
 
     #[Test]
@@ -120,8 +119,7 @@ final class AutoconfigurationTest extends TestCase
         self::assertSame('get', $factory[1]);
 
         $arguments = $definition->getArguments();
-        self::assertCount(2, $arguments);
+        self::assertCount(1, $arguments);
         self::assertSame(SimpleTestConfiguration::class, $arguments[0]);
-        self::assertSame('test_ext', $arguments[1]);
     }
 }

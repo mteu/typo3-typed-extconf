@@ -31,7 +31,7 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[ExtensionConfig(extensionKey: null)]
+// This class intentionally has no ExtensionConfig attribute to test error handling
 final readonly class InvalidExtensionConfigTestConfiguration
 {
     public function __construct(

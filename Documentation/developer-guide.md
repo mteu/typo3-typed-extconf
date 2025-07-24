@@ -306,13 +306,13 @@ $provider = GeneralUtility::makeInstance(ExtensionConfigurationProvider::class);
 $config = $provider->get(MyConfiguration::class);
 ```
 
-### Override Extension Key
+### Configuration Access
 
-You can override the extension key at runtime:
+The configuration is accessed through the provider service:
 
 ```php
-// Use a different extension key than what's defined in the #[ExtensionConfig] attribute
-$config = $this->configurationProvider->get(MyConfiguration::class, 'other_extension');
+// Access configuration using the extension key defined in the #[ExtensionConfig] attribute
+$config = $this->configurationProvider->get(MyConfiguration::class);
 ```
 
 ### TreeMapper Configuration
@@ -443,7 +443,7 @@ final class MyExtensionConfigurationTest extends TestCase
                 'api' => ['endpoint' => '/api/v2'],
             ]);
 
-        $provider = new TypedExtensionConfigurationProvider($extensionConfiguration);
+        $provider = new TypedExtensionConfigurationProvider($extensionConfiguration, $mapper);
         $config = $provider->get(MyExtensionConfiguration::class);
 
         self::assertSame(50, $config->maxItems);
@@ -531,18 +531,15 @@ final readonly class MyConfiguration { /* ... */ }
 
 **Solution**: Ensure your TYPO3 configuration values can be converted to the expected types. Check your `ext_conf_template.txt` and backend configuration.
 
-#### 4. Null Extension Key
+#### 4. Missing Extension Key
 
-**Error**: `Extension key must be specified`
+**Error**: `Configuration class must have an #[ExtensionConfig] attribute`
 
-**Solution**: Either set the extension key in the attribute or pass it as a parameter:
+**Solution**: Add the required extension key in the attribute:
 
 ```php
-// Option 1: Set in attribute
 #[ExtensionConfig(extensionKey: 'my_extension')]
-
-// Option 2: Pass as parameter
-$config = $mapper->map(MyConfiguration::class, 'my_extension');
+final readonly class MyConfiguration { /* ... */ }
 ```
 
 ### Debugging Configuration
