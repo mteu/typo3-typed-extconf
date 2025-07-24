@@ -60,7 +60,7 @@ final class ExtConfPropertyTest extends Framework\TestCase
     public function attributeIsReadonly(): void
     {
         $reflection = new \ReflectionClass(ExtConfProperty::class);
-        
+
         self::assertTrue($reflection->isReadOnly());
         self::assertTrue($reflection->getProperty('path')->isReadOnly());
         self::assertTrue($reflection->getProperty('required')->isReadOnly());

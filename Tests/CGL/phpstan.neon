@@ -6,6 +6,7 @@ parameters:
 		- ../../.build/vendor/phpunit/phpunit/src
 		- ../../.build/vendor/cuyz/valinor/src
 		- ../../.build/vendor/eliashaeussler/phpunit-attributes/src
+		- ../../.build/vendor/nette/php-generator/src
 	paths:
 		- ../../Classes
 		- ../../Configuration

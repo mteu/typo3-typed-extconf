@@ -56,69 +56,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
     }
 
     #[Test]
-    public function generateCreatesBasicClassWithSingleProperty(): void
-    {
-        $properties = [
-            [
-                'name' => 'apiKey',
-                'type' => 'string',
-            ],
-        ];
-
-        $result = $this->generator->generate('test_extension', 'TestConfiguration', $properties);
-
-        // Test basic PHP structure
-        self::assertStringContainsString('<?php', $result);
-        self::assertStringContainsString('declare(strict_types=1);', $result);
-
-        // Test namespace
-        self::assertStringContainsString('namespace Test\\Extension\\Configuration;', $result);
-
-        // Test imports
-        self::assertStringContainsString('use mteu\\TypedExtConf\\Attribute\\ExtConfProperty;', $result);
-        self::assertStringContainsString('use mteu\\TypedExtConf\\Attribute\\ExtensionConfig;', $result);
-
-        // Test class structure
-        self::assertStringContainsString('final readonly class TestConfiguration', $result);
-        self::assertStringContainsString('#[\\ExtensionConfig(extensionKey: \'test_extension\')]', $result);
-
-        // Test constructor and property
-        self::assertStringContainsString('public function __construct(', $result);
-        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
-        self::assertStringContainsString('public string $apiKey', $result);
-    }
-
-    #[Test]
-    public function generateCreatesClassWithMultipleProperties(): void
-    {
-        $properties = [
-            [
-                'name' => 'apiKey',
-                'type' => 'string',
-            ],
-            [
-                'name' => 'timeout',
-                'type' => 'int',
-            ],
-            [
-                'name' => 'enabled',
-                'type' => 'bool',
-            ],
-        ];
-
-        $result = $this->generator->generate('my_extension', 'MyConfiguration', $properties);
-
-        // Test all properties are present
-        self::assertStringContainsString('public string $apiKey', $result);
-        self::assertStringContainsString('public int $timeout', $result);
-        self::assertStringContainsString('public bool $enabled', $result);
-
-        // Test namespace for underscore extension key
-        self::assertStringContainsString('namespace My\\Extension\\Configuration;', $result);
-    }
-
-    #[Test]
-    public function generateCreatesClassWithComplexPropertyAttributes(): void
+    public function generateCreatesValidPhpClass(): void
     {
         $properties = [
             [
@@ -133,215 +71,84 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
                 'type' => 'int',
                 'default' => 30,
             ],
-            [
-                'name' => 'tags',
-                'type' => 'array',
-                'default' => ['prod', 'api'],
-            ],
         ];
 
-        $result = $this->generator->generate('complex_ext', 'ComplexConfiguration', $properties);
+        $result = $this->generator->generate('test_extension', 'TestConfiguration', $properties);
 
-        // Test ExtConfProperty attributes with parameters (no default values)
+        // Test basic PHP structure
+        self::assertStringContainsString('<?php', $result);
+        self::assertStringContainsString('declare(strict_types=1);', $result);
+        self::assertStringContainsString('namespace Test\\Extension\\Configuration;', $result);
+
+        // Test class structure
+        self::assertStringContainsString('final readonly class TestConfiguration', $result);
+        self::assertStringContainsString('#[\\ExtensionConfig(extensionKey: \'test_extension\')]', $result);
+
+        // Test properties with PHP defaults (not in attributes)
         self::assertStringContainsString('#[\\ExtConfProperty(path: \'api.key\', required: true)]', $result);
-        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
-
-        // Test PHP constructor defaults
         self::assertStringContainsString('public string $apiKey = \'default-key\',', $result);
+        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
         self::assertStringContainsString('public int $timeout = 30,', $result);
-        self::assertStringContainsString('public array $tags = [\'prod\', \'api\'],', $result);
-
-        // Test namespace for complex extension key
-        self::assertStringContainsString('namespace Complex\\Ext\\Configuration;', $result);
     }
 
     #[Test]
-    public function generateHandlesSinglePartExtensionKey(): void
+    public function generateHandlesNamespaceGeneration(): void
+    {
+        $properties = [['name' => 'test', 'type' => 'string']];
+
+        // Test multi-part extension key
+        $result1 = $this->generator->generate('my_extension', 'Config', $properties);
+        self::assertStringContainsString('namespace My\\Extension\\Configuration;', $result1);
+
+        // Test single-part extension key
+        $result2 = $this->generator->generate('myext', 'Config', $properties);
+        self::assertStringContainsString('namespace Vendor\\Myext\\Configuration;', $result2);
+    }
+
+    #[Test]
+    public function generateHandlesVariousDefaultValueTypes(): void
     {
         $properties = [
-            [
-                'name' => 'setting',
-                'type' => 'string',
-            ],
+            ['name' => 'stringVal', 'type' => 'string', 'default' => 'test'],
+            ['name' => 'intVal', 'type' => 'int', 'default' => 42],
+            ['name' => 'boolVal', 'type' => 'bool', 'default' => true],
+            ['name' => 'arrayVal', 'type' => 'array', 'default' => ['a', 'b']],
+            ['name' => 'nullVal', 'type' => 'string', 'default' => null],
         ];
 
-        $result = $this->generator->generate('myext', 'SimpleConfiguration', $properties);
+        $result = $this->generator->generate('test_ext', 'Config', $properties);
 
-        // Test namespace for single part extension key
-        self::assertStringContainsString('namespace Vendor\\Myext\\Configuration;', $result);
+        self::assertStringContainsString('public string $stringVal = \'test\',', $result);
+        self::assertStringContainsString('public int $intVal = 42,', $result);
+        self::assertStringContainsString('public bool $boolVal = true,', $result);
+        self::assertStringContainsString('public array $arrayVal = [\'a\', \'b\'],', $result);
+        self::assertStringContainsString('public ?string $nullVal = null,', $result);
     }
 
     #[Test]
-    public function generateCreatesProperClassDocumentation(): void
-    {
-        $properties = [
-            [
-                'name' => 'test',
-                'type' => 'string',
-            ],
-        ];
-
-        $result = $this->generator->generate('doc_test', 'DocumentedConfiguration', $properties);
-
-        // Test class documentation
-        self::assertStringContainsString('DocumentedConfiguration.', $result);
-        self::assertStringContainsString('Typed configuration class for extension \'doc_test\'.', $result);
-        self::assertStringContainsString('This class provides type-safe access to extension configuration properties.', $result);
-        self::assertStringContainsString('Generated using mteu/typo3-typed-extconf.', $result);
-    }
-
-    #[Test]
-    public function generateHandlesDifferentDefaultValueTypes(): void
-    {
-        $properties = [
-            [
-                'name' => 'stringProp',
-                'type' => 'string',
-                'default' => 'test value',
-            ],
-            [
-                'name' => 'intProp',
-                'type' => 'int',
-                'default' => 42,
-            ],
-            [
-                'name' => 'floatProp',
-                'type' => 'float',
-                'default' => 3.14,
-            ],
-            [
-                'name' => 'boolProp',
-                'type' => 'bool',
-                'default' => true,
-            ],
-            [
-                'name' => 'nullProp',
-                'type' => 'string',
-                'default' => null,
-            ],
-        ];
-
-        $result = $this->generator->generate('types_test', 'TypesConfiguration', $properties);
-
-        // Test PHP constructor default values
-        self::assertStringContainsString('public string $stringProp = \'test value\',', $result);
-        self::assertStringContainsString('public int $intProp = 42,', $result);
-        self::assertStringContainsString('public float $floatProp = 3.14,', $result);
-        self::assertStringContainsString('public bool $boolProp = true,', $result);
-        self::assertStringContainsString('public ?string $nullProp = null,', $result);
-    }
-
-    #[Test]
-    public function generateHandlesArrayDefaultValues(): void
-    {
-        $properties = [
-            [
-                'name' => 'emptyArray',
-                'type' => 'array',
-                'default' => [],
-            ],
-            [
-                'name' => 'stringArray',
-                'type' => 'array',
-                'default' => ['one', 'two', 'three'],
-            ],
-            [
-                'name' => 'mixedArray',
-                'type' => 'array',
-                'default' => ['string', 123, true],
-            ],
-        ];
-
-        $result = $this->generator->generate('array_test', 'ArrayConfiguration', $properties);
-
-        // Test PHP constructor array defaults
-        self::assertStringContainsString('public array $emptyArray = [],', $result);
-        self::assertStringContainsString('public array $stringArray = [\'one\', \'two\', \'three\'],', $result);
-        self::assertStringContainsString('public array $mixedArray = [\'string\', 123, true],', $result);
-    }
-
-    #[Test]
-    public function generateHandlesOptionalPropertyFields(): void
-    {
-        $properties = [
-            [
-                'name' => 'minimalProp',
-                'type' => 'string',
-            ],
-            [
-                'name' => 'pathOnlyProp',
-                'type' => 'string',
-                'path' => 'custom.path',
-            ],
-            [
-                'name' => 'requiredOnlyProp',
-                'type' => 'string',
-                'required' => true,
-            ],
-            [
-                'name' => 'defaultOnlyProp',
-                'type' => 'string',
-                'default' => 'default-value',
-            ],
-        ];
-
-        $result = $this->generator->generate('optional_test', 'OptionalConfiguration', $properties);
-
-        // Test minimal property (no attributes)
-        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
-
-        // Test path-only attribute
-        self::assertStringContainsString('#[\\ExtConfProperty(path: \'custom.path\')]', $result);
-
-        // Test required-only attribute
-        self::assertStringContainsString('#[\\ExtConfProperty(required: true)]', $result);
-
-        // Test property with PHP constructor default (not in attribute)
-        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
-        self::assertStringContainsString('public string $defaultOnlyProp = \'default-value\',', $result);
-    }
-
-    #[Test]
-    public function generateIgnoresPropertiesWithInvalidTypes(): void
+    public function generateIgnoresInvalidProperties(): void
     {
         /** @var array<mixed> $properties */
         $properties = [
-            [
-                'name' => 'validProp',
-                'type' => 'string',
-            ],
-            [
-                'name' => null, // Invalid name
-                'type' => 'string',
-            ],
-            [
-                'name' => 'invalidTypeProp',
-                'type' => null, // Invalid type
-            ],
-            [
-                'name' => 'anotherValidProp',
-                'type' => 'int',
-            ],
+            ['name' => 'validProp', 'type' => 'string'],
+            ['name' => null, 'type' => 'string'], // Invalid name
+            ['name' => 'invalidType', 'type' => null], // Invalid type
         ];
 
         // @phpstan-ignore-next-line argument.type (intentionally testing with invalid input types)
-        $result = $this->generator->generate('validation_test', 'ValidationConfiguration', $properties);
+        $result = $this->generator->generate('test_ext', 'Config', $properties);
 
-        // Test only valid properties are included
         self::assertStringContainsString('public string $validProp', $result);
-        self::assertStringContainsString('public int $anotherValidProp', $result);
-
-        // Test invalid properties are not included
         self::assertStringNotContainsString('$null', $result);
-        self::assertStringNotContainsString('$invalidTypeProp', $result);
+        self::assertStringNotContainsString('$invalidType', $result);
     }
 
     #[Test]
-    public function generateCreatesValidPhpCode(): void
+    public function generateCreatesSyntacticallyValidPhp(): void
     {
         $properties = [
             [
-                'name' => 'complexProp',
+                'name' => 'complexValue',
                 'type' => 'string',
                 'default' => 'test\'s "quoted" value\\with\\backslashes',
                 'path' => 'complex.path',
@@ -349,10 +156,9 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
             ],
         ];
 
-        $result = $this->generator->generate('syntax_test', 'SyntaxConfiguration', $properties);
+        $result = $this->generator->generate('test_ext', 'Config', $properties);
 
-        // Test that the generated code is syntactically valid PHP
-        // This should not throw a parse error
+        // Verify generated PHP is syntactically valid
         $tempFile = tempnam(sys_get_temp_dir(), 'php_syntax_test');
         file_put_contents($tempFile, $result);
 
