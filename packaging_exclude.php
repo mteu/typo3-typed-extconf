@@ -6,6 +6,7 @@ return [
     'directories' => [
         '.idea',
         '.build',
+        '.ddev',
         '.git',
         '.github',
         'tailor-version-artefact',
