@@ -31,7 +31,6 @@ use mteu\TypedExtConf\Exception\ConfigurationException;
 use mteu\TypedExtConf\Exception\SchemaValidationException;
 use mteu\TypedExtConf\Mapper\MapperFactory;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * TypedExtensionConfigurationProvider.
@@ -39,7 +38,7 @@ use TYPO3\CMS\Core\SingletonInterface;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class TypedExtensionConfigurationProvider implements ExtensionConfigurationProvider, SingletonInterface
+final readonly class TypedExtensionConfigurationProvider implements ExtensionConfigurationProvider
 {
     private TreeMapper $mapper;
 
