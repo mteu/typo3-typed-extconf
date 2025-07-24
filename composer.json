@@ -11,7 +11,9 @@
 	],
 	"require": {
 		"php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+		"ext-filter": "*",
 		"cuyz/valinor": "^2.0",
+		"symfony/console": "^7.3",
 		"typo3/cms-core": "~12.4.31 || ~13.4.12"
 	},
 	"require-dev": {
@@ -30,6 +32,7 @@
 		"saschaegerer/phpstan-typo3": "^2.1",
 		"shipmonk/composer-dependency-analyser": "*",
 		"ssch/typo3-rector": "^3.6",
+		"symfony/dependency-injection": "^7.3",
 		"typo3/coding-standards": "^0.8.0",
 		"typo3/testing-framework": "^8.2 || ^9.2"
 	},
