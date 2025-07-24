@@ -30,7 +30,6 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use mteu\TypedExtConf\Exception\ConfigurationException;
 use mteu\TypedExtConf\Exception\SchemaValidationException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * TypedExtensionConfigurationProvider.
@@ -38,7 +37,7 @@ use TYPO3\CMS\Core\SingletonInterface;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class TypedExtensionConfigurationProvider implements ExtensionConfigurationProvider, SingletonInterface
+final readonly class TypedExtensionConfigurationProvider implements ExtensionConfigurationProvider
 {
     public function __construct(
         private ExtensionConfiguration $extensionConfiguration,
