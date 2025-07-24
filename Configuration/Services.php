@@ -22,9 +22,7 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use CuyZ\Valinor\Mapper\TreeMapper;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
-use mteu\TypedExtConf\Mapper\MapperFactory;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -49,7 +47,4 @@ return static function (ContainerBuilder $container): void {
                 ->setPublic(true);
         }
     );
-
-    $container->register(TreeMapper::class)
-        ->setFactory([new Reference(MapperFactory::class), 'create']);
 };

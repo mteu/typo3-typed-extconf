@@ -29,6 +29,7 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use mteu\TypedExtConf\Exception\ConfigurationException;
 use mteu\TypedExtConf\Exception\SchemaValidationException;
+use mteu\TypedExtConf\Mapper\MapperFactory;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -40,10 +41,14 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 final readonly class TypedExtensionConfigurationProvider implements ExtensionConfigurationProvider, SingletonInterface
 {
+    private TreeMapper $mapper;
+
     public function __construct(
         private ExtensionConfiguration $extensionConfiguration,
-        private TreeMapper $mapper,
-    ) {}
+        MapperFactory $mapperFactory,
+    ) {
+        $this->mapper = $mapperFactory->create();
+    }
 
     /**
      * @template T of object
