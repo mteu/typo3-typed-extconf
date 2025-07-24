@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
  * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
  *
@@ -34,7 +34,7 @@ namespace mteu\TypedExtConf\Parser;
 final readonly class ExtConfTemplateParser
 {
     /**
-     * @return list<array<string, mixed>>
+     * @return list<array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}>
      */
     public function parse(string $templatePath): array
     {
@@ -51,7 +51,7 @@ final readonly class ExtConfTemplateParser
     }
 
     /**
-     * @return list<array<string, mixed>>
+     * @return list<array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}>
      */
     private function parseContent(string $content): array
     {
@@ -111,7 +111,7 @@ final readonly class ExtConfTemplateParser
 
     /**
      * @param array<string, string>|null $comment
-     * @return array<string, mixed>|null
+     * @return array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}|null
      */
     private function parseConfigurationLine(string $line, ?array $comment): ?array
     {

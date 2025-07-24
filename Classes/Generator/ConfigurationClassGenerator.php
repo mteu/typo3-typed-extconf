@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Generator;
 
-use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
 
@@ -124,7 +123,6 @@ final readonly class ConfigurationClassGenerator
 
         $parameter->addAttribute('ExtConfProperty', $attributeArgs);
     }
-
 
     private function formatDefaultValueForParameter(mixed $value, string $type): mixed
     {

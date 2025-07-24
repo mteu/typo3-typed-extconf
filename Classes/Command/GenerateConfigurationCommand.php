@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
  * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
  *
@@ -191,9 +191,9 @@ final class GenerateConfigurationCommand extends Command
             $io->listing(array_map(
                 fn(array $field): string => sprintf(
                     '%s (%s) - %s',
-                    is_string($field['name']) ? $field['name'] : 'unknown',
-                    is_string($field['type']) ? $field['type'] : 'mixed',
-                    is_string($field['label']) ? $field['label'] : 'No label',
+                    $field['name'],
+                    $field['type'],
+                    $field['label'] ?? 'No label',
                 ),
                 $templateData
             ));
@@ -243,17 +243,21 @@ final class GenerateConfigurationCommand extends Command
             $path = is_string($path) ? $path : $propertyNameString;
             $required = $helper->ask($input, $output, new ConfirmationQuestion('Is required? ', false));
 
+            // Ensure proper types for the property array
+            $propertyNameString = is_string($propertyName) ? $propertyName : 'property';
+            $typeString = is_string($type) ? $type : 'string';
+            $pathString = $path; // Already ensured to be string on line 243
+            $requiredBool = is_bool($required) ? $required : false;
+
             $properties[] = [
-                'name' => $propertyName,
-                'type' => $type,
+                'name' => $propertyNameString,
+                'type' => $typeString,
                 'default' => $defaultValue,
-                'path' => $path,
-                'required' => $required,
-                'label' => ucfirst(str_replace('_', ' ', is_string($propertyName) ? $propertyName : 'property')),
+                'path' => $pathString,
+                'required' => $requiredBool,
+                'label' => ucfirst(str_replace('_', ' ', $propertyNameString)),
             ];
 
-            $propertyNameString = is_string($propertyName) ? $propertyName : 'property';
-            $typeString = is_string($type) ? $type : 'mixed';
             $io->writeln("Added property: {$propertyNameString} ({$typeString})");
         }
 
@@ -290,7 +294,7 @@ final class GenerateConfigurationCommand extends Command
     }
 
     /**
-     * @param array<int, array<string, mixed>> $configurationData
+     * @param list<array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}> $configurationData
      */
     private function generateAndSaveClass(InputInterface $input, OutputInterface $output, SymfonyStyle $io, QuestionHelper $helper, string $extensionKey, string $className, array $configurationData): int
     {

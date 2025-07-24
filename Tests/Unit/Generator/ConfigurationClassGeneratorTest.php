@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
  * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
  *
@@ -62,7 +62,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
             [
                 'name' => 'apiKey',
                 'type' => 'string',
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('test_extension', 'TestConfiguration', $properties);
@@ -103,7 +103,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
             [
                 'name' => 'enabled',
                 'type' => 'bool',
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('my_extension', 'MyConfiguration', $properties);
@@ -137,17 +137,19 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
                 'name' => 'tags',
                 'type' => 'array',
                 'default' => ['prod', 'api'],
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('complex_ext', 'ComplexConfiguration', $properties);
 
-        // Test ExtConfProperty attributes with parameters
-        self::assertStringContainsString('#[\\ExtConfProperty(path: \'api.key\', default: \'default-key\', required: true)]', $result);
-        self::assertStringContainsString('#[\\ExtConfProperty(default: 30)]', $result);
+        // Test ExtConfProperty attributes with parameters (no default values)
+        self::assertStringContainsString('#[\\ExtConfProperty(path: \'api.key\', required: true)]', $result);
+        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
 
-        // Test array default value formatting
-        self::assertStringContainsString('default: [\'prod\', \'api\']', $result);
+        // Test PHP constructor defaults
+        self::assertStringContainsString('public string $apiKey = \'default-key\',', $result);
+        self::assertStringContainsString('public int $timeout = 30,', $result);
+        self::assertStringContainsString('public array $tags = [\'prod\', \'api\'],', $result);
 
         // Test namespace for complex extension key
         self::assertStringContainsString('namespace Complex\\Ext\\Configuration;', $result);
@@ -160,7 +162,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
             [
                 'name' => 'setting',
                 'type' => 'string',
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('myext', 'SimpleConfiguration', $properties);
@@ -176,7 +178,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
             [
                 'name' => 'test',
                 'type' => 'string',
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('doc_test', 'DocumentedConfiguration', $properties);
@@ -216,17 +218,17 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
                 'name' => 'nullProp',
                 'type' => 'string',
                 'default' => null,
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('types_test', 'TypesConfiguration', $properties);
 
-        // Test different default value types in attributes
-        self::assertStringContainsString('default: \'test value\'', $result);
-        self::assertStringContainsString('default: 42', $result);
-        self::assertStringContainsString('default: 3.14', $result);
-        self::assertStringContainsString('default: true', $result);
-        self::assertStringContainsString('default: null', $result);
+        // Test PHP constructor default values
+        self::assertStringContainsString('public string $stringProp = \'test value\',', $result);
+        self::assertStringContainsString('public int $intProp = 42,', $result);
+        self::assertStringContainsString('public float $floatProp = 3.14,', $result);
+        self::assertStringContainsString('public bool $boolProp = true,', $result);
+        self::assertStringContainsString('public ?string $nullProp = null,', $result);
     }
 
     #[Test]
@@ -247,16 +249,15 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
                 'name' => 'mixedArray',
                 'type' => 'array',
                 'default' => ['string', 123, true],
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('array_test', 'ArrayConfiguration', $properties);
 
-        // Test array default value formatting
-        self::assertStringContainsString('default: []', $result);
-        self::assertStringContainsString('default: [\'one\', \'two\', \'three\']', $result);
-        // Mixed array converts non-strings to empty strings
-        self::assertStringContainsString('default: [\'string\', \'\', \'\']', $result);
+        // Test PHP constructor array defaults
+        self::assertStringContainsString('public array $emptyArray = [],', $result);
+        self::assertStringContainsString('public array $stringArray = [\'one\', \'two\', \'three\'],', $result);
+        self::assertStringContainsString('public array $mixedArray = [\'string\', 123, true],', $result);
     }
 
     #[Test]
@@ -281,7 +282,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
                 'name' => 'defaultOnlyProp',
                 'type' => 'string',
                 'default' => 'default-value',
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('optional_test', 'OptionalConfiguration', $properties);
@@ -295,8 +296,9 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
         // Test required-only attribute
         self::assertStringContainsString('#[\\ExtConfProperty(required: true)]', $result);
 
-        // Test default-only attribute
-        self::assertStringContainsString('#[\\ExtConfProperty(default: \'default-value\')]', $result);
+        // Test property with PHP constructor default (not in attribute)
+        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
+        self::assertStringContainsString('public string $defaultOnlyProp = \'default-value\',', $result);
     }
 
     #[Test]
@@ -319,7 +321,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
             [
                 'name' => 'anotherValidProp',
                 'type' => 'int',
-            ]
+            ],
         ];
 
         // @phpstan-ignore-next-line argument.type (intentionally testing with invalid input types)
@@ -344,7 +346,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
                 'default' => 'test\'s "quoted" value\\with\\backslashes',
                 'path' => 'complex.path',
                 'required' => true,
-            ]
+            ],
         ];
 
         $result = $this->generator->generate('syntax_test', 'SyntaxConfiguration', $properties);
