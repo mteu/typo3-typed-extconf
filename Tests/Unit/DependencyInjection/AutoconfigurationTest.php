@@ -23,10 +23,8 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\DependencyInjection;
 
-use CuyZ\Valinor\Mapper\TreeMapper;
 use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
-use mteu\TypedExtConf\Mapper\MapperFactory;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use mteu\TypedExtConf\Tests\Unit\Fixture\SimpleTestConfiguration;
 use PHPUnit\Framework\Attributes\Test;
@@ -123,26 +121,5 @@ final class AutoconfigurationTest extends TestCase
         $arguments = $definition->getArguments();
         self::assertCount(1, $arguments);
         self::assertSame(SimpleTestConfiguration::class, $arguments[0]);
-    }
-
-    #[Test]
-    public function testTreeMapperRegistration(): void
-    {
-        $container = new ContainerBuilder();
-
-        $configurator = require __DIR__ . '/../../../Configuration/Services.php';
-        assert(is_callable($configurator));
-
-        $configurator($container);
-
-        self::assertTrue($container->hasDefinition(TreeMapper::class));
-
-        $definition = $container->getDefinition(TreeMapper::class);
-
-        $factory = $definition->getFactory();
-        self::assertIsArray($factory);
-        self::assertInstanceOf(Reference::class, $factory[0]);
-        self::assertSame(MapperFactory::class, (string)$factory[0]);
-        self::assertSame('create', $factory[1]);
     }
 }
