@@ -6,7 +6,7 @@ use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
     ->withPaths([
-        __DIR__ . '/Classes',
+        dirname(__DIR__, 2) . '/Classes',
     ])
     ->withPhpSets(php82: true)
     ->withTypeCoverageLevel(0)

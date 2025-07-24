@@ -31,25 +31,26 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
 
-      - name: Validate dependencies
-        run: composer validate-dependencies
+      # Analyze
+      - name: Analyze dependencies
+        run: composer cgl analyze:dependencies
 
       # Linting
       - name: Lint composer.json
-        run: composer lint:composer
+        run: composer cgl lint:composer
 
       - name: Lint .editorconfig
-        run: composer lint:editorconfig
+        run: composer cgl lint:editorconfig
 
       - name: Lint PHP
-        run: composer lint:php
+        run: composer cgl lint:php
 
       - name: Lint YAML
-        run: composer lint:yaml
+        run: composer cgl lint:yaml
 
       # SCA
       - name: SCA PHP
-        run: composer sca:php -- --error-format github
+        run: composer cgl sca:php -- --error-format github
 
       - name: Migration
-        run: composer sca:migrate:php --dry-run
+        run: composer cgl sca:migrate:php --dry-run
