@@ -256,15 +256,12 @@ final readonly class CacheConfiguration
 
 ### Automatic Service Registration
 
-The extension automatically registers your configuration classes as DI services through the `#[ExtensionConfig]` attribute. This is handled by the service configuration in `Configuration/Services.php`, which:
-
-1. **Registers attribute autoconfiguration** for `#[ExtensionConfig]`
-2. **Creates factory-based services** that use the `ExtensionConfigurationProvider`
-3. **Configures TreeMapper** with `allowSuperfluousKeys()` through `TreeMapperFactory`
+The extension automatically registers your configuration classes as DI services through the `#[ExtensionConfig]`
+attribute. This is handled by the service configuration in `Configuration/Services.php`, which registers
+attribute autoconfiguration for `#[ExtensionConfig]`.
 
 The DI container setup includes:
-- `TreeMapperFactory`: Creates configured TreeMapper instances
-- `TreeMapper`: Valinor mapper service with superfluous key allowance
+- `TreeMapperFactory`: Main service implementing `MapperFactory`, creates preconfigured `TreeMapper` instances
 - `TypedExtensionConfigurationProvider`: Main service implementing `ExtensionConfigurationProvider`
 
 ### Dependency Injection
@@ -324,9 +321,9 @@ The extension uses the [`CuyZ\Valinor`](https://github.com/CuyZ/Valinor) TreeMap
 with the following default configuration:
 
 - `allowSuperfluousKeys()`: Permits extra keys in TYPO3 configuration that don't
-map to class properties
+  map to class properties
 - TreeMapper instances are created through `TreeMapperFactory` for consistent
-- configuration
+  configuration
 
 This setup ensures robust handling of TYPO3's flexible configuration structure
 while maintaining type safety.

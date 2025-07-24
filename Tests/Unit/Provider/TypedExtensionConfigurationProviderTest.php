@@ -23,9 +23,9 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\Provider;
 
-use CuyZ\Valinor\MapperBuilder;
 use mteu\TypedExtConf\Exception\ConfigurationException;
 use mteu\TypedExtConf\Exception\SchemaValidationException;
+use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use mteu\TypedExtConf\Tests\Unit\Fixture\ApiConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\ComplexTestConfiguration;
@@ -61,9 +61,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         $this->extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
         $this->subject = new TypedExtensionConfigurationProvider(
             $this->extensionConfiguration,
-            (new MapperBuilder())
-                ->allowSuperfluousKeys()
-                ->mapper(),
+            new TreeMapperFactory(),
         );
     }
 
