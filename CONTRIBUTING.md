@@ -107,12 +107,13 @@ security related patches, please. Consult our [Security Guide](SECURITY.md) firs
 
 ### Testing Commands
 
-| Command | Description |
-|---------|-------------|
-| `composer test:unit` | Run unit tests only |
-| `composer test:functional` | Run functional tests only |
-| `composer test:coverage:unit` | Unit tests with coverage |
-| `composer test:coverage` | Full coverage report |
+| Command                             | Description                        |
+|-------------------------------------|------------------------------------|
+| `composer test:functional`          | Run functional tests only          |
+| `composer test:unit`                | Run unit tests only                |
+| `composer test:coverage:functional` | Run functional tests with coverage |
+| `composer test:coverage:unit`       | Run unit tests with coverage       |
+| `composer test:coverage`            | Full coverage report               |
 
 ### Quality Assurance Commands
 

@@ -22,6 +22,11 @@ jobs:
             composer-filename: '.github/composer/composer.typo3-v12'
           - typo3-version: "13.4"
             composer-filename: 'composer'
+    env:
+      typo3DatabaseName: typo3
+      typo3DatabaseHost: '127.0.0.1'
+      typo3DatabaseUsername: root
+      typo3DatabasePassword: root
 
     steps:
       - uses: actions/checkout@v4
@@ -36,6 +41,10 @@ jobs:
           tools: composer:v${{ matrix.composer-version }}
           coverage: pcov
 
+      # Start MySQL service
+      - name: Start MySQL
+        run: sudo /etc/init.d/mysql start
+
       # Install dependencies
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v3
@@ -45,12 +54,17 @@ jobs:
           composer-options: --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
 
       # Run tests
-      - name: Run unit tests
-        run: composer test:unit
+      - name: Run tests
+        run: composer test
 
   tests-coverage:
     name: Test coverage
     runs-on: ubuntu-latest
+    env:
+      typo3DatabaseName: typo3
+      typo3DatabaseHost: '127.0.0.1'
+      typo3DatabaseUsername: root
+      typo3DatabasePassword: root
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,6 +77,10 @@ jobs:
           php-version: "8.4"
           tools: composer:v2
           coverage: pcov
+
+      # Start MySQL service
+      - name: Start MySQL
+        run: sudo /etc/init.d/mysql start
 
       # Install dependencies
       - name: Install Composer dependencies
