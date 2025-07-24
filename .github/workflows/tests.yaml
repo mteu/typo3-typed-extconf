@@ -17,11 +17,6 @@ jobs:
         php-version: [ "8.2", "8.3", "8.4" ]
         typo3-version: [ "12.4", "13.4"]
         dependencies: [ "highest", "lowest" ]
-        include:
-          - typo3-version: "12.4"
-            composer-filename: '.github/composer/composer.typo3-v12'
-          - typo3-version: "13.4"
-            composer-filename: 'composer'
     env:
       typo3DatabaseName: typo3
       typo3DatabaseHost: '127.0.0.1'
@@ -49,7 +44,6 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v3
         with:
-          composer-filename: ${{ matrix.composer-filename }}
           dependency-versions: ${{ matrix.dependencies }}
           composer-options: --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
 
