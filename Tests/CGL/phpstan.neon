@@ -2,6 +2,10 @@ includes:
 	- phpstan-baseline.neon
 
 parameters:
+	scanDirectories:
+		- ../../.build/vendor/phpunit/phpunit/src
+		- ../../.build/vendor/cuyz/valinor/src
+		- ../../.build/vendor/eliashaeussler/phpunit-attributes/src
 	paths:
 		- ../../Classes
 		- ../../Configuration

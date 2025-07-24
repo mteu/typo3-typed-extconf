@@ -59,6 +59,8 @@
 			"Composer\\Config::disableProcessTimeout",
 			"rector process"
 		],
-		"sca:php": "phpstan analyse -c phpstan.neon --memory-limit=4G"
+		"sca:php": [
+			"phpstan analyse -c phpstan.neon --memory-limit=4G"
+		]
 	}
 }
