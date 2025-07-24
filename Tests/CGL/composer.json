@@ -1,7 +1,6 @@
 {
 	"require-dev": {
 		"armin/editorconfig-cli": "^2.1",
-		"eliashaeussler/phpunit-attributes": "^1.7",
 		"eliashaeussler/version-bumper": "^3.0",
 		"ergebnis/composer-normalize": "^2.28",
 		"friendsofphp/php-cs-fixer": "^3.8",
@@ -9,7 +8,6 @@
 		"phpstan/extension-installer": "*",
 		"phpstan/phpstan": "^2.1",
 		"phpstan/phpstan-phpunit": "^2.0",
-		"roave/security-advisories": "dev-latest",
 		"saschaegerer/phpstan-typo3": "^2.1",
 		"shipmonk/composer-dependency-analyser": "*",
 		"ssch/typo3-rector": "^3.6",

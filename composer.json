@@ -64,7 +64,6 @@
 			"@cgl install"
 		],
 		"cgl": "@composer -d Tests/CGL --",
-		"analyze": "@cgl analyze:dependencies",
 		"fix": "@cgl fix",
 		"lint": "@cgl lint",
 		"sca": "@cgl sca",
