@@ -147,8 +147,7 @@ Class-level attribute to specify which TYPO3 extension the configuration belongs
 to.
 
 **Parameters:**
-- `extensionKey` (string, optional): The TYPO3 extension key. If not provided,
-must be passed to the service method.
+- `extensionKey` (string, required): The TYPO3 extension key.
 
 ### `#[ExtConfProperty]`
 

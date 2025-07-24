@@ -52,7 +52,7 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
      * @throws ConfigurationException
      * @throws SchemaValidationException
      */
-    public function get(string $configClass, ?string $extensionKey = null): object
+    public function get(string $configClass): object
     {
         $reflection = new \ReflectionClass($configClass);
 
@@ -62,7 +62,7 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
             );
         }
 
-        $extensionKey = $this->resolveExtensionKey($reflection, $extensionKey);
+        $extensionKey = $this->resolveExtensionKey($reflection);
         $rawConfig = $this->getRawConfiguration($extensionKey);
         $configData = $this->prepareConfigurationData($reflection, $rawConfig);
 
@@ -80,28 +80,18 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
     /**
      * @param \ReflectionClass<object> $reflection
      */
-    private function resolveExtensionKey(\ReflectionClass $reflection, ?string $extensionKey): string
+    private function resolveExtensionKey(\ReflectionClass $reflection): string
     {
-        if ($extensionKey !== null) {
-            return $extensionKey;
-        }
-
         $extensionConfigAttributes = $reflection->getAttributes(ExtensionConfig::class);
 
         if ($extensionConfigAttributes === []) {
             throw new ConfigurationException(
-                sprintf('Configuration class "%s" must have an #[ExtensionConfig] attribute or extension key must be provided', $reflection->getName())
+                sprintf('Configuration class "%s" must have an #[ExtensionConfig] attribute', $reflection->getName())
             );
         }
 
         /** @var ExtensionConfig $extensionConfig */
         $extensionConfig = $extensionConfigAttributes[0]->newInstance();
-
-        if ($extensionConfig->extensionKey === null) {
-            throw new ConfigurationException(
-                sprintf('Extension key must be specified either via #[ExtensionConfig] attribute or method parameter')
-            );
-        }
 
         return $extensionConfig->extensionKey;
     }
