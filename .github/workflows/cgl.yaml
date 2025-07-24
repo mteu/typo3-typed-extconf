@@ -31,6 +31,9 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
 
+      - name: Validate dependencies
+        run: composer validate-dependencies
+
       # Linting
       - name: Lint composer.json
         run: composer lint:composer
@@ -48,6 +51,5 @@ jobs:
       - name: SCA PHP
         run: composer sca:php -- --error-format github
 
-      # Migration
       - name: Migration
         run: composer sca:migrate:php --dry-run
