@@ -32,7 +32,7 @@ jobs:
         uses: ramsey/composer-install@v2
 
       - name: Validate dependencies
-        run: composer validate-dependencies
+        run: composer analyze
 
       # Linting
       - name: Lint composer.json

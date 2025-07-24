@@ -3,9 +3,10 @@ includes:
 
 parameters:
 	paths:
-		- Classes
-		- Configuration
-		- Tests
+		- ../../Classes
+		- ../../Configuration
+		- ../../Tests/Functional
+		- ../../Tests/Unit
 	level: max
 	treatPhpDocTypesAsCertain: false
 
