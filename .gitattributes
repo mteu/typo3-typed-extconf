@@ -10,12 +10,8 @@
 /composer.lock               export-ignore
 /CONTRIBUTING.md             export-ignore
 /packaging_exclude.php       export-ignore
-/php-cs-fixer.php            export-ignore
-/phpstan.neon                export-ignore
-/phpstan.inc.neon            export-ignore
 /phpunit.functional.xml      export-ignore
 /phpunit.unit.xml            export-ignore
-/rector.php                  export-ignore
 /renovate.json               export-ignore
 /SECURITY.md                 export-ignore
 /version-bumper.yaml         export-ignore

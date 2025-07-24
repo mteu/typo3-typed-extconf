@@ -6,7 +6,12 @@
 	"authors": [
 		{
 			"name": "Martin Adler",
-			"email": "mteu@mailbox.org"
+			"email": "mteu@mailbox.org",
+			"role": "Maintainer"
+		},
+		{
+			"name": "Elias Häußler",
+			"email": "elias@haeussler.dev"
 		}
 	],
 	"require": {
@@ -18,23 +23,12 @@
 		"typo3/cms-core": "~12.4.31 || ~13.4.12"
 	},
 	"require-dev": {
-		"armin/editorconfig-cli": "^2.1",
 		"eliashaeussler/phpunit-attributes": "^1.7",
 		"eliashaeussler/version-bumper": "^3.0",
-		"ergebnis/composer-normalize": "^2.28",
-		"friendsofphp/php-cs-fixer": "^3.8",
-		"mteu/zealous-stan": "^0.6.3",
-		"phpstan/extension-installer": "*",
-		"phpstan/phpstan": "^2.1",
-		"phpstan/phpstan-phpunit": "^2.0",
 		"phpunit/phpcov": "^10.0 || ^11.0.0",
 		"phpunit/phpunit": "^11.5 || ^12.1",
 		"roave/security-advisories": "dev-latest",
-		"saschaegerer/phpstan-typo3": "^2.1",
-		"shipmonk/composer-dependency-analyser": "*",
-		"ssch/typo3-rector": "^3.6",
 		"symfony/dependency-injection": "^7.3",
-		"typo3/coding-standards": "^0.8.0",
 		"typo3/testing-framework": "^8.2 || ^9.2"
 	},
 	"autoload": {
@@ -67,35 +61,13 @@
 		}
 	},
 	"scripts": {
-		"fix": [
-			"@fix:composer",
-			"@fix:editorconfig",
-			"@fix:php"
+		"post-install-cmd": [
+			"@cgl install"
 		],
-		"fix:composer": "@composer normalize",
-		"fix:editorconfig": "ec --fix",
-		"fix:php": "php-cs-fixer fix --config php-cs-fixer.php",
-		"lint": [
-			"@lint:composer",
-			"@lint:editorconfig",
-			"@lint:php"
-		],
-		"lint:composer": "@composer normalize --dry-run",
-		"lint:editorconfig": "ec",
-		"lint:php": "php-cs-fixer fix --config php-cs-fixer.php",
-		"lint:yaml": "find . -path './.build' -prune -o \\( -name '*.yaml' -o -name '*.yml' \\) -type f -print | xargs yaml-lint --format=github",
-		"sca": [
-			"@sca:php",
-			"@sca:migrate"
-		],
-		"sca:migrate": [
-			"@sca:migrate:php"
-		],
-		"sca:migrate:php": [
-			"Composer\\Config::disableProcessTimeout",
-			"rector process"
-		],
-		"sca:php": "phpstan analyse -c phpstan.neon --memory-limit=4G",
+		"cgl": "@composer -d Tests/CGL --",
+		"fix": "@cgl fix",
+		"lint": "@cgl lint",
+		"sca": "@cgl sca",
 		"test": [
 			"@test:functional",
 			"@test:unit"
@@ -109,7 +81,6 @@
 		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
 		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
 		"test:functional": "@test:coverage:functional --no-coverage",
-		"test:unit": "@test:coverage:unit --no-coverage",
-		"validate-dependencies": "composer-dependency-analyser"
+		"test:unit": "@test:coverage:unit --no-coverage"
 	}
 }
