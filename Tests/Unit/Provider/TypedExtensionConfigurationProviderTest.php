@@ -232,22 +232,22 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapWithExplicitExtensionKey(): void
+    public function testMapUsesExtensionKeyFromAttribute(): void
     {
         $configData = [
             'basic' => [
-                'string' => 'explicit_key_test',
+                'string' => 'attribute_key_test',
             ],
         ];
 
         $this->extensionConfiguration->expects(self::once())
             ->method('get')
-            ->with('custom_key')
+            ->with('test_ext')
             ->willReturn($configData);
 
-        $result = $this->subject->get(SimpleTestConfiguration::class, 'custom_key');
+        $result = $this->subject->get(SimpleTestConfiguration::class);
 
-        self::assertSame('explicit_key_test', $result->stringValue);
+        self::assertSame('attribute_key_test', $result->stringValue);
     }
 
     #[Test]
@@ -261,10 +261,10 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
 
         $this->extensionConfiguration->expects(self::once())
             ->method('get')
-            ->with('monitoring')
+            ->with('test_ext')
             ->willReturn($configData);
 
-        $result = $this->subject->get(RequiredTestConfiguration::class, 'monitoring');
+        $result = $this->subject->get(RequiredTestConfiguration::class);
 
         self::assertSame('present', $result->requiredValue);
         self::assertSame('optional', $result->optionalValue);
@@ -281,13 +281,13 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
 
         $this->extensionConfiguration->expects(self::once())
             ->method('get')
-            ->with('monitoring')
+            ->with('test_ext')
             ->willReturn($configData);
 
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('Required configuration key "required.value" is missing');
 
-        $this->subject->get(RequiredTestConfiguration::class, 'monitoring');
+        $this->subject->get(RequiredTestConfiguration::class);
     }
 
     #[Test]
@@ -309,7 +309,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     public function testMapNullExtensionKeyThrowsException(): void
     {
         $this->expectException(ConfigurationException::class);
-        $this->expectExceptionMessage('Extension key must be specified');
+        $this->expectExceptionMessage('must have an #[ExtensionConfig] attribute');
 
         $this->subject->get(InvalidExtensionConfigTestConfiguration::class);
     }

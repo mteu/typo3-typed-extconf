@@ -24,13 +24,17 @@ declare(strict_types=1);
 namespace mteu\TypedExtConf\Tests\Unit\Fixture;
 
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
  * RequiredTestConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
- */
+ *
+ * @phpstan-ignore symplify.requireAttributeName
+ **/
+#[ExtensionConfig('test_ext')]
 final readonly class RequiredTestConfiguration
 {
     public function __construct(

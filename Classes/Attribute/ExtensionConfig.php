@@ -33,6 +33,6 @@ namespace mteu\TypedExtConf\Attribute;
 final readonly class ExtensionConfig
 {
     public function __construct(
-        public ?string $extensionKey = null,
+        public string $extensionKey,
     ) {}
 }

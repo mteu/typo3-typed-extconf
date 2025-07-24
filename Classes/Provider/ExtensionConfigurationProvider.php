@@ -41,5 +41,5 @@ interface ExtensionConfigurationProvider
      * @throws ConfigurationException
      * @throws SchemaValidationException
      */
-    public function get(string $configClass, ?string $extensionKey = null): object;
+    public function get(string $configClass): object;
 }
