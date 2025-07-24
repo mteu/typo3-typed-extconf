@@ -2,3 +2,4 @@
 /config
 /tailor-version-artefact
 /var
+.phpunit.result.cache
