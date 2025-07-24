@@ -47,7 +47,7 @@
 		"lint:composer": "@fix:composer --dry-run",
 		"lint:editorconfig": "ec",
 		"lint:php": "php-cs-fixer fix --config php-cs-fixer.php",
-		"lint:yaml": "find . -path './.build' -prune -o \\( -name '*.yaml' -o -name '*.yml' \\) -type f -print | xargs yaml-lint --format=github",
+		"lint:yaml": "find ./../.. \\( -path '*/.build/*' -o -path '*/vendor/*' \\) -prune -o \\( -name '*.yaml' -o -name '*.yml' \\) -type f -print | xargs yaml-lint --format=github",
 		"sca": [
 			"@sca:php",
 			"@sca:migrate"
