@@ -212,6 +212,11 @@ be possible.
 Special thanks to:
 - [CuyZ\Valinor](https://github.com/CuyZ/Valinor) for the powerful and flexible object mapping engine
 - [Romain Canon](https://github.com/romm) and the Valinor contributors for their excellent work
+- [Elias Häußler](https://github.com/eliashaeussler/) for his extensive help reviewing this extension and
+contributing substantial improvements. Be sure to check out his Composer
+packages — [`PHPUnit Attributes`](https://github.com/eliashaeussler/phpunit-attributes) and
+[`Version Bumper`](https://github.com/eliashaeussler/version-bumper) — both of which greatly simplify maintaining this
+project.
 
 ## 🤝 Contributing
 Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
