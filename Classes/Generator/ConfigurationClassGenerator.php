@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Generator;
 
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
 
@@ -43,14 +45,14 @@ final readonly class ConfigurationClassGenerator
         $file->setStrictTypes();
 
         $namespace = $file->addNamespace($this->generateNamespaceName($extensionKey));
-        $namespace->addUse('mteu\\TypedExtConf\\Attribute\\ExtConfProperty');
-        $namespace->addUse('mteu\\TypedExtConf\\Attribute\\ExtensionConfig');
+        $namespace->addUse(ExtConfProperty::class);
+        $namespace->addUse(ExtensionConfig::class);
 
         $class = $namespace->addClass($className);
         $class->setFinal(true);
         $class->setReadOnly(true);
         $class->setComment($this->generateClassDocumentation($className, $extensionKey));
-        $class->addAttribute('ExtensionConfig', ['extensionKey' => $extensionKey]);
+        $class->addAttribute(ExtensionConfig::class, ['extensionKey' => $extensionKey]);
 
         $constructor = $class->addMethod('__construct');
         $constructor->setPublic();
@@ -115,7 +117,7 @@ final readonly class ConfigurationClassGenerator
             $attributeArgs['required'] = true;
         }
 
-        $parameter->addAttribute('ExtConfProperty', $attributeArgs);
+        $parameter->addAttribute(ExtConfProperty::class, $attributeArgs);
     }
 
     private function formatDefaultValueForParameter(mixed $value, string $type): mixed
