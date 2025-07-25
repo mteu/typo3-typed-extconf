@@ -26,7 +26,7 @@ namespace mteu\TypedExtConf\Tests\Unit\DependencyInjection;
 use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
-use mteu\TypedExtConf\Tests\Unit\Fixture\SimpleTestConfiguration;
+use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\SimpleTestConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ChildDefinition;

@@ -21,27 +21,20 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
-use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * MultiNestedTestConfiguration.
- *
- * Test fixture for multiple nested configuration objects, similar to MonitoringConfiguration.
+ * ErrorTestConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[ExtensionConfig(extensionKey: 'multi_nested_ext')]
-final readonly class MultiNestedTestConfiguration
+#[ExtensionConfig(extensionKey: 'error_test')]
+final readonly class ErrorTestConfiguration
 {
     public function __construct(
-        public ApiConfiguration $apiConfiguration,
-        public SecurityConfiguration $securityConfiguration,
-        public NestedTestConfiguration $nestedTestConfiguration,
-        #[ExtConfProperty(path: 'api.endpoint')]
-        public string $endpoint = '',
+        public object $invalidType, // object type can't be mapped from primitive config values
     ) {}
 }

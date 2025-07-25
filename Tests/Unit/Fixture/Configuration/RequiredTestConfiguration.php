@@ -21,26 +21,26 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * ApiConfiguration.
- *
- * Test fixture for API configuration.
+ * RequiredTestConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
- */
-final readonly class ApiConfiguration
+ *
+ * @phpstan-ignore symplify.requireAttributeName
+ **/
+#[ExtensionConfig('test_ext')]
+final readonly class RequiredTestConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'api.url')]
-        public string $url = 'https://api.example.com',
-        #[ExtConfProperty(path: 'api.timeout')]
-        public int $timeout = 30,
-        #[ExtConfProperty(path: 'api.retries')]
-        public int $retries = 3,
+        #[ExtConfProperty(path: 'required.value', required: true)]
+        public string $requiredValue,
+        #[ExtConfProperty(path: 'optional.value')]
+        public string $optionalValue = 'optional',
     ) {}
 }

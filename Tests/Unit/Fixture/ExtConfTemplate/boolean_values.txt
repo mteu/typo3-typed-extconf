@@ -1,0 +1,8 @@
+# cat=basic; type=bool; label=True values
+true_val = 1
+
+# cat=basic; type=bool; label=Yes value
+yes_val = yes
+
+# cat=basic; type=bool; label=False values
+false_val = 0

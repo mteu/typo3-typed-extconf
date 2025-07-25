@@ -21,28 +21,26 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
-use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * SimpleTestConfiguration.
+ * ApiConfiguration.
+ *
+ * Test fixture for API configuration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[ExtensionConfig(extensionKey: 'test_ext')]
-final readonly class SimpleTestConfiguration
+final readonly class ApiConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'basic.string')]
-        public string $stringValue = 'default',
-        #[ExtConfProperty(path: 'basic.integer')]
-        public int $intValue = 42,
-        #[ExtConfProperty(path: 'basic.boolean')]
-        public bool $boolValue = false,
-        #[ExtConfProperty(path: 'basic.float')]
-        public float $floatValue = 3.14,
+        #[ExtConfProperty(path: 'api.url')]
+        public string $url = 'https://api.example.com',
+        #[ExtConfProperty(path: 'api.timeout')]
+        public int $timeout = 30,
+        #[ExtConfProperty(path: 'api.retries')]
+        public int $retries = 3,
     ) {}
 }

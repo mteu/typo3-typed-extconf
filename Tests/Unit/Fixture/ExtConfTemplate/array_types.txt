@@ -1,0 +1,5 @@
+# cat=basic; type=array; label=Array field
+array_field = item1,item2,item3
+
+# cat=basic; type=string; label=String field
+string_field = single_value
