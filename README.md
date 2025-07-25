@@ -5,6 +5,8 @@
 [![Coverage](https://coveralls.io/repos/github/mteu/typo3-typed-extconf/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-typed-extconf?branch=main)
 [![Maintainability](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf/maintainability.svg)](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf)
 
+<img src="Resources/Public/Icons/Extension.svg" width="128" height="128" alt="Extension Icon">
+
 # TYPO3 Typed Extension Configuration
 
 ![TYPO3 versions](https://typo3-badges.dev/badge/typed_extconf/typo3/shields.svg)
@@ -28,8 +30,7 @@ backend configuration or mixed types from `config/system/settings.php|additional
 - **Type Safety**: Automatic conversion from TYPO3's string configuration to proper PHP types
 - **Schema Definition**: Define configuration using PHP attributes and constructor parameters
 - **Path Mapping**: Support for nested configuration with dot notation (`api.endpoint`)
-- **Configuration Generation**: Generate classes from `ext_conf_template.txt` or interactively using the built-in
-[`Command`.](Documentation/command-guide.md)
+- **Configuration Generation**: Generate classes from `ext_conf_template.txt` or interactively
 - **Dependency Injection**: Configuration classes auto-registered as services
 
 ## ⚡️ Installation
@@ -158,11 +159,14 @@ Property/parameter-level attribute for configuration value mapping.
 - `path` (string, optional): Custom configuration path using dot notation (e.g., 'api.endpoint')
 - `required` (bool, optional): Whether the configuration value is required (default: false)
 
-**Note**: Default values are defined as PHP constructor parameter defaults, not in the attribute.
+> [!NOTE]
+> Default values are defined as PHP constructor parameter defaults, not in the attribute.
 
 ## How It Works
 
-TYPO3 stores extension configuration in `$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` as strings. This extension automatically converts those strings to proper PHP types using your configuration class schema.
+TYPO3 stores extension configuration in `$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` as an associative array with
+string values. Those strings could be manually altered by the developers to other types.
+This extension automatically converts those types to proper PHP types using your configuration class schema.
 
 
 ## 🧑‍💻 Real-world example with nested configuration
@@ -206,8 +210,8 @@ Without Valinor's robust object mapping capabilities, this extension would not
 be possible.
 
 Special thanks to:
-- **[CuyZ\Valinor](https://github.com/CuyZ/Valinor)** for the powerful and flexible object mapping engine
-- **[Romain Canon](https://github.com/romm)** and the Valinor contributors for their excellent work
+- [CuyZ\Valinor](https://github.com/CuyZ/Valinor) for the powerful and flexible object mapping engine
+- [Romain Canon](https://github.com/romm) and the Valinor contributors for their excellent work
 
 ## 🤝 Contributing
 Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
