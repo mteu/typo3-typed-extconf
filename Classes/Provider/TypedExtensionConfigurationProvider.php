@@ -67,10 +67,18 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
         try {
             return $this->mapper->map($configClass, $configData);
         } catch (MappingError $error) {
+            $messageParts = [
+                sprintf('Failed to map configuration for extension "%s":', $extensionKey),
+            ];
+
+            foreach ($error->messages() as $message) {
+                $messageParts[] = sprintf(' - %s: %s', $message->path(), $message->toString());
+            }
+
             throw new SchemaValidationException(
-                sprintf('Failed to map configuration for extension "%s": %s', $extensionKey, $error->getMessage()),
-                0,
-                $error
+                implode(PHP_EOL, $messageParts),
+                1753453309,
+                $error,
             );
         }
     }
