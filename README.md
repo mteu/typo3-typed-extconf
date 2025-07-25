@@ -5,6 +5,8 @@
 [![Coverage](https://coveralls.io/repos/github/mteu/typo3-typed-extconf/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-typed-extconf?branch=main)
 [![Maintainability](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf/maintainability.svg)](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf)
 
+<img src="Resources/Public/Icons/Extension.svg" width="128" height="128" alt="Extension Icon">
+
 # TYPO3 Typed Extension Configuration
 
 ![TYPO3 versions](https://typo3-badges.dev/badge/typed_extconf/typo3/shields.svg)
@@ -25,16 +27,11 @@ backend configuration or mixed types from `config/system/settings.php|additional
 
 ## 🚀 Features
 
-- **Type Safety**: Automatic conversion of string values from backend
-configuration to proper PHP types (int, bool, array, etc.)
-- **Schema Definition**: Define configuration schemas using PHP attributes with
-expected types and default values
-- **Automatic Validation**: Built-in validation using the Valinor library for
-type mapping and validation
-- **Default Handling**: Provide sensible defaults for missing configuration keys
-- **Path Mapping**: Support for nested configuration paths with dot notation
-- **Dependency Injection**: Configuration classes are automatically registered as DI services
-- **Developer Experience**: Simple API for accessing typed configuration values
+- **Type Safety**: Automatic conversion from TYPO3's string configuration to proper PHP types
+- **Schema Definition**: Define configuration using PHP attributes and constructor parameters
+- **Path Mapping**: Support for nested configuration with dot notation (`api.endpoint`)
+- **Configuration Generation**: Generate classes from `ext_conf_template.txt` or interactively
+- **Dependency Injection**: Configuration classes auto-registered as services
 
 ## ⚡️ Installation
 
@@ -43,6 +40,11 @@ Add this package to your TYPO3 Extension:
 ```bash
 composer require mteu/typo3-typed-extconf
 ```
+
+This extension relies heavily on these key dependencies:
+- [`cuyz/valinor`](https://github.com/CuyZ/Valinor) for type-safe object mapping and validation
+- [`nette/phpgenerator`](https://github.com/nette/php-generator) for PHP code generation for configuration classes
+- [`symfony/console`](https://github.com/symfony/console) for the automated (or interactive) code generation
 
 ## 💡 Usage
 
@@ -154,23 +156,17 @@ to.
 Property/parameter-level attribute for configuration value mapping.
 
 **Parameters:**
-- `path` (string, optional): Custom configuration path using dot notation
-(e.g., 'api.endpoint')
-- `required` (bool, optional): Whether the configuration value is required
-(default: false)
+- `path` (string, optional): Custom configuration path using dot notation (e.g., 'api.endpoint')
+- `required` (bool, optional): Whether the configuration value is required (default: false)
 
-## Configuration Structure
+> [!NOTE]
+> Default values are defined as PHP constructor parameter defaults, not in the attribute.
 
-Extension configuration in TYPO3 is typically stored in
-`config/system/settings.php` under the
-`$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` array, or in
-`config/system/additional.php`, or custom configurations.
+## How It Works
 
-TYPO3's backend configuration interface allows administrators to modify these values, but all
-values set through the backend module will be stored as strings regardless of their intended type.
-
-This package retrieves the configuration with `TYPO3\CMS\Core\Configuration\ExtensionConfiguration`
-regardless on how it got there.
+TYPO3 stores extension configuration in `$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` as an associative array with
+string values. Those strings could be manually altered by the developers to other types.
+This extension automatically converts those types to proper PHP types using your configuration class schema.
 
 
 ## 🧑‍💻 Real-world example with nested configuration
@@ -214,8 +210,8 @@ Without Valinor's robust object mapping capabilities, this extension would not
 be possible.
 
 Special thanks to:
-- **[CuyZ\Valinor](https://github.com/CuyZ/Valinor)** for the powerful and flexible object mapping engine
-- **[Romain Canon](https://github.com/romm)** and the Valinor contributors for their excellent work
+- [CuyZ\Valinor](https://github.com/CuyZ/Valinor) for the powerful and flexible object mapping engine
+- [Romain Canon](https://github.com/romm) and the Valinor contributors for their excellent work
 
 ## 🤝 Contributing
 Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the

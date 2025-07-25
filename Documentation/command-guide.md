@@ -118,27 +118,31 @@ The command generates:
 
 declare(strict_types=1);
 
+namespace MyExtension\Configuration;
+
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
+ * MyExtensionConfiguration.
+ *
  * Typed configuration class for extension 'my_extension'.
  *
- * This class provides type-safe access to extension configuration values.
+ * This class provides type-safe access to extension configuration properties.
  * Generated using mteu/typo3-typed-extconf.
  */
 #[ExtensionConfig(extensionKey: 'my_extension')]
 final readonly class MyExtensionConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(default: 10)]
-        public int $maxItems,
-        #[ExtConfProperty(default: true)]
-        public bool $enableFeature,
-        #[ExtConfProperty(path: 'api.endpoint', default: '/api/v1')]
-        public string $apiEndpoint,
-        #[ExtConfProperty(path: 'cache.ttl', default: 3600)]
-        public int $cacheTtl,
+        #[ExtConfProperty()]
+        public int $maxItems = 10,
+        #[ExtConfProperty()]
+        public bool $enableFeature = true,
+        #[ExtConfProperty(path: 'api.endpoint')]
+        public string $apiEndpoint = '/api/v1',
+        #[ExtConfProperty(path: 'cache.ttl')]
+        public int $cacheTtl = 3600,
     ) {}
 }
 ```
@@ -208,9 +212,10 @@ Generated classes use the following attributes:
 - `#[ExtensionConfig(extensionKey: 'extension_key')]`: Class-level extension
   identification
 - `#[ExtConfProperty(...)]`: Property-level configuration mapping with:
-  - `path`: Configuration path (dot notation for nested keys)
-  - `default`: Default value if configuration is missing
+  - `path`: Configuration path (dot notation for nested keys)  
   - `required`: Whether the configuration value is mandatory
+
+**Note**: Default values are PHP constructor parameter defaults, not attribute parameters.
 
 ### Type Conversion
 
@@ -363,19 +368,11 @@ namespace Vendor\MyCustomExtension\Domain\Model\Configuration;
 
 ### Complex Default Values
 
-For complex default values, consider using factory methods:
+For complex default values, use PHP array defaults:
 
 ```php
-#[ExtConfProperty(default: [])]
-public array $advancedSettings,
-
-public function getAdvancedSettingsWithDefaults(): array
-{
-    return array_merge([
-        'timeout' => 30,
-        'retries' => 3,
-    ], $this->advancedSettings);
-}
+#[ExtConfProperty()]
+public array $advancedSettings = ['timeout' => 30, 'retries' => 3],
 ```
 
 ### Validation
