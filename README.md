@@ -20,7 +20,7 @@ backend configuration or mixed types from `config/system/settings.php|additional
 (or custom solutions around those).
 
 > [!WARNING]
-> This extension is still in early development and hence marked `alpha`. Be
+> This extension is in a testing and review phase and hence marked `beta`. Be
 > cautious when using this in production environments.
 
 ## 🚀 Features
