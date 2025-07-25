@@ -1,0 +1,10 @@
+# cat=basic; type=string; label=Valid field
+valid_field = value
+
+# Invalid comment format
+invalid_line_without_equals
+
+# cat=basic; type=int; label=Another valid
+another_field = 123
+
+=empty_key
