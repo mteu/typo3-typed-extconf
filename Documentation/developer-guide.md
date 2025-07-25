@@ -366,26 +366,23 @@ final readonly class CustomMapperFactory implements MapperFactory
 
 ## Advanced Features
 
-### Default Value Strategies
+### Default Values
 
-Handle missing configuration gracefully with PHP parameter defaults:
+Default values are defined as PHP constructor parameter defaults:
 
 ```php
 #[ExtensionConfig(extensionKey: 'my_extension')]
 final readonly class DefaultsConfiguration
 {
     public function __construct(
-        // PHP parameter default
         #[ExtConfProperty()]
-        public string $environment = 'production',
+        public string $environment = 'production', // PHP default
 
-        // PHP parameter default
         #[ExtConfProperty()]
-        public int $maxMemoryMb = 100,
+        public int $maxMemoryMb = 100, // PHP default
 
-        // Required field without PHP default
         #[ExtConfProperty(required: true)]
-        public string $licenseKey,
+        public string $licenseKey, // Required, no default
     ) {}
 }
 ```
@@ -578,8 +575,8 @@ public function __construct(
     #[ExtConfProperty()] // Avoid: no PHP default, might cause issues
     public int $timeout,
 
-    #[ExtConfProperty(required: true)] // Note: Requiring without default value will throw an Exception
-    public bool $requiredButNotSet,
+    #[ExtConfProperty(required: true)] // Required fields can have defaults or not
+    public string $requiredKey,
 ) {}
 ```
 
