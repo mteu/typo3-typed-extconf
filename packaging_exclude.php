@@ -17,13 +17,15 @@ declare(strict_types=1);
 
 return [
     'directories' => [
-        '.idea',
         '.build',
         '.ddev',
         '.git',
         '.github',
-        'tailor-version-artefact',
+        '.idea',
         'Tests',
+        'config',
+        'tailor-version-artefact',
+        'var',
     ],
     'files' => [
         '.editorconfig',
