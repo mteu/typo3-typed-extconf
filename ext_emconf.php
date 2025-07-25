@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the TYPO3 CMS extension "typed_extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
  * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
  *

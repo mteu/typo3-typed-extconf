@@ -28,8 +28,7 @@ backend configuration or mixed types from `config/system/settings.php|additional
 - **Type Safety**: Automatic conversion from TYPO3's string configuration to proper PHP types
 - **Schema Definition**: Define configuration using PHP attributes and constructor parameters
 - **Path Mapping**: Support for nested configuration with dot notation (`api.endpoint`)
-- **Configuration Generation**: Generate classes from `ext_conf_template.txt` or interactively using the built-in
-[`Command`.](Documentation/command-guide.md)
+- **Configuration Generation**: Generate classes from `ext_conf_template.txt` or interactively
 - **Dependency Injection**: Configuration classes auto-registered as services
 
 ## ⚡️ Installation
@@ -206,8 +205,8 @@ Without Valinor's robust object mapping capabilities, this extension would not
 be possible.
 
 Special thanks to:
-- **[CuyZ\Valinor](https://github.com/CuyZ/Valinor)** for the powerful and flexible object mapping engine
-- **[Romain Canon](https://github.com/romm)** and the Valinor contributors for their excellent work
+- [CuyZ\Valinor](https://github.com/CuyZ/Valinor) for the powerful and flexible object mapping engine
+- [Romain Canon](https://github.com/romm) and the Valinor contributors for their excellent work
 
 ## 🤝 Contributing
 Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
