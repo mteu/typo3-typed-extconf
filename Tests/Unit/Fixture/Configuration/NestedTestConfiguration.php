@@ -21,20 +21,24 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
-use mteu\TypedExtConf\Attribute\ExtensionConfig;
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
 
 /**
- * InvalidExtensionConfigTestConfiguration.
+ * NestedTestConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-// This class intentionally has no ExtensionConfig attribute to test error handling
-final readonly class InvalidExtensionConfigTestConfiguration
+final readonly class NestedTestConfiguration
 {
     public function __construct(
-        public string $value = 'test',
+        #[ExtConfProperty(path: 'nested.enabled')]
+        public bool $enabled = false,
+        #[ExtConfProperty(path: 'nested.priority')]
+        public int $priority = 10,
+        #[ExtConfProperty(path: 'nested.name')]
+        public string $name = '',
     ) {}
 }

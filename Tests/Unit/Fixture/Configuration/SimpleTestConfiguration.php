@@ -21,25 +21,28 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * ComplexTestConfiguration.
+ * SimpleTestConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[ExtensionConfig(extensionKey: 'complex_ext')]
-final readonly class ComplexTestConfiguration
+#[ExtensionConfig(extensionKey: 'test_ext')]
+final readonly class SimpleTestConfiguration
 {
     public function __construct(
-        public NestedTestConfiguration $nestedConfig,
-        #[ExtConfProperty(path: 'main.endpoint')]
-        public string $endpoint = '/api',
-        #[ExtConfProperty()]
-        public string $simpleValue = 'fallback',
+        #[ExtConfProperty(path: 'basic.string')]
+        public string $stringValue = 'default',
+        #[ExtConfProperty(path: 'basic.integer')]
+        public int $intValue = 42,
+        #[ExtConfProperty(path: 'basic.boolean')]
+        public bool $boolValue = false,
+        #[ExtConfProperty(path: 'basic.float')]
+        public float $floatValue = 3.14,
     ) {}
 }

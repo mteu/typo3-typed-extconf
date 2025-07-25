@@ -21,26 +21,25 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * RequiredTestConfiguration.
+ * ComplexTestConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
- *
- * @phpstan-ignore symplify.requireAttributeName
- **/
-#[ExtensionConfig('test_ext')]
-final readonly class RequiredTestConfiguration
+ */
+#[ExtensionConfig(extensionKey: 'complex_ext')]
+final readonly class ComplexTestConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'required.value', required: true)]
-        public string $requiredValue,
-        #[ExtConfProperty(path: 'optional.value')]
-        public string $optionalValue = 'optional',
+        public NestedTestConfiguration $nestedConfig,
+        #[ExtConfProperty(path: 'main.endpoint')]
+        public string $endpoint = '/api',
+        #[ExtConfProperty()]
+        public string $simpleValue = 'fallback',
     ) {}
 }

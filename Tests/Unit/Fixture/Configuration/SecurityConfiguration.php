@@ -21,24 +21,24 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 
 /**
- * NestedTestConfiguration.
+ * SecurityConfiguration.
+ *
+ * Test fixture for security configuration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class NestedTestConfiguration
+final readonly class SecurityConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'nested.enabled')]
-        public bool $enabled = false,
-        #[ExtConfProperty(path: 'nested.priority')]
-        public int $priority = 10,
-        #[ExtConfProperty(path: 'nested.name')]
-        public string $name = '',
+        #[ExtConfProperty(path: 'security.token')]
+        public string $token = '',
+        #[ExtConfProperty(path: 'security.enabled')]
+        public bool $enabled = true,
     ) {}
 }

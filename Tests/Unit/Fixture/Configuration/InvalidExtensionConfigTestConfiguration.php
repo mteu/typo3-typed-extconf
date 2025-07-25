@@ -21,24 +21,20 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\TypedExtConf\Tests\Unit\Fixture;
+namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
-use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * SecurityConfiguration.
- *
- * Test fixture for security configuration.
+ * InvalidExtensionConfigTestConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class SecurityConfiguration
+// This class intentionally has no ExtensionConfig attribute to test error handling
+final readonly class InvalidExtensionConfigTestConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'security.token')]
-        public string $token = '',
-        #[ExtConfProperty(path: 'security.enabled')]
-        public bool $enabled = true,
+        public string $value = 'test',
     ) {}
 }
