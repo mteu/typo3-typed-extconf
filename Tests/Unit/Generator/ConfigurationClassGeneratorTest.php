@@ -76,12 +76,12 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
 
         // Test class structure
         self::assertStringContainsString('final readonly class TestConfiguration', $result);
-        self::assertStringContainsString('#[\\ExtensionConfig(extensionKey: \'test_extension\')]', $result);
+        self::assertStringContainsString('#[ExtensionConfig(extensionKey: \'test_extension\')]', $result);
 
         // Test properties with PHP defaults (not in attributes)
-        self::assertStringContainsString('#[\\ExtConfProperty(path: \'api.key\', required: true)]', $result);
+        self::assertStringContainsString('#[ExtConfProperty(path: \'api.key\', required: true)]', $result);
         self::assertStringContainsString('public string $apiKey = \'default-key\',', $result);
-        self::assertStringContainsString('#[\\ExtConfProperty]', $result);
+        self::assertStringContainsString('#[ExtConfProperty]', $result);
         self::assertStringContainsString('public int $timeout = 30,', $result);
     }
 
