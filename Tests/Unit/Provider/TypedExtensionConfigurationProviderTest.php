@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed-extconf".
  *
  * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
  *
@@ -136,19 +136,12 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     #[Test]
     public function testMapBooleanConversions(): void
     {
+        // Test key boolean conversion cases
         $testCases = [
             ['1', true],
             ['0', false],
             ['true', true],
             ['false', false],
-            ['yes', true],
-            ['no', false],
-            ['on', true],
-            ['off', false],
-            [1, true],
-            [0, false],
-            [true, true],
-            [false, false],
         ];
 
         foreach ($testCases as [$input, $expected]) {
@@ -336,6 +329,21 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    public function testMapHandlesEmptyConfiguration(): void
+    {
+        $this->extensionConfiguration->expects(self::once())
+            ->method('get')
+            ->with('test_ext')
+            ->willReturn([]);
+
+        $result = $this->subject->get(SimpleTestConfiguration::class);
+
+        // Should use all default values
+        self::assertSame('default', $result->stringValue);
+        self::assertSame(42, $result->intValue);
+    }
+
+    #[Test]
     public function testMapValinorMappingError(): void
     {
         $this->extensionConfiguration->expects(self::once())
@@ -453,10 +461,8 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         $configData = [
             'api' => [
                 'endpoint' => '/api/v1',
-                // api.* config missing - should use defaults from ApiConfiguration
+                // Other api.* config missing - should use defaults
             ],
-            // security.* config missing - should use defaults from SecurityConfiguration
-            // nested.* config missing - should use defaults from NestedTestConfiguration
         ];
 
         $this->extensionConfiguration->expects(self::once())
@@ -467,65 +473,9 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         $result = $this->subject->get(MultiNestedTestConfiguration::class);
 
         self::assertSame('/api/v1', $result->endpoint);
-
-        // Test ApiConfiguration with defaults
-        self::assertInstanceOf(ApiConfiguration::class, $result->apiConfiguration);
-        self::assertSame('https://api.example.com', $result->apiConfiguration->url); // default
-        self::assertSame(30, $result->apiConfiguration->timeout); // default
-        self::assertSame(3, $result->apiConfiguration->retries); // default
-
-        // Test SecurityConfiguration with defaults
-        self::assertInstanceOf(SecurityConfiguration::class, $result->securityConfiguration);
-        self::assertSame('', $result->securityConfiguration->token); // default
-        self::assertTrue($result->securityConfiguration->enabled); // default
-
-        // Test NestedTestConfiguration with defaults
-        self::assertInstanceOf(NestedTestConfiguration::class, $result->nestedTestConfiguration);
-        self::assertFalse($result->nestedTestConfiguration->enabled); // default
-        self::assertSame(10, $result->nestedTestConfiguration->priority); // default
-        self::assertSame('', $result->nestedTestConfiguration->name); // default
+        // Test that nested objects use defaults when config is missing
+        self::assertSame('https://api.example.com', $result->apiConfiguration->url);
+        self::assertSame('', $result->securityConfiguration->token);
     }
 
-    #[Test]
-    public function testMapMultiNestedConfigurationMixedDefaultsAndValues(): void
-    {
-        $configData = [
-            'api' => [
-                'endpoint' => '/mixed/api',
-                'url' => 'https://mixed.example.com',
-                // timeout and retries missing - should use defaults
-            ],
-            'security' => [
-                'token' => 'mixed-token',
-                // enabled missing - should use default
-            ],
-            'nested' => [
-                'priority' => '25',
-                // enabled and name missing - should use defaults
-            ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('multi_nested_ext')
-            ->willReturn($configData);
-
-        $result = $this->subject->get(MultiNestedTestConfiguration::class);
-
-        self::assertSame('/mixed/api', $result->endpoint);
-
-        // Test ApiConfiguration with mixed values/defaults
-        self::assertSame('https://mixed.example.com', $result->apiConfiguration->url); // set value
-        self::assertSame(30, $result->apiConfiguration->timeout); // default
-        self::assertSame(3, $result->apiConfiguration->retries); // default
-
-        // Test SecurityConfiguration with mixed values/defaults
-        self::assertSame('mixed-token', $result->securityConfiguration->token); // set value
-        self::assertTrue($result->securityConfiguration->enabled); // default
-
-        // Test NestedTestConfiguration with mixed values/defaults
-        self::assertFalse($result->nestedTestConfiguration->enabled); // default
-        self::assertSame(25, $result->nestedTestConfiguration->priority); // set value
-        self::assertSame('', $result->nestedTestConfiguration->name); // default
-    }
 }

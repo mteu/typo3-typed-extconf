@@ -18,6 +18,7 @@
 		"php": "~8.2.0 || ~8.3.0 || ~8.4.0",
 		"ext-filter": "*",
 		"cuyz/valinor": "^2.0",
+		"nette/php-generator": "^4.1.6",
 		"symfony/console": "^7.3",
 		"typo3/cms-core": "~12.4.31 || ~13.4.12"
 	},
