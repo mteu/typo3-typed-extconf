@@ -5,6 +5,8 @@
 [![Coverage](https://coveralls.io/repos/github/mteu/typo3-typed-extconf/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-typed-extconf?branch=main)
 [![Maintainability](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf/maintainability.svg)](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf)
 
+<img src="Resources/Public/Icons/Extension.svg" width="128" height="128" alt="Extension Icon">
+
 # TYPO3 Typed Extension Configuration
 
 ![TYPO3 versions](https://typo3-badges.dev/badge/typed_extconf/typo3/shields.svg)
