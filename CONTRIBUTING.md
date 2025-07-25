@@ -81,8 +81,8 @@ Wrap at 72 characters per line.
 - `[TASK]` - Maintenance, refactoring, code cleanup
 - `[DOCS]` - Documentation changes
 - `[SECURITY]` - Security fixes (Approach the maintainers before committing
-security related patches, please. Consult our [Security Guide](SECURITY.md) first!)
-- `[BREAKING]` - Breaking changes (always include this when changing public API)
+  security related patches, please. Consult our [Security Guide](SECURITY.md) first!)
+- `[!!!]` - Breaking changes (always include this when changing public API)
 
 **Examples:**
 ```
@@ -90,6 +90,7 @@ security related patches, please. Consult our [Security Guide](SECURITY.md) firs
 [BUGFIX] Fix parameter ordering in autoconfiguration callback
 [TASK] Remove redundant attribute default parameter
 [DOCS] Update developer guide with new DI examples
+[!!!][FEATURE] Rewrite configuration class generator from scratch
 ```
 
 ## 🛠️ Development Commands Reference
