@@ -3,21 +3,16 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "typed-extconf".
+ * This file is part of the TYPO3 CMS extension "typed_extconf".
  *
- * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * The TYPO3 project - inspiring people to share!
  */
 
 namespace mteu\TypedExtConf\Tests\Unit\Mapper;
