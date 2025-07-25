@@ -53,21 +53,25 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         $result = $this->parser->parse($templateFile);
 
         self::assertCount(3, $result);
-        
+
         // Check API key field
         self::assertSame('apiKey', $result[0]['name']);
+        self::assertArrayHasKey('path', $result[0]);
         self::assertSame('api.key', $result[0]['path']);
         self::assertSame('string', $result[0]['type']);
+        self::assertArrayHasKey('default', $result[0]);
         self::assertSame('default-key', $result[0]['default']);
-        
+
         // Check timeout field
         self::assertSame('timeout', $result[1]['name']);
         self::assertSame('int', $result[1]['type']);
+        self::assertArrayHasKey('default', $result[1]);
         self::assertSame(30, $result[1]['default']);
-        
+
         // Check boolean field
         self::assertSame('enabled', $result[2]['name']);
         self::assertSame('bool', $result[2]['type']);
+        self::assertArrayHasKey('default', $result[2]);
         self::assertTrue($result[2]['default']);
     }
 
@@ -80,10 +84,12 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         self::assertCount(2, $result);
         self::assertSame('simpleField', $result[0]['name']);
         self::assertSame('string', $result[0]['type']);
+        self::assertArrayHasKey('default', $result[0]);
         self::assertSame('test_value', $result[0]['default']);
-        
+
         self::assertSame('numericField', $result[1]['name']);
         self::assertSame('string', $result[1]['type']); // Without type comment, defaults to string
+        self::assertArrayHasKey('default', $result[1]);
         self::assertSame('42', $result[1]['default']);
     }
 
@@ -107,10 +113,13 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
 
         // TYPO3 array type maps to PHP string (not actual array conversion)
         self::assertSame('string', $result[0]['type']);
+        self::assertArrayHasKey('default', $result[0]);
         self::assertSame('item1,item2,item3', $result[0]['default']);
+        self::assertArrayHasKey('typo3_type', $result[0]);
         self::assertSame('array', $result[0]['typo3_type']);
-        
+
         self::assertSame('string', $result[1]['type']);
+        self::assertArrayHasKey('default', $result[1]);
         self::assertSame('single_value', $result[1]['default']);
     }
 
@@ -128,10 +137,10 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_unreadable_test');
         file_put_contents($tempFile, 'content');
-        
+
         // Make file unreadable by changing permissions
         chmod($tempFile, 0000);
-        
+
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Failed to read template file:');
 
@@ -151,12 +160,15 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         $result = $this->parser->parse($templateFile);
 
         self::assertSame('bool', $result[0]['type']);
+        self::assertArrayHasKey('default', $result[0]);
         self::assertTrue($result[0]['default']);
-        
+
         self::assertSame('bool', $result[1]['type']);
+        self::assertArrayHasKey('default', $result[1]);
         self::assertTrue($result[1]['default']);
-        
+
         self::assertSame('bool', $result[2]['type']);
+        self::assertArrayHasKey('default', $result[2]);
         self::assertFalse($result[2]['default']);
     }
 
