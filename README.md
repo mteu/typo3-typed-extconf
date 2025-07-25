@@ -157,11 +157,14 @@ Property/parameter-level attribute for configuration value mapping.
 - `path` (string, optional): Custom configuration path using dot notation (e.g., 'api.endpoint')
 - `required` (bool, optional): Whether the configuration value is required (default: false)
 
-**Note**: Default values are defined as PHP constructor parameter defaults, not in the attribute.
+> [!NOTE]
+> Default values are defined as PHP constructor parameter defaults, not in the attribute.
 
 ## How It Works
 
-TYPO3 stores extension configuration in `$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` as strings. This extension automatically converts those strings to proper PHP types using your configuration class schema.
+TYPO3 stores extension configuration in `$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']` as an associative array with
+string values. Those strings could be manually altered by the developers to other types.
+This extension automatically converts those types to proper PHP types using your configuration class schema.
 
 
 ## 🧑‍💻 Real-world example with nested configuration
