@@ -40,6 +40,11 @@ Add this package to your TYPO3 Extension:
 composer require mteu/typo3-typed-extconf
 ```
 
+This extension relies heavily on these key dependencies:
+- [`cuyz/valinor`](https://github.com/CuyZ/Valinor) for type-safe object mapping and validation
+- [`nette/phpgenerator`](https://github.com/nette/php-generator) for PHP code generation for configuration classes
+- [`symfony/console`](https://github.com/symfony/console) for the automated (or interactive) code generation
+
 ## 💡 Usage
 
 > [!TIP]
