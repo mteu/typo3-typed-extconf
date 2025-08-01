@@ -1,17 +1,17 @@
 {
 	"require-dev": {
-		"armin/editorconfig-cli": "^2.1",
-		"ergebnis/composer-normalize": "^2.28",
-		"friendsofphp/php-cs-fixer": "^3.8",
-		"mteu/zealous-stan": "^0.6.3",
+		"armin/editorconfig-cli": "2.1.1",
+		"ergebnis/composer-normalize": "2.47.0",
+		"friendsofphp/php-cs-fixer": "3.85.1",
+		"mteu/zealous-stan": "0.6.3",
 		"phpstan/extension-installer": "*",
 		"phpstan/phpstan": "^2.1",
 		"phpstan/phpstan-phpunit": "^2.0",
 		"saschaegerer/phpstan-typo3": "^2.1",
-		"shipmonk/composer-dependency-analyser": "*",
-		"ssch/typo3-rector": "^3.6",
+		"shipmonk/composer-dependency-analyser": "1.8.3",
+		"ssch/typo3-rector": "3.6.0",
 		"symfony/dependency-injection": "^7.3",
-		"typo3/coding-standards": "^0.8.0"
+		"typo3/coding-standards": "0.8.0"
 	},
 	"config": {
 		"allow-plugins": {
