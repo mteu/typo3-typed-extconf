@@ -31,5 +31,6 @@ parameters:
 		- identifier: ergebnis.noParameterWithNullableTypeDeclaration
 		- message: '#Interface must be located in "Contract" or "Contracts" namespace#'
 		# Ignore fixture extension files (standard TYPO3 ext_emconf.php format)
-		- message: '#.*#'
+		-
+			message: '#.*#'
 			path: ../../Tests/Functional/Fixtures/Extensions/*/ext_emconf.php

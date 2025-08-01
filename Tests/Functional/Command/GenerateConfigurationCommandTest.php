@@ -108,11 +108,8 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
         self::assertIsString($generatedContent);
         self::assertStringStartsWith('<?php', $generatedContent);
 
-        // Verify class structure without environment-specific paths
         self::assertMatchesRegularExpression('/final readonly class TestExtensionConfiguration/', $generatedContent);
         self::assertMatchesRegularExpression('/namespace [A-Za-z\\\\]+;/', $generatedContent);
-
-        // Verify the properties from the template
         self::assertStringContainsString('$apiKey', $generatedContent);
         self::assertStringContainsString('$timeout', $generatedContent);
         self::assertStringContainsString('$enabled', $generatedContent);
@@ -201,7 +198,6 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
         $commandTester = new CommandTester($command);
         $outputFile = $this->tempOutputDir . '/ManualConfiguration.php';
 
-        // Simulate manual property input
         $commandTester->setInputs([
             'apiUrl',      // property name
             'string',      // type
@@ -252,7 +248,6 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
         self::assertFileExists($outputFile);
         self::assertDirectoryExists(dirname($outputFile));
 
-        // Verify the file contains expected content
         $generatedContent = file_get_contents($outputFile);
         self::assertIsString($generatedContent);
         self::assertStringContainsString('final readonly class DeepConfiguration', $generatedContent);
