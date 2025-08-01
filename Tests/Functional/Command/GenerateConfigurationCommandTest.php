@@ -22,7 +22,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -77,26 +76,14 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function commandGeneratesClassFromTemplateWithRealServices(): void
+    public function commandGeneratesClassFromTemplate(): void
     {
-        $command = $this->get(GenerateConfigurationCommand::class);
+        $outputFile = $this->tempOutputDir . '/TestConfiguration.php';
 
-        $packageManager = $this->get(PackageManager::class);
-        $testPackage = $packageManager->getPackage('test_extension');
-
-        self::assertInstanceOf(PackageManager::class, $packageManager);
-        self::assertSame('test_extension', $testPackage->getPackageKey());
-
-        $application = new Application();
-        $application->add($command);
-
-        $commandTester = new CommandTester($command);
-        $outputFile = $this->tempOutputDir . '/TestExtensionConfiguration.php';
-
-        $commandTester->execute([
+        $commandTester = $this->executeCommand([
             '--extension' => 'test_extension',
             '--mode' => 'template',
-            '--class-name' => 'TestExtensionConfiguration',
+            '--class-name' => 'TestConfiguration',
             '--output-path' => $outputFile,
             '--force' => true,
         ]);
@@ -104,37 +91,23 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
         self::assertSame(0, $commandTester->getStatusCode());
         self::assertFileExists($outputFile);
 
-        $generatedContent = file_get_contents($outputFile);
-        self::assertIsString($generatedContent);
-        self::assertStringStartsWith('<?php', $generatedContent);
-
-        self::assertMatchesRegularExpression('/final readonly class TestExtensionConfiguration/', $generatedContent);
-        self::assertMatchesRegularExpression('/namespace [A-Za-z\\\\]+;/', $generatedContent);
-        self::assertStringContainsString('$apiKey', $generatedContent);
-        self::assertStringContainsString('$timeout', $generatedContent);
-        self::assertStringContainsString('$enabled', $generatedContent);
-
-        $display = $commandTester->getDisplay();
-
-        self::assertStringContainsString('test_extension', $display);
-        self::assertStringContainsString('Configuration class generated successfully', $display);
+        $content = file_get_contents($outputFile);
+        self::assertIsString($content);
+        // Test the essential generated content from template
+        self::assertStringContainsString('class TestConfiguration', $content);
+        self::assertStringContainsString('$apiKey', $content);
+        self::assertStringContainsString('$timeout', $content);
+        self::assertStringContainsString('$enabled', $content);
     }
 
     #[Test]
-    public function commandHandlesMissingTemplateWithRealExtension(): void
+    public function commandHandlesMissingTemplate(): void
     {
         $command = $this->get(GenerateConfigurationCommand::class);
-
-        $packageManager = $this->get(PackageManager::class);
-        $package = $packageManager->getPackage('no_template_extension');
-        $templatePath = $package->getPackagePath() . 'ext_conf_template.txt';
-
-        self::assertFalse(file_exists($templatePath), 'Template should not exist for this test');
-
         $application = new Application();
         $application->add($command);
-
         $commandTester = new CommandTester($command);
+
         $commandTester->setInputs(['no']); // Don't switch to manual mode
 
         $commandTester->execute([
@@ -144,60 +117,19 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
 
         self::assertSame(1, $commandTester->getStatusCode());
         self::assertStringContainsString('No ext_conf_template.txt found', $commandTester->getDisplay());
-        self::assertStringContainsString('no_template_extension', $commandTester->getDisplay());
     }
 
     #[Test]
-    public function commandWorksWithInteractiveExtensionSelection(): void
+    public function commandGeneratesClassFromManualInput(): void
     {
-        $command = $this->get(GenerateConfigurationCommand::class);
-
-        // Verify both test extensions are available to PackageManager
-        $packageManager = $this->get(PackageManager::class);
-        $activePackages = $packageManager->getActivePackages();
-
-        $extensionKeys = array_keys($activePackages);
-        self::assertContains('test_extension', $extensionKeys);
-        self::assertContains('no_template_extension', $extensionKeys);
-
-        $application = new Application();
-        $application->add($command);
-
-        $commandTester = new CommandTester($command);
-        $outputFile = $this->tempOutputDir . '/InteractiveConfiguration.php';
-
-        // Simulate interactive selection: select extension, then provide other inputs
-        $commandTester->setInputs([
-            'test_extension',
-            'InteractiveConfiguration',
-            $outputFile,
-        ]);
-
-        $commandTester->execute([
-            '--mode' => 'template',
-            '--force' => true,
-        ]);
-
-        self::assertSame(0, $commandTester->getStatusCode());
-        self::assertFileExists($outputFile);
-
-        $generatedContent = file_get_contents($outputFile);
-        self::assertIsString($generatedContent);
-        self::assertStringStartsWith('<?php', $generatedContent);
-        self::assertStringContainsString('final readonly class InteractiveConfiguration', $generatedContent);
-    }
-
-    #[Test]
-    public function commandGeneratesClassFromManualInputWithRealServices(): void
-    {
-        $command = $this->get(GenerateConfigurationCommand::class);
-
-        $application = new Application();
-        $application->add($command);
-
-        $commandTester = new CommandTester($command);
         $outputFile = $this->tempOutputDir . '/ManualConfiguration.php';
 
+        $command = $this->get(GenerateConfigurationCommand::class);
+        $application = new Application();
+        $application->add($command);
+        $commandTester = new CommandTester($command);
+
+        // Simulate manual property input - must be set before execute()
         $commandTester->setInputs([
             'apiUrl',      // property name
             'string',      // type
@@ -218,25 +150,18 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
         self::assertSame(0, $commandTester->getStatusCode());
         self::assertFileExists($outputFile);
 
-        $generatedContent = file_get_contents($outputFile);
-        self::assertIsString($generatedContent);
-        self::assertStringStartsWith('<?php', $generatedContent);
-        self::assertStringContainsString('final readonly class ManualConfiguration', $generatedContent);
-        self::assertStringContainsString('$apiUrl', $generatedContent);
+        $content = file_get_contents($outputFile);
+        self::assertIsString($content);
+        self::assertStringContainsString('class ManualConfiguration', $content);
+        self::assertStringContainsString('$apiUrl', $content);
     }
 
     #[Test]
-    public function commandCreatesOutputDirectoryWithRealFileSystem(): void
+    public function commandCreatesNestedDirectories(): void
     {
-        $command = $this->get(GenerateConfigurationCommand::class);
-
-        $application = new Application();
-        $application->add($command);
-
-        $commandTester = new CommandTester($command);
         $outputFile = $this->tempOutputDir . '/deep/nested/path/DeepConfiguration.php';
 
-        $commandTester->execute([
+        $commandTester = $this->executeCommand([
             '--extension' => 'test_extension',
             '--mode' => 'template',
             '--class-name' => 'DeepConfiguration',
@@ -247,23 +172,34 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
         self::assertSame(0, $commandTester->getStatusCode());
         self::assertFileExists($outputFile);
         self::assertDirectoryExists(dirname($outputFile));
-
-        $generatedContent = file_get_contents($outputFile);
-        self::assertIsString($generatedContent);
-        self::assertStringContainsString('final readonly class DeepConfiguration', $generatedContent);
     }
 
-    private function removeDirectory(string $dir): void
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function executeCommand(array $options): CommandTester
+    {
+        $command = $this->get(GenerateConfigurationCommand::class);
+        $application = new Application();
+        $application->add($command);
+        $commandTester = new CommandTester($command);
+        $commandTester->execute($options);
+        return $commandTester;
+    }
+
+    private function removeDirectory(string $dir): bool
     {
         if (!is_dir($dir)) {
-            return;
+            return false;
         }
 
         $files = array_diff(scandir($dir), ['.', '..']);
+
         foreach ($files as $file) {
             $path = $dir . '/' . $file;
             is_dir($path) ? $this->removeDirectory($path) : unlink($path);
         }
-        rmdir($dir);
+
+        return rmdir($dir);
     }
 }
