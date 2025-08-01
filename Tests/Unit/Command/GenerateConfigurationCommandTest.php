@@ -22,6 +22,10 @@ use mteu\TypedExtConf\Generator\ConfigurationClassGenerator;
 use mteu\TypedExtConf\Parser\ExtConfTemplateParser;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
+use TYPO3\CMS\Core\Package\Package;
 use TYPO3\CMS\Core\Package\PackageManager;
 
 /**
@@ -31,18 +35,31 @@ use TYPO3\CMS\Core\Package\PackageManager;
  * @license GPL-2.0-or-later
  */
 #[Framework\Attributes\CoversClass(GenerateConfigurationCommand::class)]
-final class GenerateConfigurationCommandTest extends Framework\TestCase
+final class GenerateConfigurationCommandTest extends TestCase
 {
     #[Test]
-    public function commandCanBeInstantiated(): void
+    public function commandExecutesSuccessfully(): void
     {
+        $package = $this->createMock(Package::class);
+        $package->method('getPackageKey')->willReturn('test_extension');
+        $package->method('getPackagePath')->willReturn('/path/to/test_extension/');
+
         $packageManager = $this->createMock(PackageManager::class);
+        $packageManager->method('getActivePackages')->willReturn([$package]);
+        $packageManager->method('getPackage')->with('test_extension')->willReturn($package);
+
         $templateParser = new ExtConfTemplateParser();
         $classGenerator = new ConfigurationClassGenerator();
 
+        $application = new Application();
         $command = new GenerateConfigurationCommand($packageManager, $templateParser, $classGenerator);
+        $application->add($command);
 
-        self::assertSame('typed-extconf:generate', $command->getName());
-        self::assertStringContainsString('Generate typed configuration classes', $command->getDescription());
+        $commandTester = new CommandTester($command);
+
+        $commandTester->setInputs(['test_extension', 'yes']);
+        $commandTester->execute([]);
+
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }
