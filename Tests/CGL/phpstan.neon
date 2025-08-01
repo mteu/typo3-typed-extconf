@@ -7,6 +7,7 @@ parameters:
 		- ../../.build/vendor/cuyz/valinor/src
 		- ../../.build/vendor/eliashaeussler/phpunit-attributes/src
 		- ../../.build/vendor/nette/php-generator/src
+		- ../../.build/vendor/typo3/testing-framework/Classes
 	paths:
 		- ../../Classes
 		- ../../Configuration
@@ -20,6 +21,7 @@ parameters:
 			classesAllowedToBeExtended:
 				- Exception
 				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
+				- TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
 				- Symfony\Component\Console\Command\Command
 
 	ignoreErrors:
@@ -28,3 +30,6 @@ parameters:
 		- identifier: ergebnis.noParameterWithNullDefaultValue
 		- identifier: ergebnis.noParameterWithNullableTypeDeclaration
 		- message: '#Interface must be located in "Contract" or "Contracts" namespace#'
+		# Ignore fixture extension files (standard TYPO3 ext_emconf.php format)
+		- message: '#.*#'
+			path: ../../Tests/Functional/Fixtures/Extensions/*/ext_emconf.php

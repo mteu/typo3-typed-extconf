@@ -1,0 +1,8 @@
+# cat=basic; type=string; label=API Key
+api.key = default-key
+
+# cat=advanced; type=int; label=Timeout in seconds
+timeout = 30
+
+# cat=basic; type=boolean; label=Enable feature
+enabled = 1
