@@ -19,7 +19,7 @@
 		"ext-filter": "*",
 		"cuyz/valinor": "^2.0",
 		"nette/php-generator": "^4.1.6",
-		"symfony/console": "^7.3",
+		"symfony/console": "^6.4 || ^7.0",
 		"typo3/cms-core": "~12.4.31 || ~13.4.12"
 	},
 	"require-dev": {
@@ -28,7 +28,7 @@
 		"phpunit/phpcov": "^10.0 || ^11.0.0",
 		"phpunit/phpunit": "^11.5 || ^12.1",
 		"roave/security-advisories": "dev-latest",
-		"symfony/dependency-injection": "^7.3",
+		"symfony/dependency-injection": "^6.4 || ^7.0",
 		"typo3/testing-framework": "^8.2 || ^9.2"
 	},
 	"autoload": {
