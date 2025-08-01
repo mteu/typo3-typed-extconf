@@ -76,7 +76,7 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class MyExtensionConfig
 {
     public function __construct(
-        #[ExtConfProperty()]
+        #[ExtConfProperty]
         public int $maxItems = 10,
 
         #[ExtConfProperty(required: false)]
@@ -85,7 +85,7 @@ final readonly class MyExtensionConfig
         #[ExtConfProperty(path: 'api.endpoint')]
         public string $apiEndpoint = '/api/v1',
 
-        #[ExtConfProperty()]
+        #[ExtConfProperty]
         public array $allowedTypes = ['default', 'fallback'],
     ) {}
 }
@@ -182,7 +182,7 @@ final readonly class ComplexConfiguration
         // Nested configuration object
         public DatabaseConfiguration $database,
 
-        #[ExtConfProperty()]
+        #[ExtConfProperty]
         public string $environment = 'production',
     ) {}
 }
