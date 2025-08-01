@@ -2,5 +2,18 @@
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
 	"extends": [
 		"github>mteu/renovate-configuration"
+	],
+	"includePaths": [
+		"composer.json",
+		"Tests/CGL/composer.json"
+	],
+	"packageRules": [
+		{
+			"description": "Pin exact versions for CGL dependencies",
+			"matchPaths": ["Tests/CGL/composer.json"],
+			"rangeStrategy": "pin",
+			"automerge": true,
+			"automergeType": "pr"
+		}
 	]
 }
