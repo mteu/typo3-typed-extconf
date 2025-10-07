@@ -14,9 +14,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ "8.2", "8.3", "8.4" ]
+        php-version: [ "8.2", "8.3", "8.4", "8.5" ]
         typo3-version: [ "12.4", "13.4"]
         dependencies: [ "highest", "lowest" ]
+    continue-on-error: ${{ matrix.php-version == '8.5' }}
+
     env:
       typo3DatabaseName: typo3
       typo3DatabaseHost: '127.0.0.1'
@@ -45,7 +47,9 @@ jobs:
         uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
-          composer-options: --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
+          composer-options: >-
+            --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
+            ${{ matrix.php-version == '8.5' && '--ignore-platform-req=php' || '' }}
 
       # Run tests
       - name: Run tests
