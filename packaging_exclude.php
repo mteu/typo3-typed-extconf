@@ -23,7 +23,6 @@ return [
         '.github',
         '.idea',
         'Tests',
-        'config',
         'tailor-version-artefact',
         'var',
     ],
