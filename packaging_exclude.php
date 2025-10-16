@@ -49,6 +49,7 @@ return [
         'rector.php',
         'renovate.json',
         'SECURITY.md',
+        'typo3-vendor-bundler.yaml',
         'version-bumper.yaml',
     ],
 ];
