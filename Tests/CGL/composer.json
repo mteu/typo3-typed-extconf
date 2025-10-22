@@ -2,10 +2,10 @@
 	"require-dev": {
 		"armin/editorconfig-cli": "2.1.1",
 		"ergebnis/composer-normalize": "2.48.2",
-		"friendsofphp/php-cs-fixer": "3.88.2",
+		"friendsofphp/php-cs-fixer": "3.89.0",
 		"mteu/zealous-stan": "0.6.3",
 		"phpstan/extension-installer": "1.4.3",
-		"phpstan/phpstan": "2.1.30",
+		"phpstan/phpstan": "2.1.31",
 		"phpstan/phpstan-phpunit": "2.0.7",
 		"saschaegerer/phpstan-typo3": "2.1.1",
 		"shipmonk/composer-dependency-analyser": "1.8.3",
@@ -35,7 +35,8 @@
 		],
 		"fix:composer": [
 			"@composer normalize",
-			"@composer normalize ../../composer.json"
+			"@composer normalize ../../composer.json",
+			"@composer normalize ../../Resources/Private/Libs/composer.json"
 		],
 		"fix:editorconfig": "ec --fix",
 		"fix:php": "php-cs-fixer fix --config php-cs-fixer.php",

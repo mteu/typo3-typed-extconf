@@ -1,0 +1,10 @@
+{
+	"require": {
+		"cuyz/valinor": "2.2.2",
+		"nette/php-generator": "4.2.0"
+	},
+	"config": {
+		"lock": false,
+		"sort-packages": true
+	}
+}
