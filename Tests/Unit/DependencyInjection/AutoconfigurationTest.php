@@ -76,44 +76,4 @@ final class AutoconfigurationTest extends TestCase
         self::assertCount(1, $arguments);
         self::assertSame(SimpleTestConfiguration::class, $arguments[0]);
     }
-
-    #[Test]
-    #[RequiresPackage(
-        package: 'symfony/dependency-injection',
-        versionRequirement: '< 7.3',
-        message: 'getAutoconfiguredAttributes() is deprecated in >= 7.3',
-    )]
-    public function testAttributeAutoconfigurationRegistersServiceForSymfonyDependencyInjectionUpTo73(): void
-    {
-        $container = new ContainerBuilder();
-
-        $configurator = require __DIR__ . '/../../../Configuration/Services.php';
-        assert(is_callable($configurator));
-
-        $configurator($container);
-
-        $reflectionClass = new \ReflectionClass(SimpleTestConfiguration::class);
-        $attribute = $reflectionClass->getAttributes(ExtensionConfig::class)[0]->newInstance();
-
-        $definition = new ChildDefinition('abstract.service');
-
-        /** @phpstan-ignore method.deprecated */
-        $autoconfigurationCallbacks = $container->getAutoconfiguredAttributes();
-
-        self::assertArrayHasKey(ExtensionConfig::class, $autoconfigurationCallbacks);
-
-        // Execute the callback
-        $callback = $autoconfigurationCallbacks[ExtensionConfig::class];
-        $callback($definition, $attribute, $reflectionClass);
-
-        $factory = $definition->getFactory();
-        self::assertIsArray($factory);
-        self::assertInstanceOf(Reference::class, $factory[0]);
-        self::assertSame(ExtensionConfigurationProvider::class, (string)$factory[0]);
-        self::assertSame('get', $factory[1]);
-
-        $arguments = $definition->getArguments();
-        self::assertCount(1, $arguments);
-        self::assertSame(SimpleTestConfiguration::class, $arguments[0]);
-    }
 }
