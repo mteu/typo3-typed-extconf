@@ -30,9 +30,6 @@ jobs:
       # Install dependencies
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
-        with:
-          # @todo: remove once dependencies declare php 8.5 support
-          composer-options: --ignore-platform-req=php
 
       # Analyze
       - name: Analyze dependencies

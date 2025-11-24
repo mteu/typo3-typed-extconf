@@ -48,7 +48,6 @@ jobs:
           dependency-versions: ${{ matrix.dependencies }}
           composer-options: >-
             --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
-            ${{ matrix.php-version == '8.5' && '--ignore-platform-req=php' || '' }}
 
       # Run tests
       - name: Run tests
