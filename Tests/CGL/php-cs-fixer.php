@@ -15,9 +15,13 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
+use PhpCsFixer\Config;
+
 $config = \TYPO3\CodingStandards\CsFixerConfig::create();
 $config->setHeader('This file is part of the TYPO3 CMS extension "typed_extconf".');
 $config->setParallelConfig(\PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect());
 $config->getFinder()->in(dirname(__DIR__, 2));
+// @todo: remove this once dependencies declare support for PHP 8.5
+$config->setUnsupportedPhpVersionAllowed(true);
 
 return $config;
