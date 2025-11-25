@@ -31,8 +31,6 @@
 		"symfony/dependency-injection": "^7.3",
 		"typo3/testing-framework": "^9.2"
 	},
-	"minimum-stability": "dev",
-	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
 			"mteu\\TypedExtConf\\": "Classes/"
