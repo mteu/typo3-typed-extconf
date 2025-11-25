@@ -20,7 +20,7 @@
 		"cuyz/valinor": "^2.0",
 		"nette/php-generator": "^4.1.6",
 		"symfony/console": "^7.3",
-		"typo3/cms-core": "~13.4.18"
+		"typo3/cms-core": "~13.4.18 || ~14.0.0"
 	},
 	"require-dev": {
 		"composer/class-map-generator": "^1.1",
@@ -31,6 +31,8 @@
 		"symfony/dependency-injection": "^7.3",
 		"typo3/testing-framework": "^9.2"
 	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
 			"mteu\\TypedExtConf\\": "Classes/"
