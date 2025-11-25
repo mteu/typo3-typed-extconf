@@ -229,7 +229,7 @@ Please refer to our [security policy](SECURITY.md) if you discover a security vu
 this extension. Be warned, though. I cannot afford bounty. This is a private project.
 
 ## ⭐ License
-This extension is licensed under the [GPL-2.0-or-later](LICENSE.md) license.
+This extension is licensed under the [GPL-2.0-or-later](LICENSE.txt) license.
 
 ## 💬 Support
 For issues and feature requests, please use the [GitHub issue tracker](https://github.com/mteu/typo3-typed-extconf/issues).
