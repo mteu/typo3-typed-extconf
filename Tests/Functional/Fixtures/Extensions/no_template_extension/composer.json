@@ -1,0 +1,8 @@
+{
+	"name": "mteu/no-template-extension",
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "no_template_extension"
+		}
+	}
+}
