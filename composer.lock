@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9243de9f77470b952557370cac0e067a",
+    "content-hash": "996f9a4542e42998ee12444834220670",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -5373,60 +5373,6 @@
             "time": "2022-12-30T00:23:10+00:00"
         },
         {
-            "name": "eliashaeussler/phpunit-attributes",
-            "version": "1.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/eliashaeussler/phpunit-attributes.git",
-                "reference": "de30e8334965d5489f8c98cfdf27224429a0515f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/eliashaeussler/phpunit-attributes/zipball/de30e8334965d5489f8c98cfdf27224429a0515f",
-                "reference": "de30e8334965d5489f8c98cfdf27224429a0515f",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
-                "phpunit/phpunit": "^10.5.53 || ^11.5.34 || ^12.3.6"
-            },
-            "require-dev": {
-                "armin/editorconfig-cli": "^1.8 || ^2.0",
-                "eliashaeussler/php-cs-fixer-config": "^2.0",
-                "eliashaeussler/phpstan-config": "^2.5.1",
-                "eliashaeussler/rector-config": "^3.0",
-                "ergebnis/composer-normalize": "^2.30",
-                "phpstan/extension-installer": "^1.2",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpcov": "^9.0 || ^10.0 || ^11.0",
-                "symfony/console": "^6.4 || ^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "EliasHaeussler\\PHPUnitAttributes\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Elias Häußler",
-                    "email": "elias@haeussler.dev",
-                    "homepage": "https://haeussler.dev",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "Provides additional attributes for tests with PHPUnit",
-            "support": {
-                "issues": "https://github.com/eliashaeussler/phpunit-attributes/issues",
-                "source": "https://github.com/eliashaeussler/phpunit-attributes/tree/1.8.0"
-            },
-            "time": "2025-11-14T11:54:49+00:00"
-        },
-        {
             "name": "eliashaeussler/version-bumper",
             "version": "3.1.0",
             "source": {
@@ -9211,5 +9157,5 @@
         "ext-filter": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

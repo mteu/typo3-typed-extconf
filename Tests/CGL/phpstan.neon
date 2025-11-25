@@ -5,7 +5,6 @@ parameters:
 	scanDirectories:
 		- ../../.build/vendor/phpunit/phpunit/src
 		- ../../.build/vendor/cuyz/valinor/src
-		- ../../.build/vendor/eliashaeussler/phpunit-attributes/src
 		- ../../.build/vendor/nette/php-generator/src
 		- ../../.build/vendor/typo3/testing-framework/Classes
 	paths:

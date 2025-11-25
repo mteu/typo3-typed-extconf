@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\DependencyInjection;
 
-use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use mteu\TypedExtConf\Provider\ExtensionConfigurationProvider;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\SimpleTestConfiguration;
@@ -36,10 +35,6 @@ use Symfony\Component\DependencyInjection\Reference;
 final class AutoconfigurationTest extends TestCase
 {
     #[Test]
-    #[RequiresPackage(
-        package: 'symfony/dependency-injection',
-        versionRequirement: '>= 7.3',
-    )]
     public function testAttributeAutoconfigurationRegistersService(): void
     {
         $container = new ContainerBuilder();
