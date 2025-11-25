@@ -191,7 +191,6 @@ final readonly class ComplexConfiguration
     ) {}
 }
 
-#[ExtensionConfig(extensionKey: 'my_complex_ext')]
 final readonly class DatabaseConfiguration
 {
     public function __construct(
