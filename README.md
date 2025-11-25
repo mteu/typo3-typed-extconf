@@ -21,9 +21,13 @@ management for TYPO3, ensuring proper types instead of string-only values from
 backend configuration or mixed types from `config/system/settings.php|additional.php`
 (or custom solutions around those).
 
-> [!WARNING]
-> This extension is in a testing and review phase and hence marked `beta`. Be
-> cautious when using this in production environments.
+## 🦊 TYPO3 Support
+
+|            | TYPO3 v12 | TYPO3 v13 | TYPO3 v14 |
+|------------|-----------|-----------|-----------|
+| up to v0.3 | ✅         | ✅         | ❌         |
+| v1.x       | ❌         | ✅         | ✅         |
+
 
 ## 🚀 Features
 
@@ -53,7 +57,7 @@ This extension relies heavily on these key dependencies:
 > check out the [Developer Guide](Documentation/developer-guide.md).
 
 > [!NOTE]
-> If you're in a hurry you might want to have this package generate
+> If you're in a hurry, you might want to have this package generate
 > configuration classes automatically based on your extension's
 > `ext_conf_template.txt`.
 >
@@ -93,7 +97,7 @@ final readonly class MyExtensionConfig
 
 ### 2. Access Typed Configuration
 
-#### Option A: Direct Injection (Recommended)
+#### Direct Injection (Recommended)
 
 Directly inject your configuration object using dependency injection:
 
@@ -117,7 +121,7 @@ final readonly class MyService
 }
 ```
 
-#### Option B: Using the Provider
+#### Using the `ExtensionConfigurationProvider`
 
 Alternatively, use the configuration provider service:
 
@@ -169,7 +173,7 @@ string values. Those strings could be manually altered by the developers to othe
 This extension automatically converts those types to proper PHP types using your configuration class schema.
 
 
-## 🧑‍💻 Real-world example with nested configuration
+## 🧑‍💻 Example
 
 ```php
 #[ExtensionConfig(extensionKey: 'my_complex_ext')]
@@ -206,12 +210,10 @@ final readonly class DatabaseConfiguration
 
 This project is built on the excellent [CuyZ\Valinor](https://github.com/CuyZ/Valinor)
 library, which provides the core type mapping and validation functionality.
-Without Valinor's robust object mapping capabilities, this extension would not
-be possible.
 
 Special thanks to:
 - [CuyZ\Valinor](https://github.com/CuyZ/Valinor) for the powerful and flexible object mapping engine
-- [Romain Canon](https://github.com/romm) and the Valinor contributors for their excellent work
+- [Romain Canon](https://github.com/romm) personally and the Valinor contributors in general for their excellent work
 - [Elias Häußler](https://github.com/eliashaeussler/) for his extensive help reviewing this extension and
 contributing substantial improvements. Be sure to check out his Composer
 packages — [`PHPUnit Attributes`](https://github.com/eliashaeussler/phpunit-attributes) and
@@ -224,7 +226,7 @@ workflow of submitting new features or bugfixes.
 
 ## 🔒 Security
 Please refer to our [security policy](SECURITY.md) if you discover a security vulnerability in
-this extension. Be warned, though. I cannot afford bounty. This is private project.
+this extension. Be warned, though. I cannot afford bounty. This is a private project.
 
 ## ⭐ License
 This extension is licensed under the [GPL-2.0-or-later](LICENSE.md) license.
