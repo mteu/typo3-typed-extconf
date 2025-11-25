@@ -19,8 +19,8 @@
 		"ext-filter": "*",
 		"cuyz/valinor": "^2.0",
 		"nette/php-generator": "^4.1.6",
-		"symfony/console": "^6.0 || ^7.3",
-		"typo3/cms-core": "~12.4.37 || ~13.4.18"
+		"symfony/console": "^7.3",
+		"typo3/cms-core": "~13.4.18"
 	},
 	"require-dev": {
 		"composer/class-map-generator": "^1.1",
@@ -29,8 +29,8 @@
 		"phpunit/phpcov": "^10.0 || ^11.0.0",
 		"phpunit/phpunit": "^11.5 || ^12.1",
 		"roave/security-advisories": "dev-latest",
-		"symfony/dependency-injection": "^6.0 || ^7.3",
-		"typo3/testing-framework": "^8.2 || ^9.2"
+		"symfony/dependency-injection": "^7.3",
+		"typo3/testing-framework": "^9.2"
 	},
 	"autoload": {
 		"psr-4": {
