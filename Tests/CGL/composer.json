@@ -6,7 +6,7 @@
 		"mteu/zealous-stan": "0.6.3",
 		"phpstan/extension-installer": "1.4.3",
 		"phpstan/phpstan": "2.1.32",
-		"phpstan/phpstan-phpunit": "2.0.8",
+		"phpstan/phpstan-phpunit": "2.0.9",
 		"saschaegerer/phpstan-typo3": "2.1.1",
 		"shipmonk/composer-dependency-analyser": "1.8.4",
 		"ssch/typo3-rector": "3.8.0",
