@@ -53,7 +53,7 @@ final class GenerateConfigurationCommandTest extends TestCase
 
         $application = new Application();
         $command = new GenerateConfigurationCommand($packageManager, $templateParser, $classGenerator);
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
 
