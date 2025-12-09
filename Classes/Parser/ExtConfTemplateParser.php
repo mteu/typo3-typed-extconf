@@ -198,7 +198,7 @@ final readonly class ExtConfTemplateParser
 
         foreach ($separators as $separator) {
             if (str_contains($value, $separator)) {
-                return array_map('trim', explode($separator, $value));
+                return array_map(trim(...), explode($separator, $value));
             }
         }
 
