@@ -69,7 +69,7 @@ final readonly class ConfigurationClassGenerator
     {
         // Convert extension key to namespace (e.g., my_extension -> MyExtension)
         $parts = explode('_', $extensionKey);
-        $namespaceParts = array_map('ucfirst', $parts);
+        $namespaceParts = array_map(ucfirst(...), $parts);
         $vendor = array_shift($namespaceParts);
         $extension = implode('', $namespaceParts);
 
