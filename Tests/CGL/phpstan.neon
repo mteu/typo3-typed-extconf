@@ -29,6 +29,10 @@ parameters:
 		- identifier: ergebnis.noParameterWithNullDefaultValue
 		- identifier: ergebnis.noParameterWithNullableTypeDeclaration
 		- message: '#Interface must be located in "Contract" or "Contracts" namespace#'
+		# Ignore symfony/console 8.x deprecation as long as we support 6.x for TYPO3 v13
+		-
+			identifier: method.deprecated
+			path: ../../Tests/*/GenerateConfigurationCommandTest.php
 		# Ignore fixture extension files (standard TYPO3 ext_emconf.php format)
 		-
 			message: '#.*#'
