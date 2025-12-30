@@ -35,8 +35,7 @@
 		],
 		"fix:composer": [
 			"@composer normalize",
-			"@composer normalize ../../composer.json",
-			"@composer normalize ../../Resources/Private/Libs/composer.json"
+			"@composer normalize ../../composer.json"
 		],
 		"fix:editorconfig": "ec --fix",
 		"fix:php": "php-cs-fixer fix --config php-cs-fixer.php",
