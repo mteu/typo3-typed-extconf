@@ -9,9 +9,8 @@
 	],
 	"packageRules": [
 		{
-			"description": "Pin exact versions for CGL and bundled dependencies",
+			"description": "Pin exact versions for CGL dependencies",
 			"matchFileNames": [
-				"Resources/Private/Libs/composer.json",
 				"Tests/CGL/composer.json"
 			],
 			"rangeStrategy": "pin",

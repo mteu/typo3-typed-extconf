@@ -1,6 +1,6 @@
 /.build
 /config
-/Resources/Private/Libs/vendor
+/Resources/Private/Libs
 /tailor-version-artefact
 /var
 .phpunit.result.cache
