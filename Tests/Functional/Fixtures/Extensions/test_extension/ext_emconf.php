@@ -13,6 +13,8 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+// @todo Drop this file once TF can handle absent ext_emconf.php files in fixture extensions
+
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Fixture Extension for Functional Tests',
     'description' => 'Fixture extension for testing GenerateConfigurationCommand',

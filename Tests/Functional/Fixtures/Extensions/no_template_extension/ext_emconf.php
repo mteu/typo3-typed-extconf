@@ -13,6 +13,8 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+// @todo Drop this file once TF can handle absent ext_emconf.php files in fixture extensions
+
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Extension Without Template',
     'description' => 'Fixture extension without ext_conf_template.txt for testing',

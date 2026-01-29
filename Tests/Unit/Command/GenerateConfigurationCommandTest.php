@@ -41,12 +41,12 @@ final class GenerateConfigurationCommandTest extends TestCase
     public function commandExecutesSuccessfully(): void
     {
         $package = $this->createMock(Package::class);
-        $package->method('getPackageKey')->willReturn('test_extension');
-        $package->method('getPackagePath')->willReturn('/path/to/test_extension/');
+        $package->expects(self::atLeastOnce())->method('getPackageKey')->willReturn('test_extension');
+        $package->expects(self::once())->method('getPackagePath')->willReturn('/path/to/test_extension/');
 
         $packageManager = $this->createMock(PackageManager::class);
-        $packageManager->method('getActivePackages')->willReturn([$package]);
-        $packageManager->method('getPackage')->with('test_extension')->willReturn($package);
+        $packageManager->expects(self::once())->method('getActivePackages')->willReturn([$package]);
+        $packageManager->expects(self::once())->method('getPackage')->with('test_extension')->willReturn($package);
 
         $templateParser = new ExtConfTemplateParser();
         $classGenerator = new ConfigurationClassGenerator();
