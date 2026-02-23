@@ -129,7 +129,7 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
             ['name' => 'invalidType', 'type' => null], // Invalid type
         ];
 
-        // @phpstan-ignore-next-line argument.type (intentionally testing with invalid input types)
+        // ignored via configuration (intentionally testing with invalid input types)
         $result = $this->generator->generate('test_ext', 'Config', $properties);
 
         self::assertStringContainsString('public string $validProp', $result);

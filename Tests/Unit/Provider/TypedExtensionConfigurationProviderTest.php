@@ -184,7 +184,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         self::assertSame('/custom/api', $result->endpoint);
         self::assertSame('direct_value', $result->simpleValue);
 
-        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
+        /** staticMethod.alreadyNarrowedType ignored by configuration */
         self::assertInstanceOf(NestedTestConfiguration::class, $result->nestedConfig);
         self::assertTrue($result->nestedConfig->enabled);
         self::assertSame(99, $result->nestedConfig->priority);
@@ -429,20 +429,20 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         self::assertSame('/monitoring/api', $result->endpoint);
 
         // Test ApiConfiguration nested object
-        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
+        /** staticMethod.alreadyNarrowedType ignored by configuration */
         self::assertInstanceOf(ApiConfiguration::class, $result->apiConfiguration);
         self::assertSame('https://custom.example.com', $result->apiConfiguration->url);
         self::assertSame(60, $result->apiConfiguration->timeout);
         self::assertSame(5, $result->apiConfiguration->retries);
 
         // Test SecurityConfiguration nested object
-        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
+        /** staticMethod.alreadyNarrowedType ignored by configuration */
         self::assertInstanceOf(SecurityConfiguration::class, $result->securityConfiguration);
         self::assertSame('secret-token-123', $result->securityConfiguration->token);
         self::assertTrue($result->securityConfiguration->enabled);
 
         // Test NestedTestConfiguration nested object
-        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
+        /** staticMethod.alreadyNarrowedType ignored by configuration */
         self::assertInstanceOf(NestedTestConfiguration::class, $result->nestedTestConfiguration);
         self::assertTrue($result->nestedTestConfiguration->enabled);
         self::assertSame(15, $result->nestedTestConfiguration->priority);
