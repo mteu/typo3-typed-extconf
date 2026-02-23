@@ -26,7 +26,7 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  *
- * @phpstan-ignore symplify.requireAttributeName
+ * symplify.requireAttributeName ignored by configuration
  **/
 #[ExtensionConfig('test_ext')]
 final readonly class RequiredTestConfiguration
