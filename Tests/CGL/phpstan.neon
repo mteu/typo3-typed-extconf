@@ -37,3 +37,13 @@ parameters:
 		-
 			message: '#.*#'
 			path: ../../Tests/Functional/Fixtures/Extensions/*/ext_emconf.php
+		# Allow ignoring phpstan errors inline in Tests/*
+		-
+			identifier: symplify.requireAttributeName
+			path: ../../Tests/Unit/Fixture/Configuration/RequiredTestConfiguration.php
+		-
+			identifier: argument.type
+			path: ../../Tests/Unit/Generator/ConfigurationClassGeneratorTest.php
+		-
+			identifier: staticMethod.alreadyNarrowedType
+			path: ../../Tests/Unit/Provider/TypedExtensionConfigurationProviderTest.php
