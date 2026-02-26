@@ -129,3 +129,4 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           file: ${{ steps.download.outputs.download-path }}/clover.xml
+          fail-on-error: false
