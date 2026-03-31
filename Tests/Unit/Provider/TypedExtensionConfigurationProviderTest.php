@@ -128,6 +128,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
     public function testMapBooleanConversions(): void
     {
         // Test key boolean conversion cases
@@ -276,6 +277,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
     public function testMapMissingExtensionConfigAttributeThrowsException(): void
     {
         $class = new class () {
@@ -291,6 +293,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
     public function testMapNullExtensionKeyThrowsException(): void
     {
         $this->expectException(ConfigurationException::class);
@@ -300,6 +303,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
     public function testMapNonInstantiableClassThrowsException(): void
     {
         $this->expectException(ConfigurationException::class);

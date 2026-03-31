@@ -13,6 +13,9 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+// @todo Drop this file once support for TYPO3 v13 is dropped
+//       and TER can handle uploads with ext_emconf.php being absent
+
 /** @noinspection PhpUndefinedVariableInspection */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Typed Extension Configuration',
@@ -24,7 +27,7 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'mteu@mailbox.org',
     'constraints' => [
         'depends' => [
-            'typo3' => '13.4.18-14.1.99',
+            'typo3' => '13.4.18-14.2.99',
             'php' => '8.2.0-8.5.99',
         ],
     ],
