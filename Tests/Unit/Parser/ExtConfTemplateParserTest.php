@@ -51,22 +51,22 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         // Check API key field
         self::assertSame('apiKey', $result[0]['name']);
         self::assertArrayHasKey('path', $result[0]);
-        self::assertSame('api.key', $result[0]['path']);
+        self::assertSame('api.key', $result[0]['path'] ?? null);
         self::assertSame('string', $result[0]['type']);
         self::assertArrayHasKey('default', $result[0]);
-        self::assertSame('default-key', $result[0]['default']);
+        self::assertSame('default-key', $result[0]['default'] ?? null);
 
         // Check timeout field
         self::assertSame('timeout', $result[1]['name']);
         self::assertSame('int', $result[1]['type']);
         self::assertArrayHasKey('default', $result[1]);
-        self::assertSame(30, $result[1]['default']);
+        self::assertSame(30, $result[1]['default'] ?? null);
 
         // Check boolean field
         self::assertSame('enabled', $result[2]['name']);
         self::assertSame('bool', $result[2]['type']);
         self::assertArrayHasKey('default', $result[2]);
-        self::assertTrue($result[2]['default']);
+        self::assertTrue($result[2]['default'] ?? null);
     }
 
     #[Test]
@@ -79,12 +79,12 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         self::assertSame('simpleField', $result[0]['name']);
         self::assertSame('string', $result[0]['type']);
         self::assertArrayHasKey('default', $result[0]);
-        self::assertSame('test_value', $result[0]['default']);
+        self::assertSame('test_value', $result[0]['default'] ?? null);
 
         self::assertSame('numericField', $result[1]['name']);
         self::assertSame('string', $result[1]['type']); // Without type comment, defaults to string
         self::assertArrayHasKey('default', $result[1]);
-        self::assertSame('42', $result[1]['default']);
+        self::assertSame('42', $result[1]['default'] ?? null);
     }
 
     #[Test]
@@ -108,13 +108,13 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         // TYPO3 array type maps to PHP string (not actual array conversion)
         self::assertSame('string', $result[0]['type']);
         self::assertArrayHasKey('default', $result[0]);
-        self::assertSame('item1,item2,item3', $result[0]['default']);
+        self::assertSame('item1,item2,item3', $result[0]['default'] ?? null);
         self::assertArrayHasKey('typo3_type', $result[0]);
-        self::assertSame('array', $result[0]['typo3_type']);
+        self::assertSame('array', $result[0]['typo3_type'] ?? null);
 
         self::assertSame('string', $result[1]['type']);
         self::assertArrayHasKey('default', $result[1]);
-        self::assertSame('single_value', $result[1]['default']);
+        self::assertSame('single_value', $result[1]['default'] ?? null);
     }
 
     #[Test]
@@ -155,15 +155,15 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
 
         self::assertSame('bool', $result[0]['type']);
         self::assertArrayHasKey('default', $result[0]);
-        self::assertTrue($result[0]['default']);
+        self::assertTrue($result[0]['default'] ?? null);
 
         self::assertSame('bool', $result[1]['type']);
         self::assertArrayHasKey('default', $result[1]);
-        self::assertTrue($result[1]['default']);
+        self::assertTrue($result[1]['default'] ?? null);
 
         self::assertSame('bool', $result[2]['type']);
         self::assertArrayHasKey('default', $result[2]);
-        self::assertFalse($result[2]['default']);
+        self::assertFalse($result[2]['default'] ?? null);
     }
 
 }
