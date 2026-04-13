@@ -14,7 +14,7 @@
 		"shipmonk/composer-dependency-analyser": "1.8.4",
 		"shipmonk/phpstan-rules": "4.3.7",
 		"spaze/phpstan-disallowed-calls": "4.10.0",
-		"ssch/typo3-rector": "3.14.0",
+		"ssch/typo3-rector": "3.14.1",
 		"symplify/phpstan-rules": "14.9.11",
 		"typo3/coding-standards": "0.8.0"
 	},
