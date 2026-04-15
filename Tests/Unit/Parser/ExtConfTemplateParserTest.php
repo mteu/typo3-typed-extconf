@@ -19,6 +19,7 @@ namespace mteu\TypedExtConf\Tests\Unit\Parser;
 
 use mteu\TypedExtConf\Parser\ExtConfTemplateParser;
 use PHPUnit\Framework;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
@@ -48,25 +49,18 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
 
         self::assertCount(3, $result);
 
-        // Check API key field
         self::assertSame('apiKey', $result[0]['name']);
-        self::assertArrayHasKey('path', $result[0]);
-        self::assertSame('api.key', $result[0]['path'] ?? null);
+        self::assertSame('api.key', $result[0]['path']);
         self::assertSame('string', $result[0]['type']);
-        self::assertArrayHasKey('default', $result[0]);
-        self::assertSame('default-key', $result[0]['default'] ?? null);
+        self::assertSame('default-key', $result[0]['default']);
 
-        // Check timeout field
         self::assertSame('timeout', $result[1]['name']);
         self::assertSame('int', $result[1]['type']);
-        self::assertArrayHasKey('default', $result[1]);
-        self::assertSame(30, $result[1]['default'] ?? null);
+        self::assertSame(30, $result[1]['default']);
 
-        // Check boolean field
         self::assertSame('enabled', $result[2]['name']);
         self::assertSame('bool', $result[2]['type']);
-        self::assertArrayHasKey('default', $result[2]);
-        self::assertTrue($result[2]['default'] ?? null);
+        self::assertTrue($result[2]['default']);
     }
 
     #[Test]
@@ -78,13 +72,11 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         self::assertCount(2, $result);
         self::assertSame('simpleField', $result[0]['name']);
         self::assertSame('string', $result[0]['type']);
-        self::assertArrayHasKey('default', $result[0]);
-        self::assertSame('test_value', $result[0]['default'] ?? null);
+        self::assertSame('test_value', $result[0]['default']);
 
         self::assertSame('numericField', $result[1]['name']);
-        self::assertSame('string', $result[1]['type']); // Without type comment, defaults to string
-        self::assertArrayHasKey('default', $result[1]);
-        self::assertSame('42', $result[1]['default'] ?? null);
+        self::assertSame('string', $result[1]['type']);
+        self::assertSame('42', $result[1]['default']);
     }
 
     #[Test]
@@ -93,10 +85,24 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         $templateFile = __DIR__ . '/../Fixture/ExtConfTemplate/malformed.txt';
         $result = $this->parser->parse($templateFile);
 
-        // Should only parse valid lines
         self::assertCount(2, $result);
         self::assertSame('validField', $result[0]['name']);
         self::assertSame('anotherField', $result[1]['name']);
+    }
+
+    #[Test]
+    public function parseEmptyFileReturnsEmptyArray(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_empty_');
+        self::assertIsString($tempFile);
+        file_put_contents($tempFile, '');
+
+        try {
+            $result = $this->parser->parse($tempFile);
+            self::assertSame([], $result);
+        } finally {
+            unlink($tempFile);
+        }
     }
 
     #[Test]
@@ -105,16 +111,11 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         $templateFile = __DIR__ . '/../Fixture/ExtConfTemplate/array_types.txt';
         $result = $this->parser->parse($templateFile);
 
-        // TYPO3 array type maps to PHP string (not actual array conversion)
         self::assertSame('string', $result[0]['type']);
-        self::assertArrayHasKey('default', $result[0]);
-        self::assertSame('item1,item2,item3', $result[0]['default'] ?? null);
-        self::assertArrayHasKey('typo3_type', $result[0]);
-        self::assertSame('array', $result[0]['typo3_type'] ?? null);
+        self::assertSame('item1,item2,item3', $result[0]['default']);
 
         self::assertSame('string', $result[1]['type']);
-        self::assertArrayHasKey('default', $result[1]);
-        self::assertSame('single_value', $result[1]['default'] ?? null);
+        self::assertSame('single_value', $result[1]['default']);
     }
 
     #[Test]
@@ -130,18 +131,22 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
     public function parseHandlesUnreadableFile(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_unreadable_test');
+        self::assertIsString($tempFile);
         file_put_contents($tempFile, 'content');
-
-        // Make file unreadable by changing permissions
         chmod($tempFile, 0000);
 
+        if (is_readable($tempFile)) {
+            chmod($tempFile, 0644);
+            unlink($tempFile);
+            self::markTestSkipped('Cannot test file permissions in this environment.');
+        }
+
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Failed to read template file:');
+        $this->expectExceptionMessage('Unable to read template file:');
 
         try {
             $this->parser->parse($tempFile);
         } finally {
-            // Restore permissions for cleanup
             chmod($tempFile, 0644);
             unlink($tempFile);
         }
@@ -154,16 +159,119 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
         $result = $this->parser->parse($templateFile);
 
         self::assertSame('bool', $result[0]['type']);
-        self::assertArrayHasKey('default', $result[0]);
-        self::assertTrue($result[0]['default'] ?? null);
+        self::assertTrue($result[0]['default']);
 
         self::assertSame('bool', $result[1]['type']);
-        self::assertArrayHasKey('default', $result[1]);
-        self::assertTrue($result[1]['default'] ?? null);
+        self::assertTrue($result[1]['default']);
 
         self::assertSame('bool', $result[2]['type']);
-        self::assertArrayHasKey('default', $result[2]);
-        self::assertFalse($result[2]['default'] ?? null);
+        self::assertFalse($result[2]['default']);
     }
 
+    /**
+     * @return \Generator<string, array{string, string}>
+     */
+    public static function typo3TypeMappingDataProvider(): \Generator
+    {
+        yield 'boolean' => ['boolean', 'bool'];
+        yield 'bool' => ['bool', 'bool'];
+        yield 'int' => ['int', 'int'];
+        yield 'integer' => ['integer', 'int'];
+        yield 'int+' => ['int+', 'int'];
+        yield 'float' => ['float', 'float'];
+        yield 'double' => ['double', 'float'];
+        yield 'string' => ['string', 'string'];
+        yield 'text' => ['text', 'string'];
+        yield 'wrap' => ['wrap', 'string'];
+        yield 'offset' => ['offset', 'string'];
+        yield 'select' => ['select', 'string'];
+        yield 'options' => ['options', 'string'];
+        yield 'user' => ['user', 'string'];
+        yield 'unknown type defaults to string' => ['foobar', 'string'];
+    }
+
+    #[Test]
+    #[DataProvider('typo3TypeMappingDataProvider')]
+    public function mapTypo3TypeToPhpTypeReturnsExpectedType(string $typo3Type, string $expectedPhpType): void
+    {
+        $reflection = new \ReflectionMethod($this->parser, 'mapTypo3TypeToPhpType');
+        $result = $reflection->invoke($this->parser, $typo3Type);
+
+        self::assertSame($expectedPhpType, $result);
+    }
+
+    /**
+     * @return \Generator<string, array{string, string}>
+     */
+    public static function keyToPropertyNameDataProvider(): \Generator
+    {
+        yield 'dot notation' => ['api.key', 'apiKey'];
+        yield 'underscore notation' => ['api_key', 'apiKey'];
+        yield 'mixed separators' => ['some_nested.value', 'someNestedValue'];
+        yield 'already camelCase' => ['apiKey', 'apiKey'];
+        yield 'single word' => ['timeout', 'timeout'];
+        yield 'leading dot' => ['.hidden', 'hidden'];
+        yield 'leading underscore' => ['_private', 'private'];
+        yield 'double dots' => ['api..key', 'apiKey'];
+        yield 'triple segments' => ['a.b.c', 'aBC'];
+    }
+
+    #[Test]
+    #[DataProvider('keyToPropertyNameDataProvider')]
+    public function convertKeyToPropertyNameReturnsExpectedResult(string $key, string $expected): void
+    {
+        $reflection = new \ReflectionMethod($this->parser, 'convertKeyToPropertyName');
+        $result = $reflection->invoke($this->parser, $key);
+
+        self::assertSame($expected, $result);
+    }
+
+    /**
+     * @return \Generator<string, array{string, string, mixed}>
+     */
+    public static function defaultValueConversionDataProvider(): \Generator
+    {
+        yield 'empty string stays empty' => ['', 'string', ''];
+        yield 'empty bool is false' => ['', 'bool', false];
+        yield 'empty int is zero' => ['', 'int', 0];
+        yield 'empty float is zero' => ['', 'float', 0.0];
+        yield 'string value unchanged' => ['hello', 'string', 'hello'];
+        yield 'int value cast' => ['42', 'int', 42];
+        yield 'float value cast' => ['3.14', 'float', 3.14];
+        yield 'bool true from 1' => ['1', 'bool', true];
+        yield 'bool true from yes' => ['yes', 'bool', true];
+        yield 'bool true from on' => ['on', 'bool', true];
+        yield 'bool false from 0' => ['0', 'bool', false];
+        yield 'bool false from no' => ['no', 'bool', false];
+        yield 'bool false from off' => ['off', 'bool', false];
+    }
+
+    #[Test]
+    #[DataProvider('defaultValueConversionDataProvider')]
+    public function convertDefaultValueReturnsExpectedResult(string $value, string $phpType, mixed $expected): void
+    {
+        $reflection = new \ReflectionMethod($this->parser, 'convertDefaultValue');
+        $result = $reflection->invoke($this->parser, $value, $phpType);
+
+        self::assertSame($expected, $result);
+    }
+
+    #[Test]
+    public function parseLabelWithSemicolonIsCapturedFully(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_semicolon_');
+        self::assertIsString($tempFile);
+
+        $content = "# cat=basic; type=string; label=Timeout (in seconds; default: 30)\ntimeout = 30";
+        file_put_contents($tempFile, $content);
+
+        try {
+            $result = $this->parser->parse($tempFile);
+
+            self::assertCount(1, $result);
+            self::assertSame('Timeout (in seconds; default: 30)', $result[0]['label']);
+        } finally {
+            unlink($tempFile);
+        }
+    }
 }

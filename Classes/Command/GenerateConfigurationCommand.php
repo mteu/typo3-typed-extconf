@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Command;
 
-use mteu\TypedExtConf\Generator\ConfigurationClassGenerator;
-use mteu\TypedExtConf\Parser\ExtConfTemplateParser;
+use mteu\TypedExtConf\Generator\ClassGenerator;
+use mteu\TypedExtConf\Parser\TemplateParser;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -45,12 +45,13 @@ final class GenerateConfigurationCommand extends Command
 {
     public function __construct(
         private readonly PackageManager $packageManager,
-        private readonly ExtConfTemplateParser $templateParser,
-        private readonly ConfigurationClassGenerator $classGenerator,
+        private readonly TemplateParser $templateParser,
+        private readonly ClassGenerator $classGenerator,
     ) {
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -87,6 +88,7 @@ final class GenerateConfigurationCommand extends Command
             );
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
