@@ -6,7 +6,7 @@
 		"friendsofphp/php-cs-fixer": "3.95.1",
 		"helmich/typo3-typoscript-lint": "3.3.0",
 		"phpstan/extension-installer": "1.4.3",
-		"phpstan/phpstan": "2.1.49",
+		"phpstan/phpstan": "2.1.50",
 		"phpstan/phpstan-deprecation-rules": "2.0.4",
 		"phpstan/phpstan-strict-rules": "2.0.10",
 		"roave/security-advisories": "dev-latest",
