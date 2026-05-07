@@ -62,4 +62,34 @@ final class GenerateConfigurationCommandTest extends TestCase
 
         self::assertSame(0, $commandTester->getStatusCode());
     }
+
+    #[Test]
+    public function ownExtensionIsExcludedFromActivePackagesPicker(): void
+    {
+        $ownPackage = $this->createMock(Package::class);
+        $ownPackage->method('getPackageKey')->willReturn('typed_extconf');
+
+        $otherPackage = $this->createMock(Package::class);
+        $otherPackage->method('getPackageKey')->willReturn('test_extension');
+        $otherPackage->method('getPackagePath')->willReturn('/path/to/test_extension/');
+
+        $packageManager = $this->createMock(PackageManager::class);
+        $packageManager->method('getActivePackages')->willReturn([$ownPackage, $otherPackage]);
+        $packageManager->method('getPackage')->with('test_extension')->willReturn($otherPackage);
+
+        $command = new GenerateConfigurationCommand(
+            $packageManager,
+            new ExtConfTemplateParser(),
+            new ConfigurationClassGenerator(),
+        );
+        (new Application())->add($command);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->setInputs(['test_extension', 'yes']);
+        $commandTester->execute([]);
+
+        $display = $commandTester->getDisplay();
+        self::assertStringContainsString('test_extension', $display);
+        self::assertStringNotContainsString('[0] typed_extconf', $display);
+    }
 }
