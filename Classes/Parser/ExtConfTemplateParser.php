@@ -25,10 +25,10 @@ namespace mteu\TypedExtConf\Parser;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class ExtConfTemplateParser
+final readonly class ExtConfTemplateParser implements TemplateParser
 {
     /**
-     * @return list<array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}>
+     * @return list<array{name: string, type: string, default: mixed, path: string, required: bool, label: string, category: string, typo3_type: string}>
      */
     public function parse(string $templatePath): array
     {
@@ -36,16 +36,25 @@ final readonly class ExtConfTemplateParser
             throw new \InvalidArgumentException("Template file not found: {$templatePath}");
         }
 
+        if (!is_readable($templatePath)) {
+            throw new \RuntimeException(
+                sprintf('Unable to read template file: %s', $templatePath),
+            );
+        }
+
         $content = file_get_contents($templatePath);
+
         if ($content === false) {
-            throw new \RuntimeException("Failed to read template file: {$templatePath}");
+            throw new \RuntimeException(
+                sprintf('Failed to read template file: %s', $templatePath),
+            );
         }
 
         return $this->parseContent($content);
     }
 
     /**
-     * @return list<array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}>
+     * @return list<array{name: string, type: string, default: mixed, path: string, required: bool, label: string, category: string, typo3_type: string}>
      */
     private function parseContent(string $content): array
     {
@@ -105,7 +114,7 @@ final readonly class ExtConfTemplateParser
 
     /**
      * @param array<string, string>|null $comment
-     * @return array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}|null
+     * @return array{name: string, type: string, default: mixed, path: string, required: bool, label: string, category: string, typo3_type: string}|null
      */
     private function parseConfigurationLine(string $line, ?array $comment): ?array
     {

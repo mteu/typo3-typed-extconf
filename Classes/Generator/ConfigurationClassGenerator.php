@@ -28,7 +28,7 @@ use Nette\PhpGenerator\PsrPrinter;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class ConfigurationClassGenerator
+final readonly class ConfigurationClassGenerator implements ClassGenerator
 {
     /**
      * Generate a typed configuration class.
