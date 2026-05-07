@@ -105,7 +105,7 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
     {
         $command = $this->get(GenerateConfigurationCommand::class);
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
         $commandTester = new CommandTester($command);
 
         $commandTester->setInputs(['no']); // Don't switch to manual mode
@@ -126,7 +126,7 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
 
         $command = $this->get(GenerateConfigurationCommand::class);
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
         $commandTester = new CommandTester($command);
 
         // Simulate manual property input - must be set before execute()
@@ -181,7 +181,7 @@ final class GenerateConfigurationCommandTest extends FunctionalTestCase
     {
         $command = $this->get(GenerateConfigurationCommand::class);
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
         $commandTester = new CommandTester($command);
         $commandTester->execute($options);
         return $commandTester;
