@@ -123,7 +123,7 @@ final class GenerateConfigurationCommand extends Command
     {
         $extensions = [];
         foreach ($this->packageManager->getActivePackages() as $package) {
-            if ($package->getPackageKey() !== 'typo3-typed-extconf') {
+            if ($package->getPackageKey() !== 'typed_extconf') {
                 $extensions[] = $package->getPackageKey();
             }
         }
