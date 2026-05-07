@@ -297,7 +297,16 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
             ->willReturn($packageMock);
 
         $this->templateParserMock->method('parse')->willReturn([
-            ['name' => 'apiKey', 'type' => 'string', 'label' => 'API Key'],
+            [
+                'name' => 'apiKey',
+                'type' => 'string',
+                'default' => '',
+                'path' => 'apiKey',
+                'required' => false,
+                'label' => 'API Key',
+                'category' => 'basic',
+                'typo3_type' => 'string',
+            ],
         ]);
 
         $this->classGeneratorMock->method('generate')
@@ -320,32 +329,41 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function ownExtensionIsExcludedFromActivePackagesPicker(): void
     {
         $ownPackage = $this->createMock(Package::class);
         $ownPackage->method('getPackageKey')->willReturn('typed_extconf');
 
-        $otherPackage = $this->createMock(Package::class);
-        $otherPackage->method('getPackageKey')->willReturn('test_extension');
-        $otherPackage->method('getPackagePath')->willReturn('/path/to/test_extension/');
+        $alpha = $this->createMock(Package::class);
+        $alpha->method('getPackageKey')->willReturn('alpha_ext');
+        $alpha->method('getPackagePath')
+            ->willReturn(sys_get_temp_dir() . '/missing_alpha_' . uniqid() . '/');
 
-        $packageManager = $this->createMock(PackageManager::class);
-        $packageManager->method('getActivePackages')->willReturn([$ownPackage, $otherPackage]);
-        $packageManager->method('getPackage')->with('test_extension')->willReturn($otherPackage);
+        $beta = $this->createMock(Package::class);
+        $beta->method('getPackageKey')->willReturn('beta_ext');
 
-        $command = new GenerateConfigurationCommand(
-            $packageManager,
-            new ExtConfTemplateParser(),
-            new ConfigurationClassGenerator(),
+        $this->packageManagerMock->method('getActivePackages')
+            ->willReturn([$ownPackage, $alpha, $beta]);
+        $this->packageManagerMock->method('getPackage')
+            ->with('alpha_ext')
+            ->willReturn($alpha);
+
+        $command = $this->createCommand();
+        $tester = new CommandTester($command);
+
+        // Pick alpha_ext from the rendered choice list, decline manual fallback
+        // when the (non-existent) template file is missing.
+        $tester->setInputs(['alpha_ext', 'no']);
+
+        $tester->execute(
+            ['--mode' => 'template'],
+            ['interactive' => true],
         );
-        (new Application())->add($command);
 
-        $commandTester = new CommandTester($command);
-        $commandTester->setInputs(['test_extension', 'yes']);
-        $commandTester->execute([]);
-
-        $display = $commandTester->getDisplay();
-        self::assertStringContainsString('test_extension', $display);
-        self::assertStringNotContainsString('[0] typed_extconf', $display);
+        $display = $tester->getDisplay();
+        self::assertStringContainsString('alpha_ext', $display);
+        self::assertStringContainsString('beta_ext', $display);
+        self::assertStringNotContainsString('typed_extconf', $display);
     }
 }

@@ -23,7 +23,16 @@ namespace mteu\TypedExtConf\Parser;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  *
- * @phpstan-type FieldData array{name: string, type: string, label?: string, default?: mixed}
+ * @phpstan-type FieldData array{
+ *     name: string,
+ *     type: string,
+ *     default: mixed,
+ *     path: string,
+ *     required: bool,
+ *     label: string,
+ *     category: string,
+ *     typo3_type: string,
+ * }
  */
 interface TemplateParser
 {

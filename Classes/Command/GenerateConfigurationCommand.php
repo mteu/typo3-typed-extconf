@@ -189,7 +189,7 @@ final class GenerateConfigurationCommand extends Command
                     '%s (%s) - %s',
                     $field['name'],
                     $field['type'],
-                    $field['label'] ?? 'No label',
+                    $field['label'],
                 ),
                 $templateData
             ));
