@@ -25,7 +25,7 @@
 	"require-dev": {
 		"composer/class-map-generator": "^1.1",
 		"eliashaeussler/typo3-vendor-bundler": "^4.0",
-		"eliashaeussler/version-bumper": "^3.0",
+		"eliashaeussler/version-bumper": "^3.3",
 		"phpunit/phpcov": "^10.0 || ^11.0.0",
 		"phpunit/phpunit": "^11.5 || ^12.1",
 		"roave/security-advisories": "dev-latest",
