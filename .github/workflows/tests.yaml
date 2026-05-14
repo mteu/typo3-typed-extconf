@@ -24,13 +24,13 @@ jobs:
       typo3DatabasePassword: root
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
       # Prepare environment
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v${{ matrix.composer-version }}
@@ -61,13 +61,13 @@ jobs:
       typo3DatabaseUsername: root
       typo3DatabasePassword: root
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
       # Prepare environment
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
         with:
           php-version: "8.5"
           tools: composer:v2
@@ -92,7 +92,7 @@ jobs:
         working-directory: .build/coverage
         run: sed -i 's#/home/runner/work/typo3-typed-extconf/typo3-typed-extconf#${{ github.workspace }}#g' clover.xml
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: coverage
           path: .build/coverage/clover.xml
@@ -103,20 +103,20 @@ jobs:
     needs: tests-coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
       # Download artifact
       - name: Download coverage artifact
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: coverage
 
       # qlty
       - name: qlty report
-        uses: qltysh/qlty-action/coverage@v1
+        uses: qltysh/qlty-action/coverage@a2277a908db90c4c868832fb9204521fb940fdb4 # v1
         if: env.QLTY_COVERAGE_TOKEN
         env:
           QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
@@ -126,7 +126,7 @@ jobs:
 
       # Coveralls
       - name: Coveralls report
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2
         with:
           file: ${{ steps.download.outputs.download-path }}/clover.xml
           fail-on-error: false
