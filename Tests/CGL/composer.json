@@ -1,7 +1,7 @@
 {
 	"require-dev": {
 		"armin/editorconfig-cli": "2.2.1",
-		"ergebnis/composer-normalize": "2.51.0",
+		"ergebnis/composer-normalize": "2.52.0",
 		"ergebnis/phpstan-rules": "2.13.1",
 		"friendsofphp/php-cs-fixer": "3.95.2",
 		"helmich/typo3-typoscript-lint": "3.3.0",
