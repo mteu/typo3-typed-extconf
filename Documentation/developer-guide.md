@@ -192,6 +192,24 @@ final readonly class PathMappingConfiguration
 }
 ```
 
+> [!IMPORTANT]
+> The dot (`.`) is always treated as a path separator. A `path` of
+> `'database.host'` is resolved as `['database']['host']`, never as a single
+> flat key literally named `database.host`. This matches how the TYPO3 backend
+> module stores configuration: it flattens the form into nested arrays, so
+> `db.driver` is `['db']['driver']`.
+>
+> Consequences to be aware of:
+>
+> - You cannot point a `path` at a flat key that itself contains a literal dot.
+>   There is currently no escape sequence (e.g. `foo\.bar`) or explicit
+>   array-form (`path: ['foo', 'bar']`).
+> - There is no syntax for addressing a numeric array index within `path`.
+>
+> In practice this is rarely a problem because TYPO3 ext-conf keys are
+> dot-flattened by convention, but the behaviour is intentional and not
+> configurable.
+
 ### Required Fields
 
 Mark configuration values as required to enforce their presence:
