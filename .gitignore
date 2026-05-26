@@ -2,6 +2,7 @@
 /config
 /Resources/Private/Libs
 /tailor-version-artefact
+/packages
 /var
 .phpunit.result.cache
 .php-cs-fixer.cache
