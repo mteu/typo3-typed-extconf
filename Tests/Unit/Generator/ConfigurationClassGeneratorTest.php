@@ -17,15 +17,14 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\Generator;
 
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 use mteu\TypedExtConf\Generator\ConfigurationClassGenerator;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
  * ConfigurationClassGeneratorTest.
- *
- * Tests the ConfigurationClassGenerator for proper PHP code generation
- * using Nette PhpGenerator with various property configurations.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -35,9 +34,24 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
 {
     private ConfigurationClassGenerator $generator;
 
+    /**
+     * @var list<string>
+     */
+    private array $tempFiles = [];
+
     protected function setUp(): void
     {
         $this->generator = new ConfigurationClassGenerator();
+    }
+
+    protected function tearDown(): void
+    {
+        foreach ($this->tempFiles as $tempFile) {
+            if (is_file($tempFile)) {
+                unlink($tempFile);
+            }
+        }
+        $this->tempFiles = [];
     }
 
     #[Test]
@@ -50,39 +64,54 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
     }
 
     #[Test]
-    public function generateCreatesValidPhpClass(): void
+    public function generatedClassHasExpectedStructure(): void
     {
-        $properties = [
+        $reflection = $this->generateAndReflect(
+            'valid_class_ext',
+            'ValidClassConfiguration',
             [
-                'name' => 'apiKey',
-                'type' => 'string',
-                'default' => 'default-key',
-                'path' => 'api.key',
-                'required' => true,
+                [
+                    'name' => 'apiKey',
+                    'type' => 'string',
+                    'default' => 'default-key',
+                    'path' => 'api.key',
+                    'required' => true,
+                ],
+                [
+                    'name' => 'timeout',
+                    'type' => 'int',
+                    'default' => 30,
+                ],
             ],
-            [
-                'name' => 'timeout',
-                'type' => 'int',
-                'default' => 30,
-            ],
-        ];
+        );
 
-        $result = $this->generator->generate('test_extension', 'TestConfiguration', $properties);
+        self::assertTrue($reflection->isFinal());
+        self::assertTrue($reflection->isReadOnly());
 
-        // Test basic PHP structure
-        self::assertStringContainsString('<?php', $result);
-        self::assertStringContainsString('declare(strict_types=1);', $result);
-        self::assertStringContainsString('namespace Test\\Extension\\Configuration;', $result);
+        $extensionConfigAttrs = $reflection->getAttributes(ExtensionConfig::class);
+        self::assertCount(1, $extensionConfigAttrs);
+        self::assertSame('valid_class_ext', $extensionConfigAttrs[0]->newInstance()->extensionKey);
 
-        // Test class structure
-        self::assertStringContainsString('final readonly class TestConfiguration', $result);
-        self::assertStringContainsString('#[ExtensionConfig(extensionKey: \'test_extension\')]', $result);
+        $constructor = $reflection->getConstructor();
+        self::assertNotNull($constructor);
+        $parameters = $constructor->getParameters();
+        self::assertCount(2, $parameters);
 
-        // Test properties with PHP defaults (not in attributes)
-        self::assertStringContainsString('#[ExtConfProperty(path: \'api.key\', required: true)]', $result);
-        self::assertStringContainsString('public string $apiKey = \'default-key\',', $result);
-        self::assertStringContainsString('#[ExtConfProperty]', $result);
-        self::assertStringContainsString('public int $timeout = 30,', $result);
+        self::assertSame('apiKey', $parameters[0]->getName());
+        self::assertSame('string', self::namedTypeName($parameters[0]));
+        self::assertSame('default-key', $parameters[0]->getDefaultValue());
+
+        $apiKeyAttribute = $parameters[0]->getAttributes(ExtConfProperty::class)[0]->newInstance();
+        self::assertSame('api.key', $apiKeyAttribute->path);
+        self::assertTrue($apiKeyAttribute->required);
+
+        self::assertSame('timeout', $parameters[1]->getName());
+        self::assertSame('int', self::namedTypeName($parameters[1]));
+        self::assertSame(30, $parameters[1]->getDefaultValue());
+
+        $timeoutAttribute = $parameters[1]->getAttributes(ExtConfProperty::class)[0]->newInstance();
+        self::assertNull($timeoutAttribute->path);
+        self::assertFalse($timeoutAttribute->required);
     }
 
     #[Test]
@@ -90,51 +119,55 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
     {
         $properties = [['name' => 'test', 'type' => 'string']];
 
-        // Test multi-part extension key
-        $result1 = $this->generator->generate('my_extension', 'Config', $properties);
-        self::assertStringContainsString('namespace My\\Extension\\Configuration;', $result1);
+        $result1 = $this->generator->generate('my_extension_one', 'Config', $properties);
+        self::assertStringContainsString('namespace My\\ExtensionOne\\Configuration;', $result1);
 
-        // Test single-part extension key
-        $result2 = $this->generator->generate('myext', 'Config', $properties);
-        self::assertStringContainsString('namespace Vendor\\Myext\\Configuration;', $result2);
+        $result2 = $this->generator->generate('singleword', 'Config', $properties);
+        self::assertStringContainsString('namespace Vendor\\Singleword\\Configuration;', $result2);
     }
 
     #[Test]
     public function generateHandlesVariousDefaultValueTypes(): void
     {
-        $properties = [
-            ['name' => 'stringVal', 'type' => 'string', 'default' => 'test'],
-            ['name' => 'intVal', 'type' => 'int', 'default' => 42],
-            ['name' => 'boolVal', 'type' => 'bool', 'default' => true],
-            ['name' => 'arrayVal', 'type' => 'array', 'default' => ['a', 'b']],
-            ['name' => 'nullVal', 'type' => 'string', 'default' => null],
-        ];
+        $reflection = $this->generateAndReflect(
+            'various_defaults_ext',
+            'VariousDefaultsConfiguration',
+            [
+                ['name' => 'stringVal', 'type' => 'string', 'default' => 'test'],
+                ['name' => 'intVal', 'type' => 'int', 'default' => 42],
+                ['name' => 'boolVal', 'type' => 'bool', 'default' => true],
+                ['name' => 'arrayVal', 'type' => 'array', 'default' => ['a', 'b']],
+                ['name' => 'nullVal', 'type' => 'string', 'default' => null],
+            ],
+        );
 
-        $result = $this->generator->generate('test_ext', 'Config', $properties);
+        $parameters = $reflection->getConstructor()?->getParameters() ?? [];
 
-        self::assertStringContainsString('public string $stringVal = \'test\',', $result);
-        self::assertStringContainsString('public int $intVal = 42,', $result);
-        self::assertStringContainsString('public bool $boolVal = true,', $result);
-        self::assertStringContainsString('public array $arrayVal = [\'a\', \'b\'],', $result);
-        self::assertStringContainsString('public ?string $nullVal = null,', $result);
+        self::assertSame('test', $parameters[0]->getDefaultValue());
+        self::assertSame(42, $parameters[1]->getDefaultValue());
+        self::assertTrue($parameters[2]->getDefaultValue());
+        self::assertSame(['a', 'b'], $parameters[3]->getDefaultValue());
+        self::assertNull($parameters[4]->getDefaultValue());
+        self::assertTrue($parameters[4]->allowsNull());
     }
 
     #[Test]
     public function generateIgnoresInvalidProperties(): void
     {
-        /** @var array<mixed> $properties */
-        $properties = [
-            ['name' => 'validProp', 'type' => 'string'],
-            ['name' => null, 'type' => 'string'], // Invalid name
-            ['name' => 'invalidType', 'type' => null], // Invalid type
-        ];
+        $reflection = $this->generateAndReflect(
+            'ignores_invalid_ext',
+            'IgnoresInvalidConfiguration',
+            [
+                ['name' => 'validProp', 'type' => 'string'],
+                ['name' => null, 'type' => 'string'],
+                ['name' => 'invalidType', 'type' => null],
+            ],
+        );
 
-        // ignored via configuration (intentionally testing with invalid input types)
-        $result = $this->generator->generate('test_ext', 'Config', $properties);
+        $parameters = $reflection->getConstructor()?->getParameters() ?? [];
 
-        self::assertStringContainsString('public string $validProp', $result);
-        self::assertStringNotContainsString('$null', $result);
-        self::assertStringNotContainsString('$invalidType', $result);
+        self::assertCount(1, $parameters);
+        self::assertSame('validProp', $parameters[0]->getName());
     }
 
     #[Test]
@@ -152,14 +185,60 @@ final class ConfigurationClassGeneratorTest extends Framework\TestCase
 
         $result = $this->generator->generate('test_ext', 'Config', $properties);
 
-        // Verify generated PHP is syntactically valid
         $tempFile = tempnam(sys_get_temp_dir(), 'php_syntax_test');
+        self::assertIsString($tempFile);
+        $this->tempFiles[] = $tempFile;
         file_put_contents($tempFile, $result);
 
         $syntaxCheck = shell_exec("php -l $tempFile 2>&1");
-        unlink($tempFile);
-
         self::assertIsString($syntaxCheck);
         self::assertStringContainsString('No syntax errors detected', $syntaxCheck);
+    }
+
+    /**
+     * @param list<array<string, mixed>> $properties
+     * @return \ReflectionClass<object>
+     */
+    private function generateAndReflect(string $extensionKey, string $className, array $properties): \ReflectionClass
+    {
+        /** @var list<array{name: string, type: string, default?: mixed, path?: string, required?: bool, label?: string}> $typedProperties */
+        $typedProperties = $properties;
+
+        $code = $this->generator->generate($extensionKey, $className, $typedProperties);
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'gen_class_');
+        self::assertIsString($tempFile);
+        $this->tempFiles[] = $tempFile;
+        file_put_contents($tempFile, $code);
+
+        $fqn = $this->resolveFullyQualifiedName($extensionKey, $className);
+
+        if (!class_exists($fqn, false)) {
+            require $tempFile;
+        }
+
+        self::assertTrue(class_exists($fqn), "Generated class {$fqn} was not loaded.");
+
+        return new \ReflectionClass($fqn);
+    }
+
+    private static function namedTypeName(\ReflectionParameter $parameter): ?string
+    {
+        $type = $parameter->getType();
+        return $type instanceof \ReflectionNamedType ? $type->getName() : null;
+    }
+
+    private function resolveFullyQualifiedName(string $extensionKey, string $className): string
+    {
+        $parts = explode('_', $extensionKey);
+        $namespaceParts = array_map(ucfirst(...), $parts);
+        $vendor = array_shift($namespaceParts);
+        $extension = implode('', $namespaceParts);
+
+        $namespace = $extension === ''
+            ? "Vendor\\{$vendor}\\Configuration"
+            : "{$vendor}\\{$extension}\\Configuration";
+
+        return "{$namespace}\\{$className}";
     }
 }

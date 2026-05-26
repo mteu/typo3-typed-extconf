@@ -31,6 +31,8 @@ use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\RequiredTestConfiguration
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\SecurityConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\SimpleTestConfiguration;
 use PHPUnit\Framework;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
@@ -38,13 +40,11 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 /**
  * TypedExtensionConfigurationProviderTest.
  *
- * Tests the TypedExtensionConfigurationProvider with various configuration scenarios
- * using dedicated test fixture classes.
- *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
 #[Framework\Attributes\CoversClass(TypedExtensionConfigurationProvider::class)]
+#[AllowMockObjectsWithoutExpectations]
 final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
 {
     private ExtensionConfiguration&MockObject $extensionConfiguration;
@@ -60,25 +60,19 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapSimpleConfiguration(): void
+    public function mapSimpleConfiguration(): void
     {
-        $configData = [
+        $this->stubExtensionConfig('test_ext', [
             'basic' => [
                 'string' => 'test_value',
                 'integer' => '123',
                 'boolean' => '1',
                 'float' => '2.71',
             ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn($configData);
+        ]);
 
         $result = $this->subject->get(SimpleTestConfiguration::class);
 
-        self::assertInstanceOf(SimpleTestConfiguration::class, $result);
         self::assertSame('test_value', $result->stringValue);
         self::assertSame(123, $result->intValue);
         self::assertTrue($result->boolValue);
@@ -86,16 +80,12 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapWithDefaults(): void
+    public function mapWithDefaults(): void
     {
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn([]);
+        $this->stubExtensionConfig('test_ext', []);
 
         $result = $this->subject->get(SimpleTestConfiguration::class);
 
-        self::assertInstanceOf(SimpleTestConfiguration::class, $result);
         self::assertSame('default', $result->stringValue);
         self::assertSame(42, $result->intValue);
         self::assertFalse($result->boolValue);
@@ -103,21 +93,16 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapWithTypeConversion(): void
+    public function mapWithTypeConversion(): void
     {
-        $configData = [
+        $this->stubExtensionConfig('test_ext', [
             'basic' => [
-                'string' => 123, // int to string
-                'integer' => '456', // string to int
-                'boolean' => 'true', // string to bool
-                'float' => '9.81', // string to float
+                'string' => 123,
+                'integer' => '456',
+                'boolean' => 'true',
+                'float' => '9.81',
             ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn($configData);
+        ]);
 
         $result = $this->subject->get(SimpleTestConfiguration::class);
 
@@ -127,61 +112,43 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         self::assertSame(9.81, $result->floatValue);
     }
 
-    #[Test]
-    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
-    public function testMapBooleanConversions(): void
+    /**
+     * @return \Generator<string, array{mixed, bool}>
+     */
+    public static function booleanConversionDataProvider(): \Generator
     {
-        // Test key boolean conversion cases
-        $testCases = [
-            ['1', true],
-            ['0', false],
-            ['true', true],
-            ['false', false],
-        ];
-
-        foreach ($testCases as [$input, $expected]) {
-            $configData = [
-                'basic' => [
-                    'boolean' => $input,
-                ],
-            ];
-
-            $this->extensionConfiguration->expects(self::once())
-                ->method('get')
-                ->with('test_ext')
-                ->willReturn($configData);
-
-            $result = $this->subject->get(SimpleTestConfiguration::class);
-            self::assertSame($expected, $result->boolValue, 'Failed for input: ' . var_export($input, true));
-
-            // Reset mock for next iteration
-            $this->setUp();
-        }
+        yield 'string 1' => ['1', true];
+        yield 'string 0' => ['0', false];
+        yield 'string true' => ['true', true];
+        yield 'string false' => ['false', false];
     }
 
     #[Test]
-    public function testMapNestedConfiguration(): void
+    #[DataProvider('booleanConversionDataProvider')]
+    public function mapBooleanConversions(mixed $input, bool $expected): void
     {
-        $configData = [
-            'main' => [
-                'endpoint' => '/custom/api',
-            ],
+        $this->stubExtensionConfig('test_ext', ['basic' => ['boolean' => $input]]);
+
+        $result = $this->subject->get(SimpleTestConfiguration::class);
+
+        self::assertSame($expected, $result->boolValue);
+    }
+
+    #[Test]
+    public function mapNestedConfiguration(): void
+    {
+        $this->stubExtensionConfig('complex_ext', [
+            'main' => ['endpoint' => '/custom/api'],
             'nested' => [
                 'enabled' => '1',
                 'priority' => '99',
                 'name' => 'test_nested',
             ],
             'simpleValue' => 'direct_value',
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('complex_ext')
-            ->willReturn($configData);
+        ]);
 
         $result = $this->subject->get(ComplexTestConfiguration::class);
 
-        self::assertInstanceOf(ComplexTestConfiguration::class, $result);
         self::assertSame('/custom/api', $result->endpoint);
         self::assertSame('direct_value', $result->simpleValue);
 
@@ -192,62 +159,27 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapNestedConfigurationWithDefaults(): void
+    public function mapNestedConfigurationWithDefaults(): void
     {
-        $configData = [
-            'main' => [
-                'endpoint' => '/api/v2',
-            ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('complex_ext')
-            ->willReturn($configData);
+        $this->stubExtensionConfig('complex_ext', [
+            'main' => ['endpoint' => '/api/v2'],
+        ]);
 
         $result = $this->subject->get(ComplexTestConfiguration::class);
 
         self::assertSame('/api/v2', $result->endpoint);
         self::assertSame('fallback', $result->simpleValue);
-
-        // Nested object should use its defaults
         self::assertFalse($result->nestedConfig->enabled);
         self::assertSame(10, $result->nestedConfig->priority);
         self::assertSame('', $result->nestedConfig->name);
     }
 
     #[Test]
-    public function testMapUsesExtensionKeyFromAttribute(): void
+    public function mapRequiredFieldPresent(): void
     {
-        $configData = [
-            'basic' => [
-                'string' => 'attribute_key_test',
-            ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn($configData);
-
-        $result = $this->subject->get(SimpleTestConfiguration::class);
-
-        self::assertSame('attribute_key_test', $result->stringValue);
-    }
-
-    #[Test]
-    public function testMapRequiredFieldPresent(): void
-    {
-        $configData = [
-            'required' => [
-                'value' => 'present',
-            ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn($configData);
+        $this->stubExtensionConfig('test_ext', [
+            'required' => ['value' => 'present'],
+        ]);
 
         $result = $this->subject->get(RequiredTestConfiguration::class);
 
@@ -256,18 +188,11 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapRequiredFieldMissingThrowsException(): void
+    public function mapRequiredFieldMissingThrowsException(): void
     {
-        $configData = [
-            'optional' => [
-                'value' => 'only_optional',
-            ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn($configData);
+        $this->stubExtensionConfig('test_ext', [
+            'optional' => ['value' => 'only_optional'],
+        ]);
 
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('Required configuration key "required.value" is missing');
@@ -276,8 +201,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
-    public function testMapMissingExtensionConfigAttributeThrowsException(): void
+    public function mapMissingExtensionConfigAttributeThrowsException(): void
     {
         $class = new class () {
             public function __construct(
@@ -292,8 +216,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
-    public function testMapNullExtensionKeyThrowsException(): void
+    public function mapNullExtensionKeyThrowsException(): void
     {
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('must have an #[ExtensionConfig] attribute');
@@ -302,8 +225,7 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    #[Framework\Attributes\AllowMockObjectsWithoutExpectations]
-    public function testMapNonInstantiableClassThrowsException(): void
+    public function mapNonInstantiableClassThrowsException(): void
     {
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('must be instantiable');
@@ -312,10 +234,9 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapExtensionConfigurationRetrievalFailure(): void
+    public function mapExtensionConfigurationRetrievalFailure(): void
     {
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
+        $this->extensionConfiguration->method('get')
             ->with('test_ext')
             ->willThrowException(new \Exception('Extension configuration not found'));
 
@@ -326,51 +247,12 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapHandlesEmptyConfiguration(): void
+    public function mapWithNullConfiguration(): void
     {
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn([]);
+        $this->stubExtensionConfig('test_ext', null);
 
         $result = $this->subject->get(SimpleTestConfiguration::class);
 
-        // Should use all default values
-        self::assertSame('default', $result->stringValue);
-        self::assertSame(42, $result->intValue);
-    }
-
-    #[Test]
-    public function testMapValinorMappingError(): void
-    {
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('error_test')
-            ->willReturn(['invalidType' => 'string_value']);
-
-        try {
-            $this->subject->get(ErrorTestConfiguration::class);
-            self::fail('Expected SchemaValidationException was not thrown');
-        } catch (SchemaValidationException $e) {
-            self::assertStringContainsString('Failed to map configuration for extension "error_test"', $e->getMessage());
-            self::assertNotNull($e->getPrevious());
-        } catch (\Throwable $e) {
-            // If it's not wrapped properly, we should still get some kind of Valinor exception
-            self::assertStringContainsString('object', $e->getMessage());
-        }
-    }
-
-    #[Test]
-    public function testMapWithNullConfiguration(): void
-    {
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn(null);
-
-        $result = $this->subject->get(SimpleTestConfiguration::class);
-
-        // Should use all defaults when configuration is null
         self::assertSame('default', $result->stringValue);
         self::assertSame(42, $result->intValue);
         self::assertFalse($result->boolValue);
@@ -378,32 +260,54 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapWithPartialConfiguration(): void
+    public function mapWithPartialConfiguration(): void
     {
-        $configData = [
-            'basic' => [
-                'string' => 'partial_test',
-                // integer, boolean, float missing - should use defaults
-            ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('test_ext')
-            ->willReturn($configData);
+        $this->stubExtensionConfig('test_ext', [
+            'basic' => ['string' => 'partial_test'],
+        ]);
 
         $result = $this->subject->get(SimpleTestConfiguration::class);
 
         self::assertSame('partial_test', $result->stringValue);
-        self::assertSame(42, $result->intValue); // default
-        self::assertFalse($result->boolValue); // default
-        self::assertSame(3.14, $result->floatValue); // default
+        self::assertSame(42, $result->intValue);
+        self::assertFalse($result->boolValue);
+        self::assertSame(3.14, $result->floatValue);
     }
 
     #[Test]
-    public function testMapMultiNestedConfigurationWithFullData(): void
+    public function mapValinorMappingErrorIsWrappedInSchemaValidationException(): void
     {
-        $configData = [
+        $this->stubExtensionConfig(
+            'error_test',
+            ['value' => ['array', 'where', 'int', 'expected']],
+        );
+
+        $this->expectException(SchemaValidationException::class);
+        $this->expectExceptionMessage('Failed to map configuration for extension "error_test"');
+
+        $this->subject->get(ErrorTestConfiguration::class);
+    }
+
+    #[Test]
+    public function mapValinorMappingErrorPreservesPreviousException(): void
+    {
+        $this->stubExtensionConfig(
+            'error_test',
+            ['value' => ['array', 'where', 'int', 'expected']],
+        );
+
+        try {
+            $this->subject->get(ErrorTestConfiguration::class);
+            self::fail('Expected SchemaValidationException was not thrown');
+        } catch (SchemaValidationException $exception) {
+            self::assertNotNull($exception->getPrevious());
+        }
+    }
+
+    #[Test]
+    public function mapMultiNestedConfiguration(): void
+    {
+        $this->stubExtensionConfig('multi_nested_ext', [
             'api' => [
                 'endpoint' => '/monitoring/api',
                 'url' => 'https://custom.example.com',
@@ -419,30 +323,21 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
                 'priority' => '15',
                 'name' => 'multi_nested_test',
             ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('multi_nested_ext')
-            ->willReturn($configData);
+        ]);
 
         $result = $this->subject->get(MultiNestedTestConfiguration::class);
 
-        self::assertInstanceOf(MultiNestedTestConfiguration::class, $result);
         self::assertSame('/monitoring/api', $result->endpoint);
 
-        // Test ApiConfiguration nested object
         self::assertInstanceOf(ApiConfiguration::class, $result->apiConfiguration);
         self::assertSame('https://custom.example.com', $result->apiConfiguration->url);
         self::assertSame(60, $result->apiConfiguration->timeout);
         self::assertSame(5, $result->apiConfiguration->retries);
 
-        // Test SecurityConfiguration nested object
         self::assertInstanceOf(SecurityConfiguration::class, $result->securityConfiguration);
         self::assertSame('secret-token-123', $result->securityConfiguration->token);
         self::assertTrue($result->securityConfiguration->enabled);
 
-        // Test NestedTestConfiguration nested object
         self::assertInstanceOf(NestedTestConfiguration::class, $result->nestedTestConfiguration);
         self::assertTrue($result->nestedTestConfiguration->enabled);
         self::assertSame(15, $result->nestedTestConfiguration->priority);
@@ -450,26 +345,23 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function testMapMultiNestedConfigurationWithDefaults(): void
+    public function mapMultiNestedConfigurationWithDefaults(): void
     {
-        $configData = [
-            'api' => [
-                'endpoint' => '/api/v1',
-                // Other api.* config missing - should use defaults
-            ],
-        ];
-
-        $this->extensionConfiguration->expects(self::once())
-            ->method('get')
-            ->with('multi_nested_ext')
-            ->willReturn($configData);
+        $this->stubExtensionConfig('multi_nested_ext', [
+            'api' => ['endpoint' => '/api/v1'],
+        ]);
 
         $result = $this->subject->get(MultiNestedTestConfiguration::class);
 
         self::assertSame('/api/v1', $result->endpoint);
-        // Test that nested objects use defaults when config is missing
         self::assertSame('https://api.example.com', $result->apiConfiguration->url);
         self::assertSame('', $result->securityConfiguration->token);
     }
 
+    private function stubExtensionConfig(string $extensionKey, mixed $value): void
+    {
+        $this->extensionConfiguration->method('get')
+            ->with($extensionKey)
+            ->willReturn($value);
+    }
 }

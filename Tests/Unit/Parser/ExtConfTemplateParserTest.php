@@ -25,9 +25,6 @@ use PHPUnit\Framework\Attributes\Test;
 /**
  * ExtConfTemplateParserTest.
  *
- * Tests the ExtConfTemplateParser for parsing TYPO3 ext_conf_template.txt
- * configuration files into structured property definitions.
- *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
@@ -36,16 +33,31 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
 {
     private ExtConfTemplateParser $parser;
 
+    /**
+     * @var list<string>
+     */
+    private array $tempFiles = [];
+
     protected function setUp(): void
     {
         $this->parser = new ExtConfTemplateParser();
     }
 
+    protected function tearDown(): void
+    {
+        foreach ($this->tempFiles as $tempFile) {
+            if (is_file($tempFile)) {
+                chmod($tempFile, 0644);
+                unlink($tempFile);
+            }
+        }
+        $this->tempFiles = [];
+    }
+
     #[Test]
     public function parseValidTemplateWithTypedFields(): void
     {
-        $templateFile = __DIR__ . '/../Fixture/ExtConfTemplate/valid_template.txt';
-        $result = $this->parser->parse($templateFile);
+        $result = $this->parser->parse(__DIR__ . '/../Fixture/ExtConfTemplate/valid_template.txt');
 
         self::assertCount(3, $result);
 
@@ -66,8 +78,7 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
     #[Test]
     public function parseFieldsWithoutComments(): void
     {
-        $templateFile = __DIR__ . '/../Fixture/ExtConfTemplate/no_comments.txt';
-        $result = $this->parser->parse($templateFile);
+        $result = $this->parser->parse(__DIR__ . '/../Fixture/ExtConfTemplate/no_comments.txt');
 
         self::assertCount(2, $result);
         self::assertSame('simpleField', $result[0]['name']);
@@ -80,42 +91,22 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
     }
 
     #[Test]
-    public function parseEmptyAndMalformedLines(): void
+    public function parseSkipsMalformedLinesAndKeepsValidOnes(): void
     {
-        $templateFile = __DIR__ . '/../Fixture/ExtConfTemplate/malformed.txt';
-        $result = $this->parser->parse($templateFile);
+        $result = $this->parser->parse(__DIR__ . '/../Fixture/ExtConfTemplate/malformed.txt');
 
         self::assertCount(2, $result);
         self::assertSame('validField', $result[0]['name']);
+        self::assertSame('value', $result[0]['default']);
         self::assertSame('anotherField', $result[1]['name']);
+        self::assertSame(123, $result[1]['default']);
     }
 
     #[Test]
     public function parseEmptyFileReturnsEmptyArray(): void
     {
-        $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_empty_');
-        self::assertIsString($tempFile);
-        file_put_contents($tempFile, '');
-
-        try {
-            $result = $this->parser->parse($tempFile);
-            self::assertSame([], $result);
-        } finally {
-            unlink($tempFile);
-        }
-    }
-
-    #[Test]
-    public function parseArrayTypeValues(): void
-    {
-        $templateFile = __DIR__ . '/../Fixture/ExtConfTemplate/array_types.txt';
-        $result = $this->parser->parse($templateFile);
-
-        self::assertSame('string', $result[0]['type']);
-        self::assertSame('item1,item2,item3', $result[0]['default']);
-
-        self::assertSame('string', $result[1]['type']);
-        self::assertSame('single_value', $result[1]['default']);
+        $result = $this->parser->parse($this->writeTempTemplate(''));
+        self::assertSame([], $result);
     }
 
     #[Test]
@@ -130,42 +121,30 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
     #[Test]
     public function parseHandlesUnreadableFile(): void
     {
-        $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_unreadable_test');
-        self::assertIsString($tempFile);
-        file_put_contents($tempFile, 'content');
+        $tempFile = $this->writeTempTemplate('content');
         chmod($tempFile, 0000);
 
         if (is_readable($tempFile)) {
-            chmod($tempFile, 0644);
-            unlink($tempFile);
             self::markTestSkipped('Cannot test file permissions in this environment.');
         }
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to read template file:');
 
-        try {
-            $this->parser->parse($tempFile);
-        } finally {
-            chmod($tempFile, 0644);
-            unlink($tempFile);
-        }
+        $this->parser->parse($tempFile);
     }
 
     #[Test]
-    public function parseBooleanConversions(): void
+    public function parseLabelWithSemicolonIsCapturedFully(): void
     {
-        $templateFile = __DIR__ . '/../Fixture/ExtConfTemplate/boolean_values.txt';
-        $result = $this->parser->parse($templateFile);
+        $tempFile = $this->writeTempTemplate(
+            "# cat=basic; type=string; label=Timeout (in seconds; default: 30)\ntimeout = 30"
+        );
 
-        self::assertSame('bool', $result[0]['type']);
-        self::assertTrue($result[0]['default']);
+        $result = $this->parser->parse($tempFile);
 
-        self::assertSame('bool', $result[1]['type']);
-        self::assertTrue($result[1]['default']);
-
-        self::assertSame('bool', $result[2]['type']);
-        self::assertFalse($result[2]['default']);
+        self::assertCount(1, $result);
+        self::assertSame('Timeout (in seconds; default: 30)', $result[0]['label']);
     }
 
     /**
@@ -192,12 +171,15 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
 
     #[Test]
     #[DataProvider('typo3TypeMappingDataProvider')]
-    public function mapTypo3TypeToPhpTypeReturnsExpectedType(string $typo3Type, string $expectedPhpType): void
+    public function parseMapsTypo3TypesToPhpTypes(string $typo3Type, string $expectedPhpType): void
     {
-        $reflection = new \ReflectionMethod($this->parser, 'mapTypo3TypeToPhpType');
-        $result = $reflection->invoke($this->parser, $typo3Type);
+        $tempFile = $this->writeTempTemplate(
+            "# cat=basic; type={$typo3Type}; label=Some label\nkey = value"
+        );
 
-        self::assertSame($expectedPhpType, $result);
+        $result = $this->parser->parse($tempFile);
+
+        self::assertSame($expectedPhpType, $result[0]['type']);
     }
 
     /**
@@ -218,12 +200,15 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
 
     #[Test]
     #[DataProvider('keyToPropertyNameDataProvider')]
-    public function convertKeyToPropertyNameReturnsExpectedResult(string $key, string $expected): void
+    public function parseConvertsKeyToPropertyName(string $key, string $expected): void
     {
-        $reflection = new \ReflectionMethod($this->parser, 'convertKeyToPropertyName');
-        $result = $reflection->invoke($this->parser, $key);
+        $tempFile = $this->writeTempTemplate("{$key} = value");
 
-        self::assertSame($expected, $result);
+        $result = $this->parser->parse($tempFile);
+
+        self::assertCount(1, $result);
+        self::assertSame($expected, $result[0]['name']);
+        self::assertSame($key, $result[0]['path']);
     }
 
     /**
@@ -232,46 +217,39 @@ final class ExtConfTemplateParserTest extends Framework\TestCase
     public static function defaultValueConversionDataProvider(): \Generator
     {
         yield 'empty string stays empty' => ['', 'string', ''];
-        yield 'empty bool is false' => ['', 'bool', false];
+        yield 'empty bool is false' => ['', 'boolean', false];
         yield 'empty int is zero' => ['', 'int', 0];
         yield 'empty float is zero' => ['', 'float', 0.0];
         yield 'string value unchanged' => ['hello', 'string', 'hello'];
         yield 'int value cast' => ['42', 'int', 42];
         yield 'float value cast' => ['3.14', 'float', 3.14];
-        yield 'bool true from 1' => ['1', 'bool', true];
-        yield 'bool true from yes' => ['yes', 'bool', true];
-        yield 'bool true from on' => ['on', 'bool', true];
-        yield 'bool false from 0' => ['0', 'bool', false];
-        yield 'bool false from no' => ['no', 'bool', false];
-        yield 'bool false from off' => ['off', 'bool', false];
+        yield 'bool true from 1' => ['1', 'boolean', true];
+        yield 'bool true from yes' => ['yes', 'boolean', true];
+        yield 'bool true from on' => ['on', 'boolean', true];
+        yield 'bool false from 0' => ['0', 'boolean', false];
+        yield 'bool false from no' => ['no', 'boolean', false];
+        yield 'bool false from off' => ['off', 'boolean', false];
     }
 
     #[Test]
     #[DataProvider('defaultValueConversionDataProvider')]
-    public function convertDefaultValueReturnsExpectedResult(string $value, string $phpType, mixed $expected): void
+    public function parseConvertsDefaultValueByType(string $value, string $typo3Type, mixed $expected): void
     {
-        $reflection = new \ReflectionMethod($this->parser, 'convertDefaultValue');
-        $result = $reflection->invoke($this->parser, $value, $phpType);
+        $tempFile = $this->writeTempTemplate(
+            "# cat=basic; type={$typo3Type}; label=Some label\nkey = {$value}"
+        );
 
-        self::assertSame($expected, $result);
+        $result = $this->parser->parse($tempFile);
+
+        self::assertSame($expected, $result[0]['default']);
     }
 
-    #[Test]
-    public function parseLabelWithSemicolonIsCapturedFully(): void
+    private function writeTempTemplate(string $content): string
     {
-        $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_semicolon_');
+        $tempFile = tempnam(sys_get_temp_dir(), 'ext_conf_template_');
         self::assertIsString($tempFile);
-
-        $content = "# cat=basic; type=string; label=Timeout (in seconds; default: 30)\ntimeout = 30";
         file_put_contents($tempFile, $content);
-
-        try {
-            $result = $this->parser->parse($tempFile);
-
-            self::assertCount(1, $result);
-            self::assertSame('Timeout (in seconds; default: 30)', $result[0]['label']);
-        } finally {
-            unlink($tempFile);
-        }
+        $this->tempFiles[] = $tempFile;
+        return $tempFile;
     }
 }
