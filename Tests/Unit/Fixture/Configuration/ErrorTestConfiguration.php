@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\TypedExtConf\Tests\Unit\Fixture\Configuration;
 
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
@@ -29,6 +30,7 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class ErrorTestConfiguration
 {
     public function __construct(
-        public object $invalidType, // object type can't be mapped from primitive config values
+        #[ExtConfProperty(path: 'value')]
+        public int $value = 0,
     ) {}
 }

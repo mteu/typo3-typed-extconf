@@ -36,7 +36,3 @@ parameters:
 		-
 			message: '#.*#'
 			path: ../../Tests/Functional/Fixtures/Extensions/*/ext_emconf.php
-		# Allow ignoring phpstan errors inline in Tests/*
-		-
-			identifier: argument.type
-			path: ../../Tests/Unit/Generator/ConfigurationClassGeneratorTest.php

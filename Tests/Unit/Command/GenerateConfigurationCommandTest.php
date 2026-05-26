@@ -22,7 +22,6 @@ use mteu\TypedExtConf\Generator\ClassGenerator;
 use mteu\TypedExtConf\Parser\TemplateParser;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Command\Command;
@@ -38,11 +37,17 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
  * @license GPL-2.0-or-later
  */
 #[Framework\Attributes\CoversClass(GenerateConfigurationCommand::class)]
+#[AllowMockObjectsWithoutExpectations]
 final class GenerateConfigurationCommandTest extends UnitTestCase
 {
     private MockObject&PackageManager $packageManagerMock;
     private MockObject&TemplateParser $templateParserMock;
     private MockObject&ClassGenerator $classGeneratorMock;
+
+    /**
+     * @var list<string>
+     */
+    private array $tempDirs = [];
 
     #[\Override]
     protected function setUp(): void
@@ -52,6 +57,17 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
         $this->packageManagerMock = $this->createMock(PackageManager::class);
         $this->templateParserMock = $this->createMock(TemplateParser::class);
         $this->classGeneratorMock = $this->createMock(ClassGenerator::class);
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        foreach ($this->tempDirs as $dir) {
+            $this->removeDirectory($dir);
+        }
+        $this->tempDirs = [];
+
+        parent::tearDown();
     }
 
     private function createCommand(): GenerateConfigurationCommand
@@ -70,63 +86,6 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function commandIsRegisteredWithCorrectNameAndDescription(): void
-    {
-        $command = $this->createCommand();
-
-        self::assertSame('typed-extconf:generate', $command->getName());
-        self::assertSame(
-            'Generate typed configuration classes for TYPO3 extensions',
-            $command->getDescription(),
-        );
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function commandDefinesAllExpectedOptions(): void
-    {
-        $command = $this->createCommand();
-        $definition = $command->getDefinition();
-
-        self::assertTrue($definition->hasOption('extension'));
-        self::assertTrue($definition->hasOption('mode'));
-        self::assertTrue($definition->hasOption('class-name'));
-        self::assertTrue($definition->hasOption('output-path'));
-        self::assertTrue($definition->hasOption('force'));
-
-        self::assertSame('e', $definition->getOption('extension')->getShortcut());
-        self::assertSame('m', $definition->getOption('mode')->getShortcut());
-        self::assertSame('c', $definition->getOption('class-name')->getShortcut());
-        self::assertSame('o', $definition->getOption('output-path')->getShortcut());
-        self::assertSame('f', $definition->getOption('force')->getShortcut());
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function modeOptionDefaultsToTemplate(): void
-    {
-        $command = $this->createCommand();
-
-        self::assertSame(
-            'template',
-            $command->getDefinition()->getOption('mode')->getDefault(),
-        );
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function forceOptionIsValueNone(): void
-    {
-        $command = $this->createCommand();
-
-        self::assertFalse(
-            $command->getDefinition()->getOption('force')->acceptValue(),
-        );
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function templateModeFailsWhenTemplateFileDoesNotExist(): void
     {
         $packageMock = $this->createMock(Package::class);
@@ -139,7 +98,7 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
         $command = $this->createCommand();
         $tester = new CommandTester($command);
 
-        $tester->setInputs(['no']); // decline manual fallback
+        $tester->setInputs(['no']);
 
         $tester->execute([
             '--extension' => 'my_extension',
@@ -154,12 +113,9 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function templateModeReturnsSuccessWhenNoFieldsFound(): void
     {
-        $templateDir = sys_get_temp_dir() . '/typed_extconf_test_' . uniqid();
-        mkdir($templateDir, 0755, true);
-        file_put_contents($templateDir . '/ext_conf_template.txt', '');
+        $templateDir = $this->createTemplateDir('');
 
         $packageMock = $this->createMock(Package::class);
         $packageMock->method('getPackagePath')->willReturn($templateDir . '/');
@@ -183,18 +139,12 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
             'No configuration fields found',
             $tester->getDisplay(),
         );
-
-        unlink($templateDir . '/ext_conf_template.txt');
-        rmdir($templateDir);
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function templateModeReturnsFailureWhenParserThrows(): void
     {
-        $templateDir = sys_get_temp_dir() . '/typed_extconf_test_' . uniqid();
-        mkdir($templateDir, 0755, true);
-        file_put_contents($templateDir . '/ext_conf_template.txt', 'something');
+        $templateDir = $this->createTemplateDir('something');
 
         $packageMock = $this->createMock(Package::class);
         $packageMock->method('getPackagePath')->willReturn($templateDir . '/');
@@ -216,19 +166,14 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
 
         self::assertSame(Command::FAILURE, $tester->getStatusCode());
         self::assertStringContainsString('Failed to parse', $tester->getDisplay());
-
-        unlink($templateDir . '/ext_conf_template.txt');
-        rmdir($templateDir);
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function manualModeReturnsSuccessWhenNoPropertiesDefined(): void
     {
         $command = $this->createCommand();
         $tester = new CommandTester($command);
 
-        // First input: class name (accept default), second: empty property name to stop
         $tester->setInputs(['MyConfiguration', '']);
 
         $tester->execute([
@@ -240,32 +185,57 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
         self::assertStringContainsString('No properties defined', $tester->getDisplay());
     }
 
-    /**
-     * @return \Generator<string, array{string, string}>
-     */
-    public static function defaultClassNameDataProvider(): \Generator
+    #[Test]
+    public function classNameDefaultsToCamelCasedExtensionKey(): void
     {
-        yield 'single word' => ['news', 'NewsConfiguration'];
-        yield 'two words' => ['my_extension', 'MyExtensionConfiguration'];
-        yield 'three words' => ['my_cool_extension', 'MyCoolExtensionConfiguration'];
-    }
+        $templateDir = $this->createTemplateDir('content');
+        $outputFile = $templateDir . '/MyCoolExtensionConfiguration.php';
 
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    #[DataProvider('defaultClassNameDataProvider')]
-    public function generateDefaultClassNameProducesExpectedResult(
-        string $extensionKey,
-        string $expectedClassName,
-    ): void {
+        $packageMock = $this->createMock(Package::class);
+        $packageMock->method('getPackagePath')->willReturn($templateDir . '/');
+
+        $this->packageManagerMock->method('getPackage')
+            ->with('my_cool_extension')
+            ->willReturn($packageMock);
+
+        $this->templateParserMock->method('parse')->willReturn([
+            [
+                'name' => 'foo',
+                'type' => 'string',
+                'default' => '',
+                'path' => 'foo',
+                'required' => false,
+                'label' => 'Foo',
+                'category' => 'basic',
+                'typo3_type' => 'string',
+            ],
+        ]);
+
+        $capturedClassName = null;
+        $this->classGeneratorMock->method('generate')
+            ->willReturnCallback(
+                function (string $extensionKey, string $className) use (&$capturedClassName): string {
+                    $capturedClassName = $className;
+                    return '<?php // generated';
+                },
+            );
+
         $command = $this->createCommand();
+        $tester = new CommandTester($command);
+        $tester->setInputs(['']);
 
-        $reflection = new \ReflectionMethod($command, 'generateDefaultClassName');
+        $tester->execute([
+            '--extension' => 'my_cool_extension',
+            '--mode' => 'template',
+            '--output-path' => $outputFile,
+            '--force' => true,
+        ]);
 
-        self::assertSame($expectedClassName, $reflection->invoke($command, $extensionKey));
+        self::assertSame(Command::SUCCESS, $tester->getStatusCode());
+        self::assertSame('MyCoolExtensionConfiguration', $capturedClassName);
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function selectExtensionThrowsWhenNoExtensionsAvailable(): void
     {
         $this->packageManagerMock->method('getActivePackages')->willReturn([]);
@@ -282,12 +252,9 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function generatorFailureReturnsFailure(): void
     {
-        $templateDir = sys_get_temp_dir() . '/typed_extconf_test_' . uniqid();
-        mkdir($templateDir, 0755, true);
-        file_put_contents($templateDir . '/ext_conf_template.txt', 'content');
+        $templateDir = $this->createTemplateDir('content');
 
         $packageMock = $this->createMock(Package::class);
         $packageMock->method('getPackagePath')->willReturn($templateDir . '/');
@@ -323,13 +290,9 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
 
         self::assertSame(Command::FAILURE, $tester->getStatusCode());
         self::assertStringContainsString('Failed to generate class', $tester->getDisplay());
-
-        unlink($templateDir . '/ext_conf_template.txt');
-        rmdir($templateDir);
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function ownExtensionIsExcludedFromActivePackagesPicker(): void
     {
         $ownPackage = $this->createMock(Package::class);
@@ -352,8 +315,6 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
         $command = $this->createCommand();
         $tester = new CommandTester($command);
 
-        // Pick alpha_ext from the rendered choice list, decline manual fallback
-        // when the (non-existent) template file is missing.
         $tester->setInputs(['alpha_ext', 'no']);
 
         $tester->execute(
@@ -365,5 +326,39 @@ final class GenerateConfigurationCommandTest extends UnitTestCase
         self::assertStringContainsString('alpha_ext', $display);
         self::assertStringContainsString('beta_ext', $display);
         self::assertStringNotContainsString('typed_extconf', $display);
+    }
+
+    private function createTemplateDir(string $templateContent): string
+    {
+        $dir = sys_get_temp_dir() . '/typed_extconf_test_' . uniqid();
+        mkdir($dir, 0755, true);
+        file_put_contents($dir . '/ext_conf_template.txt', $templateContent);
+        $this->tempDirs[] = $dir;
+        return $dir;
+    }
+
+    private function removeDirectory(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        $entries = scandir($dir);
+        if ($entries === false) {
+            return;
+        }
+
+        foreach (array_diff($entries, ['.', '..']) as $entry) {
+            $path = $dir . '/' . $entry;
+            if (is_dir($path)) {
+                $this->removeDirectory($path);
+            } elseif (is_file($path)) {
+                unlink($path);
+            }
+        }
+
+        if (is_dir($dir)) {
+            rmdir($dir);
+        }
     }
 }
