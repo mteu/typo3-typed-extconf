@@ -4,6 +4,9 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: read
+
 env:
   TYPO3_DISABLE_DOCS_VERSION_UPDATE: 1
   TYPO3_EXTENSION_KEY: typed_extconf
@@ -65,6 +68,8 @@ jobs:
   release:
     needs: [build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       release-notes-url: ${{ steps.create-release.outputs.url }}
     steps:
