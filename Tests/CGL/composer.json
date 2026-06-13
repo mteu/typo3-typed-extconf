@@ -3,7 +3,7 @@
 		"armin/editorconfig-cli": "2.2.1",
 		"ergebnis/composer-normalize": "2.52.0",
 		"ergebnis/phpstan-rules": "2.13.1",
-		"friendsofphp/php-cs-fixer": "3.95.5",
+		"friendsofphp/php-cs-fixer": "3.95.7",
 		"helmich/typo3-typoscript-lint": "3.3.0",
 		"phpstan/extension-installer": "1.4.3",
 		"phpstan/phpstan": "2.2.2",
