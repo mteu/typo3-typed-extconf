@@ -3,16 +3,18 @@
 [![CGL](https://github.com/mteu/typo3-typed-extconf/actions/workflows/cgl.yaml/badge.svg)](https://github.com/mteu/typo3-typed-extconf/actions/workflows/cgl.yaml)
 [![Tests](https://github.com/mteu/typo3-typed-extconf/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/mteu/typo3-typed-extconf/actions/workflows/tests.yaml)
 [![Coverage](https://coveralls.io/repos/github/mteu/typo3-typed-extconf/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-typed-extconf?branch=main)
-[![Maintainability](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf/maintainability.svg)](https://qlty.sh/gh/mteu/projects/typo3-typed-extconf)
+[![PHP Version Require](https://poser.pugx.org/mteu/typo3-typed-extconf/require/php)](https://packagist.org/packages/mteu/typo3-typed-extconf)
 
 <img src="Resources/Public/Icons/Extension.svg" width="128" height="128" alt="Extension Icon">
 
 # TYPO3 Typed Extension Configuration
 
-![TYPO3 versions](https://typo3-badges.dev/badge/typed_extconf/typo3/shields.svg)
+![TYPO3 Support](https://badgen.net/badge/TYPO3/v13/FF8700?icon=typo3)
+![TYPO3 Support](https://badgen.net/badge/TYPO3/v14/FF8700?icon=typo3)
 ![Latest version](https://typo3-badges.dev/badge/typed_extconf/version/shields.svg)
 ![Stability](https://typo3-badges.dev/badge/typed_extconf/stability/shields.svg)
-[![PHP Version Require](https://poser.pugx.org/mteu/typo3-typed-extconf/require/php)](https://packagist.org/packages/mteu/typo3-typed-extconf)
+![Total downloads](https://typo3-badges.dev/badge/typed_extconf/downloads/badgen.svg)
+<!-- Generated with 🧡 at typo3-badges.dev -->
 
 </div>
 
