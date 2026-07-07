@@ -119,7 +119,7 @@ jobs:
 
       # qlty
       - name: qlty report
-        uses: qltysh/qlty-action/coverage@fd52dc852530a708d68c3b7342f8d33d1df4cd55 # v2
+        uses: qltysh/qlty-action/coverage@b413a89d8f3a8b36b9edd20b7ef1ad7ae0a7ac3a # v2
         if: env.QLTY_COVERAGE_TOKEN
         env:
           QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
