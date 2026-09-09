@@ -57,8 +57,12 @@
 	},
 	"extra": {
 		"typo3/cms": {
+			"Package": {
+				"providesPackages": {}
+			},
 			"extension-key": "typed_extconf",
 			"skip-ter-packagist-import": true,
+			"version": "1.3.2",
 			"web-dir": ".build/web"
 		}
 	},
