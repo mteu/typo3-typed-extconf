@@ -2938,16 +2938,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v7.4.18",
+            "version": "v7.4.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "90d412aa5277c6819db39e7605aa46b1019e3232"
+                "reference": "53d609da66578dad5a39fe290e8f924ec8f05e93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/90d412aa5277c6819db39e7605aa46b1019e3232",
-                "reference": "90d412aa5277c6819db39e7605aa46b1019e3232",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/53d609da66578dad5a39fe290e8f924ec8f05e93",
+                "reference": "53d609da66578dad5a39fe290e8f924ec8f05e93",
                 "shasum": ""
             },
             "require": {
@@ -2984,7 +2984,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v7.4.18"
+                "source": "https://github.com/symfony/filesystem/tree/v7.4.23"
             },
             "funding": [
                 {
@@ -3004,7 +3004,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-23T10:03:40+00:00"
+            "time": "2026-11-04T08:27:22+00:00",
+            "published-time": "2026-11-04T11:28:00+00:00"
         },
         {
             "name": "symfony/finder",
@@ -4089,7 +4090,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-25T15:50:05+00:00"
+            "time": "2026-09-25T15:50:05+00:00",
+            "published-time": "2026-09-30T10:23:35+00:00"
         },
         {
             "name": "symfony/polyfill-php82",
@@ -4557,7 +4559,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-02T12:38:34+00:00"
+            "time": "2026-09-02T12:38:34+00:00",
+            "published-time": "2026-09-15T07:11:48+00:00"
         },
         {
             "name": "symfony/rate-limiter",
@@ -5242,16 +5245,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v7.4.20",
+            "version": "v7.4.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "0222bf4dfaa1e3ceb8fff579635d655f2950d5a7"
+                "reference": "1e601207ffe627a2e621faa9d661f1d32dcf1cec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/0222bf4dfaa1e3ceb8fff579635d655f2950d5a7",
-                "reference": "0222bf4dfaa1e3ceb8fff579635d655f2950d5a7",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/1e601207ffe627a2e621faa9d661f1d32dcf1cec",
+                "reference": "1e601207ffe627a2e621faa9d661f1d32dcf1cec",
                 "shasum": ""
             },
             "require": {
@@ -5294,7 +5297,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v7.4.20"
+                "source": "https://github.com/symfony/yaml/tree/v7.4.23"
             },
             "funding": [
                 {
@@ -5314,7 +5317,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-26T06:31:10+00:00"
+            "time": "2026-11-04T08:27:22+00:00",
+            "published-time": "2026-11-04T11:28:41+00:00"
         },
         {
             "name": "typo3/class-alias-loader",
@@ -5853,7 +5857,8 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-09-17T17:38:29+00:00"
+            "time": "2026-09-17T17:38:29+00:00",
+            "published-time": "2026-09-17T17:39:06+00:00"
         },
         {
             "name": "cypresslab/gitelephant",
@@ -6040,20 +6045,21 @@
                 "issues": "https://github.com/eliashaeussler/task-runner/issues",
                 "source": "https://github.com/eliashaeussler/task-runner/tree/1.2.3"
             },
-            "time": "2026-06-18T18:59:00+00:00"
+            "time": "2026-06-18T18:59:00+00:00",
+            "published-time": "2026-06-18T18:59:18+00:00"
         },
         {
             "name": "eliashaeussler/typo3-vendor-bundler",
-            "version": "4.1.1",
+            "version": "4.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eliashaeussler/typo3-vendor-bundler.git",
-                "reference": "c8dfecefa8afbc18846fec226284f8ea15d85f2f"
+                "reference": "76760a936dcd8a6bd1668aa97a00cf81f234d210"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eliashaeussler/typo3-vendor-bundler/zipball/c8dfecefa8afbc18846fec226284f8ea15d85f2f",
-                "reference": "c8dfecefa8afbc18846fec226284f8ea15d85f2f",
+                "url": "https://api.github.com/repos/eliashaeussler/typo3-vendor-bundler/zipball/76760a936dcd8a6bd1668aa97a00cf81f234d210",
+                "reference": "76760a936dcd8a6bd1668aa97a00cf81f234d210",
                 "shasum": ""
             },
             "require": {
@@ -6069,17 +6075,17 @@
             },
             "require-dev": {
                 "armin/editorconfig-cli": "^2.1",
-                "composer/composer": "~2.2.28 || ~2.10.0",
+                "composer/composer": "~2.2.28 || ~2.11.0",
                 "composer/semver": "^3.0",
                 "composer/spdx-licenses": "^1.5.7",
                 "eliashaeussler/php-cs-fixer-config": "^3.0",
                 "eliashaeussler/phpstan-config": "^4.0",
-                "eliashaeussler/rector-config": "^4.0",
                 "ergebnis/composer-normalize": "^2.47",
                 "phpstan/extension-installer": "^1.4",
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-symfony": "^2.0",
                 "phpunit/phpunit": "^11.5 || ^12.5 || ^13.0",
+                "rector/rector": "^2.8",
                 "shipmonk/composer-dependency-analyser": "^1.8"
             },
             "type": "composer-plugin",
@@ -6106,9 +6112,10 @@
             "description": "Composer plugin to bundle vendor libraries for TYPO3 extensions in classic mode",
             "support": {
                 "issues": "https://github.com/eliashaeussler/typo3-vendor-bundler/issues",
-                "source": "https://github.com/eliashaeussler/typo3-vendor-bundler/tree/4.1.1"
+                "source": "https://github.com/eliashaeussler/typo3-vendor-bundler/tree/4.1.2"
             },
-            "time": "2026-07-30T14:03:06+00:00"
+            "time": "2026-11-06T19:03:27+00:00",
+            "published-time": "2026-11-06T19:04:06+00:00"
         },
         {
             "name": "eliashaeussler/version-bumper",
@@ -6363,7 +6370,8 @@
                 "issues": "https://github.com/opis/json-schema/issues",
                 "source": "https://github.com/opis/json-schema/tree/2.6.0"
             },
-            "time": "2025-10-17T12:46:48+00:00"
+            "time": "2025-10-17T12:46:48+00:00",
+            "published-time": "2025-10-17T12:48:22+00:00"
         },
         {
             "name": "opis/string",
@@ -6425,7 +6433,8 @@
                 "issues": "https://github.com/opis/string/issues",
                 "source": "https://github.com/opis/string/tree/2.1.0"
             },
-            "time": "2025-10-17T12:38:41+00:00"
+            "time": "2025-10-17T12:38:41+00:00",
+            "published-time": "2025-10-17T12:40:48+00:00"
         },
         {
             "name": "opis/uri",
@@ -6488,7 +6497,8 @@
                 "issues": "https://github.com/opis/uri/issues",
                 "source": "https://github.com/opis/uri/tree/1.1.0"
             },
-            "time": "2021-05-22T15:57:08+00:00"
+            "time": "2021-05-22T15:57:08+00:00",
+            "published-time": "2021-05-22T16:01:15+00:00"
         },
         {
             "name": "package-url/packageurl-php",
@@ -6554,7 +6564,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-05T11:20:07+00:00"
+            "time": "2024-02-05T11:20:07+00:00",
+            "published-time": "2024-02-05T11:21:28+00:00"
         },
         {
             "name": "phar-io/manifest",
