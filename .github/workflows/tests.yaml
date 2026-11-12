@@ -25,6 +25,19 @@ jobs:
       typo3DatabaseHost: "127.0.0.1"
       typo3DatabaseUsername: root
       typo3DatabasePassword: root
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: typo3
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -36,12 +49,8 @@ jobs:
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: ${{ matrix.php-version }}
-          tools: composer:v${{ matrix.composer-version }}
+          tools: composer:v2
           coverage: pcov
-
-      # Start MySQL service
-      - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
 
       # Install dependencies
       - name: Install Composer dependencies
@@ -63,6 +72,19 @@ jobs:
       typo3DatabaseHost: "127.0.0.1"
       typo3DatabaseUsername: root
       typo3DatabasePassword: root
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: typo3
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -75,10 +97,6 @@ jobs:
           php-version: "8.5"
           tools: composer:v2
           coverage: pcov
-
-      # Start MySQL service
-      - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
 
       # Install dependencies
       - name: Install Composer dependencies
