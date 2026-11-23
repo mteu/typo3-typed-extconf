@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ["8.2", "8.3", "8.4", "8.5"]
+        php-version: ["8.2", "8.3", "8.4", "8.5", "8.6"]
         typo3-version: ["13.4", "14.3"]
         dependencies: ["highest", "lowest"]
     env:
@@ -54,6 +54,11 @@ jobs:
           coverage: pcov
 
       # Install dependencies
+      # @todo Remove once eliashaeussler/typo3-vendor-bundler and eliashaeussler/version-bumper allow PHP 8.6
+      - name: Drop release tooling without PHP 8.6 support
+        if: matrix.php-version == '8.6'
+        run: composer remove --dev --no-update eliashaeussler/typo3-vendor-bundler eliashaeussler/version-bumper
+
       - name: Install Composer dependencies
         uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
         with:
