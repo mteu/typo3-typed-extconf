@@ -67,20 +67,37 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
         try {
             return $this->mapper->map($configClass, $configData);
         } catch (MappingError $error) {
-            $messageParts = [
-                sprintf('Failed to map configuration for extension "%s":', $extensionKey),
-            ];
-
-            foreach ($error->messages() as $message) {
-                $messageParts[] = sprintf(' - %s: %s', $message->path(), $message->toString());
-            }
-
-            throw new SchemaValidationException(
-                implode(PHP_EOL, $messageParts),
-                1753453309,
-                $error,
-            );
+            throw $this->createSchemaValidationException($extensionKey, $error);
         }
+    }
+
+    /**
+     * Valinor's message bodies, its exception message and its `source`
+     * property all contain raw configuration values, secrets included.
+     * The message is therefore built from paths and expected types only,
+     * and the MappingError is deliberately not chained as previous.
+     */
+    private function createSchemaValidationException(
+        string $extensionKey,
+        MappingError $error,
+    ): SchemaValidationException {
+        $messageParts = [
+            sprintf('Failed to map configuration for extension "%s":', $extensionKey),
+        ];
+        $invalidPaths = [];
+
+        foreach ($error->messages() as $message) {
+            $messageParts[] = sprintf(' - %s: expected %s (%s)', $message->path(), $message->type(), $message->code());
+            $invalidPaths[] = $message->path();
+        }
+
+        return new SchemaValidationException(
+            implode(PHP_EOL, $messageParts),
+            1753453309,
+            null,
+            $extensionKey,
+            $invalidPaths,
+        );
     }
 
     /**

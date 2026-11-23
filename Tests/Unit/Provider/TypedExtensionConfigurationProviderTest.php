@@ -44,9 +44,12 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
  * @license GPL-2.0-or-later
  */
 #[Framework\Attributes\CoversClass(TypedExtensionConfigurationProvider::class)]
+#[Framework\Attributes\CoversClass(SchemaValidationException::class)]
 #[AllowMockObjectsWithoutExpectations]
 final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
 {
+    private const SECRET = 'TOP-SECRET-5f2b9c0e';
+
     private ExtensionConfiguration&MockObject $extensionConfiguration;
     private TypedExtensionConfigurationProvider $subject;
 
@@ -289,19 +292,73 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function mapValinorMappingErrorPreservesPreviousException(): void
+    public function mapValinorMappingErrorIsNotChainedAsPreviousException(): void
     {
         $this->stubExtensionConfig(
             'error_test',
             ['value' => ['array', 'where', 'int', 'expected']],
         );
 
-        try {
-            $this->subject->get(ErrorTestConfiguration::class);
-            self::fail('Expected SchemaValidationException was not thrown');
-        } catch (SchemaValidationException $exception) {
-            self::assertNotNull($exception->getPrevious());
+        $exception = $this->catchSchemaValidationException(ErrorTestConfiguration::class);
+
+        self::assertNull($exception->getPrevious());
+    }
+
+    /**
+     * @return \Generator<string, array{string, class-string, array<string, mixed>, string, string}>
+     */
+    public static function invalidSecretConfigurationDataProvider(): \Generator
+    {
+        yield 'array given for int' => [
+            'error_test',
+            ErrorTestConfiguration::class,
+            ['value' => ['secret' => self::SECRET, 'other' => 1]],
+            'value',
+            '`int`',
+        ];
+        yield 'list given for string' => [
+            'test_ext',
+            SimpleTestConfiguration::class,
+            ['basic' => ['string' => [self::SECRET]]],
+            'stringValue',
+            '`string`',
+        ];
+        yield 'array given for string in nested object' => [
+            'complex_ext',
+            ComplexTestConfiguration::class,
+            ['nested' => ['name' => ['secret' => self::SECRET]]],
+            'nestedConfig.name',
+            '`string`',
+        ];
+    }
+
+    /**
+     * @param class-string $configClass
+     * @param array<string, mixed> $rawConfig
+     */
+    #[Test]
+    #[DataProvider('invalidSecretConfigurationDataProvider')]
+    public function mapValinorMappingErrorReportsPathAndExpectedTypeButNotInvalidValue(
+        string $extensionKey,
+        string $configClass,
+        array $rawConfig,
+        string $expectedPath,
+        string $expectedType,
+    ): void {
+        $this->stubExtensionConfig($extensionKey, $rawConfig);
+
+        $exception = $this->catchSchemaValidationException($configClass);
+
+        for ($current = $exception; $current !== null; $current = $current->getPrevious()) {
+            self::assertStringNotContainsString(self::SECRET, $current->getMessage());
         }
+        self::assertStringNotContainsString(self::SECRET, (string)$exception);
+        self::assertSame($extensionKey, $exception->extensionKey);
+        self::assertSame([$expectedPath], $exception->invalidPaths);
+        self::assertStringContainsString(
+            sprintf(' - %s: expected %s', $expectedPath, $expectedType),
+            $exception->getMessage(),
+        );
     }
 
     #[Test]
@@ -356,6 +413,20 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         self::assertSame('/api/v1', $result->endpoint);
         self::assertSame('https://api.example.com', $result->apiConfiguration->url);
         self::assertSame('', $result->securityConfiguration->token);
+    }
+
+    /**
+     * @param class-string $configClass
+     */
+    private function catchSchemaValidationException(string $configClass): SchemaValidationException
+    {
+        try {
+            $this->subject->get($configClass);
+        } catch (SchemaValidationException $exception) {
+            return $exception;
+        }
+
+        self::fail('Expected SchemaValidationException was not thrown');
     }
 
     private function stubExtensionConfig(string $extensionKey, mixed $value): void
