@@ -22,13 +22,17 @@ use mteu\TypedExtConf\Exception\SchemaValidationException;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\ApiConfiguration;
+use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\CircularChildTestConfiguration;
+use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\CircularParentTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\ComplexTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\ErrorTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\InvalidExtensionConfigTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\MultiNestedTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\NestedTestConfiguration;
+use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\RepeatedNestedTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\RequiredTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\SecurityConfiguration;
+use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\SelfReferencingTestConfiguration;
 use mteu\TypedExtConf\Tests\Unit\Fixture\Configuration\SimpleTestConfiguration;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -427,6 +431,54 @@ final class TypedExtensionConfigurationProviderTest extends Framework\TestCase
         }
 
         self::fail('Expected SchemaValidationException was not thrown');
+    }
+
+    /**
+     * @return \Generator<string, array{class-string, string}>
+     */
+    public static function circularConfigurationDataProvider(): \Generator
+    {
+        yield 'class referencing itself' => [
+            SelfReferencingTestConfiguration::class,
+            SelfReferencingTestConfiguration::class . ' -> ' . SelfReferencingTestConfiguration::class,
+        ];
+        yield 'nested class referencing its parent' => [
+            CircularParentTestConfiguration::class,
+            CircularParentTestConfiguration::class
+                . ' -> ' . CircularChildTestConfiguration::class
+                . ' -> ' . CircularParentTestConfiguration::class,
+        ];
+    }
+
+    /**
+     * @param class-string $configClass
+     */
+    #[Test]
+    #[DataProvider('circularConfigurationDataProvider')]
+    public function mapCircularConfigurationThrowsExceptionNamingTheCycle(
+        string $configClass,
+        string $expectedCycle,
+    ): void {
+        $this->stubExtensionConfig('circular_test', []);
+
+        $this->expectException(ConfigurationException::class);
+        $this->expectExceptionCode(1795285635);
+        $this->expectExceptionMessage('Circular configuration reference detected: ' . $expectedCycle);
+
+        $this->subject->get($configClass);
+    }
+
+    #[Test]
+    public function mapSameNestedClassInSiblingParametersIsNotCircular(): void
+    {
+        $this->stubExtensionConfig('repeated_nested_ext', [
+            'nested' => ['name' => 'shared'],
+        ]);
+
+        $result = $this->subject->get(RepeatedNestedTestConfiguration::class);
+
+        self::assertSame('shared', $result->first->name);
+        self::assertSame('shared', $result->second->name);
     }
 
     private function stubExtensionConfig(string $extensionKey, mixed $value): void

@@ -62,7 +62,7 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
 
         $extensionKey = $this->resolveExtensionKey($reflection);
         $rawConfig = $this->getRawConfiguration($extensionKey);
-        $configData = $this->prepareConfigurationData($reflection, $rawConfig);
+        $configData = $this->prepareConfigurationData($reflection, $rawConfig, [$configClass]);
 
         try {
             return $this->mapper->map($configClass, $configData);
@@ -141,10 +141,15 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
     /**
      * @param \ReflectionClass<object> $reflection
      * @param array<string, mixed> $rawConfig
+     * @param non-empty-list<class-string> $resolutionStack
      * @return array<string, mixed>
+     * @throws ConfigurationException
      */
-    private function prepareConfigurationData(\ReflectionClass $reflection, array $rawConfig): array
-    {
+    private function prepareConfigurationData(
+        \ReflectionClass $reflection,
+        array $rawConfig,
+        array $resolutionStack,
+    ): array {
         $constructor = $reflection->getConstructor();
         if ($constructor === null) {
             return $rawConfig;
@@ -153,7 +158,7 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
         $configData = [];
 
         foreach ($constructor->getParameters() as $parameter) {
-            $configData[$parameter->getName()] = $this->resolveParameterValue($parameter, $rawConfig);
+            $configData[$parameter->getName()] = $this->resolveParameterValue($parameter, $rawConfig, $resolutionStack);
         }
 
         return $configData;
@@ -161,9 +166,14 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
 
     /**
      * @param array<string, mixed> $rawConfig
+     * @param non-empty-list<class-string> $resolutionStack
+     * @throws ConfigurationException
      */
-    private function resolveParameterValue(\ReflectionParameter $parameter, array $rawConfig): mixed
-    {
+    private function resolveParameterValue(
+        \ReflectionParameter $parameter,
+        array $rawConfig,
+        array $resolutionStack,
+    ): mixed {
         $attribute = $this->getExtConfPropertyAttribute($parameter);
         $configKey = $this->determineConfigKey($parameter, $attribute);
         /** @var array<string, mixed> $typedRawConfig */
@@ -185,7 +195,7 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
         }
 
         if ($this->isNestedConfigurationObject($parameter)) {
-            return $this->createNestedConfiguration($parameter, $rawConfig);
+            return $this->createNestedConfiguration($parameter, $rawConfig, $resolutionStack);
         }
 
         return null;
@@ -202,9 +212,14 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
 
     /**
      * @param array<string, mixed> $rawConfig
+     * @param non-empty-list<class-string> $resolutionStack
+     * @throws ConfigurationException
      */
-    private function createNestedConfiguration(\ReflectionParameter $parameter, array $rawConfig): mixed
-    {
+    private function createNestedConfiguration(
+        \ReflectionParameter $parameter,
+        array $rawConfig,
+        array $resolutionStack,
+    ): mixed {
         $type = $parameter->getType();
 
         if (!$type instanceof \ReflectionNamedType || $type->isBuiltin()) {
@@ -214,11 +229,34 @@ final readonly class TypedExtensionConfigurationProvider implements ExtensionCon
         /** @var class-string $className */
         $className = $type->getName();
 
+        $this->rejectCircularReference($className, $resolutionStack);
+
         /** @var array<string, mixed> $typedRawConfig */
         $typedRawConfig = $rawConfig;
         return $this->prepareConfigurationData(
             new \ReflectionClass($className),
-            $typedRawConfig
+            $typedRawConfig,
+            [...$resolutionStack, $className],
+        );
+    }
+
+    /**
+     * @param class-string $className
+     * @param non-empty-list<class-string> $resolutionStack
+     * @throws ConfigurationException
+     */
+    private function rejectCircularReference(string $className, array $resolutionStack): void
+    {
+        if (!in_array($className, $resolutionStack, true)) {
+            return;
+        }
+
+        throw new ConfigurationException(
+            sprintf(
+                'Circular configuration reference detected: %s',
+                implode(' -> ', [...$resolutionStack, $className]),
+            ),
+            1795285635,
         );
     }
 
