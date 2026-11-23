@@ -62,7 +62,7 @@
 			},
 			"extension-key": "typed_extconf",
 			"skip-ter-packagist-import": true,
-			"version": "1.3.4",
+			"version": "1.4.0",
 			"web-dir": ".build/web"
 		}
 	},
