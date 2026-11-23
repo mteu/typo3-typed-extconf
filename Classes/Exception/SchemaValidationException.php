@@ -23,4 +23,18 @@ namespace mteu\TypedExtConf\Exception;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class SchemaValidationException extends \Exception {}
+final class SchemaValidationException extends \Exception
+{
+    /**
+     * @param list<string> $invalidPaths
+     */
+    public function __construct(
+        string $message = '',
+        int $code = 0,
+        ?\Throwable $previous = null,
+        public readonly string $extensionKey = '',
+        public readonly array $invalidPaths = [],
+    ) {
+        parent::__construct($message, $code, $previous);
+    }
+}
