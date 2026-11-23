@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6ecee3de08155bd07151f3ed6c27dbe",
+    "content-hash": "a3ecfa60a6f3647d68e4fe42c518f8b4",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -6035,16 +6035,16 @@
         },
         {
             "name": "cypresslab/gitelephant",
-            "version": "v5.1.0",
+            "version": "v5.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matteosister/GitElephant.git",
-                "reference": "97d57185624d4f9a7c9efe95e0d07bccccb6dd86"
+                "reference": "1d18fe579afe0fd7933d1216a5c3fbd2d214a09a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matteosister/GitElephant/zipball/97d57185624d4f9a7c9efe95e0d07bccccb6dd86",
-                "reference": "97d57185624d4f9a7c9efe95e0d07bccccb6dd86",
+                "url": "https://api.github.com/repos/matteosister/GitElephant/zipball/1d18fe579afe0fd7933d1216a5c3fbd2d214a09a",
+                "reference": "1d18fe579afe0fd7933d1216a5c3fbd2d214a09a",
                 "shasum": ""
             },
             "require": {
@@ -6085,10 +6085,10 @@
             ],
             "support": {
                 "issues": "https://github.com/matteosister/GitElephant/issues",
-                "source": "https://github.com/matteosister/GitElephant/tree/v5.1.0"
+                "source": "https://github.com/matteosister/GitElephant/tree/v5.1.1"
             },
-            "time": "2026-10-30T15:09:29+00:00",
-            "published-time": "2026-11-10T15:50:31+00:00"
+            "time": "2026-11-22T21:08:19+00:00",
+            "published-time": "2026-11-23T06:20:07+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -10662,7 +10662,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0 || ~8.6.0",
         "ext-filter": "*"
     },
     "platform-dev": {},
